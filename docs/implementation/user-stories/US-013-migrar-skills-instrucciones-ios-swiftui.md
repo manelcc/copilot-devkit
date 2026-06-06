@@ -1,20 +1,10 @@
-# US-013 — Migrar skills e instrucciones iOS SwiftUI
+# US-013 — Implementar features iOS SwiftUI con guía estructurada
 
-## Contexto de la necesidad
-El proyecto `bankinter-devtools` contiene skills iOS probadas en proyectos reales. Migrarlas al namespace centralizado `skills/ios/swiftui/` junto con las instrucciones Swift/SwiftUI cubre el stack iOS moderno para cualquier equipo que use este repo central.
+**Como** desarrollador iOS con SwiftUI,  
+**quiero** las skills de bankinter-devtools disponibles en `skills/ios/swiftui/` y las instrucciones Swift/SwiftUI configuradas,  
+**para** implementar features iOS de calidad sin buscar en repositorios externos.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-013
-- **Título usuario**: Migrar skills iOS SwiftUI y crear instrucciones Swift/SwiftUI
-- **Descripción usuario**: Como desarrollador iOS con SwiftUI, quiero las skills de bankinter-devtools disponibles en `skills/ios/swiftui/` y las instrucciones Swift/SwiftUI configuradas, para implementar features iOS de calidad sin buscar en repos externos.
-- **Épica relacionada**: EP-5 — Stack iOS
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - Skills iOS de `bankinter-devtools/skills/ios/` migradas a `skills/ios/swiftui/`
-  - Skill `swiftui-patterns` creada
-  - Agente `ios-swiftui-expert.agent.md` creado
-  - `instructions/ios-swiftui.instructions.md` con reglas Swift + SwiftUI
-  - Fuente: `bankinter-devtools/skills/ios/` y `bankinter-devtools/agents/ios/`
+---
 
 ## Requerimientos de inicio
 
@@ -23,28 +13,56 @@ El proyecto `bankinter-devtools` contiene skills iOS probadas en proyectos reale
 | RQ-001 | Acceso a `bankinter-devtools/skills/ios/` | Necesario | Funcional | Path: `/Users/manelcc/Documents/BANKINTER/bankinter-devtools/skills/ios/` |
 | RQ-002 | Acceso a `bankinter-devtools/agents/ios/` | Necesario | Funcional | Agentes iOS por proyecto (bro/inx/nbo) |
 
-## 2. Cobertura funcional
-- **Skills a migrar** desde `BK:skills/ios/` → `skills/ios/swiftui/`:
-  - Todas las skills de los subdirectorios `bro/`, `inx/`, `nbo/` que sean genéricas (no específicas de proyecto)
-  - Prefijo del proyecto en el nombre se elimina para generalizar
+## Criterios de Aceptación
 
-- **Skill nueva a crear**: `skills/ios/swiftui/swiftui-patterns/`
-  - SwiftUI View lifecycle
-  - `@State`, `@Binding`, `@ObservableObject`, `@Environment`
-  - NavigationStack, Sheet, fullScreenCover
-  - Async/await con `task {}` modifier
-  - `List`, `LazyVStack`, `LazyHStack`
+1. Las skills genéricas de `bankinter-devtools/skills/ios/{bro,inx,nbo}/` están migradas a `skills/ios/swiftui/` (se eliminan prefijos de proyecto: `bro-`, `inx-`, `nbo-`).
+2. La skill `skills/ios/swiftui/swiftui-patterns/` cubre: `@State`, `@Binding`, `@ObservableObject`, NavigationStack, async/await con `task {}`, `List`, `LazyVStack`.
+3. El agente `agents/ios/swiftui/ios-swiftui-expert.agent.md` detecta tipo de tarea iOS SwiftUI y delega a skills relevantes.
+4. El archivo `instructions/ios-swiftui.instructions.md` existe con `applyTo: "**/*.swift"`.
+5. Las instrucciones incluyen reglas de: (1) MVVM con `@Observable` o `ObservableObject`, (2) Async/await, Combine, (3) NavigationStack (no NavigationView), (4) Testing con XCTest.
+6. Ninguna skill migrada contiene referencias específicas al proyecto bankinter (verificable con `grep -r "bankinter" skills/ios/swiftui/` sin resultados o solo en comentarios de origen).
+7. Cada skill migrada pasa validación: `./scripts/validate-skill.sh skills/ios/swiftui/<skill-name>/` devuelve exit code 0.
+8. Ejecutar `ls -1 skills/ios/swiftui/` muestra al menos 3 skills (migradas + swiftui-patterns).
 
-- **Agente**: `agents/ios/swiftui/ios-swiftui-expert.agent.md`
-  - Detecta tipo de tarea iOS SwiftUI
-  - Handoffs a skills SwiftUI
+---
 
-- **`instructions/ios-swiftui.instructions.md`**:
-  - `applyTo: "**/*.swift"`
-  - MVVM con `@Observable` (Swift 5.9+) o `ObservableObject`
-  - Async/await, Combine donde aplica
-  - NavigationStack (no NavigationView)
-  - Testing: XCTest, ViewInspector
+## Notas Técnicas
+
+**Path fuente**: `/Users/manelcc/Documents/BANKINTER/bankinter-devtools/skills/ios/`
+
+**Proceso de migración**:
+- Identificar skills genéricas (no específicas de bro/inx/nbo)
+- Eliminar prefijos de proyecto del nombre
+- Actualizar frontmatter y paths relativos
+
+**Decisiones abiertas**: ¿Qué skills de bankinter-devtools son genéricas vs específicas de proyecto?
+
+**Supuestos**: Las skills de bankinter-devtools están actualizadas con SwiftUI moderno.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001, US-003, US-004 |
+| **Negociable** | ✅ | Número de skills migradas ajustable |
+| **Valiosa** | ✅ | Skills probadas en producción disponibles para cualquier proyecto iOS |
+| **Estimable** | ✅ | Migración + creación de swiftui-patterns + agente: 8-12 horas |
+| **Small** | ✅ | 8 CA, cubre migración + skill nueva + agente + instrucciones |
+| **Testeable** | ✅ | Todos los CA verificables con validador y grep |
+
+---
+
+## Épica Relacionada
+
+EP-5 — Stack iOS
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Primera población del namespace iOS.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (namespace `ios/swiftui/` existe), US-004 (validador)

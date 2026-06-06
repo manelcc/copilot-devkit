@@ -1,20 +1,10 @@
-# US-006 — Implementar devtools sync copy-on-demand
+# US-006 — Sincronizar artefactos sin duplicación manual
 
-## Contexto de la necesidad
-Los proyectos consumidores necesitan importar artefactos (skills, agentes, instrucciones) desde este repositorio central de forma controlada, versionada y sin duplicación manual. La estrategia está documentada en `sync-strategy.md`; esta US la implementa.
+**Como** desarrollador de un proyecto consumidor,  
+**quiero** ejecutar `devtools sync` para importar artefactos desde DevTools-AI según un manifest,  
+**para** no copiar manualmente skills/agentes y recibir actualizaciones automáticamente.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-006
-- **Título usuario**: Comando devtools sync con manifest y lock
-- **Descripción usuario**: Como desarrollador de un proyecto consumidor, quiero ejecutar `devtools sync` para importar los artefactos que necesito según un manifest, para no copiar manualmente ni perder actualizaciones futuras.
-- **Épica relacionada**: EP-2 — Sync Skills Strategy
-- **Prioridad sugerida**: Alta (P1)
-- **Criterios funcionales trazados**:
-  - `devtools sync` lee `devtools.manifest.json` y copia artefactos al destino
-  - Genera/actualiza `devtools.lock.json` con SHA y timestamp
-  - Soporta `--dry-run` (muestra qué cambiaría sin aplicar)
-  - No sobreescribe sin confirmación si hay cambios locales
-  - Referencia: `sync-strategy.md` + `bankinter-devtools/cli-tools/sync_skills/`
+---
 
 ## Requerimientos de inicio
 
@@ -24,22 +14,68 @@ Los proyectos consumidores necesitan importar artefactos (skills, agentes, instr
 | RQ-002 | Source de artefactos accesible (local path o git URL) | Necesario | Funcional | Modo local primero; git en sprint siguiente |
 | RQ-003 | Destino `.github/` o path configurado en manifest | Necesario | Funcional | Cada tipo de artefacto tiene su destination |
 
-## 2. Cobertura funcional
-- **Flujo principal**:
-  1. Desarrollador ejecuta `devtools sync` en raíz del proyecto consumidor
-  2. CLI lee `devtools.manifest.json`
-  3. Para cada artefacto en `artifacts[]`, copia desde source al destination
-  4. Genera/actualiza `devtools.lock.json`
-  5. Muestra resumen de artefactos sincronizados
-- **Entradas**: `devtools.manifest.json`, source path, destination paths
-- **Validaciones**:
-  - Si destination tiene cambios locales → preguntar antes de sobreescribir
-  - Si source no existe → error claro con path esperado
-  - Si manifest es inválido → error con línea y campo problemático
-- **Salidas**: Artefactos copiados al destino + `devtools.lock.json` actualizado
-- **Casos límite**:
-  - Artefacto en manifest que no existe en source → warning, no error fatal
-  - Sincronización sin cambios → "Todo sincronizado, nada que hacer"
+## Criterios de Aceptación
+
+1. Ejecutar `devtools sync` en la raíz de un proyecto consumidor lee el archivo `devtools.manifest.json` y copia los artefactos especificados al destino configurado.
+2. El comando genera o actualiza `devtools.lock.json` con: SHA del artefacto copiado, timestamp de sincronización, path de destino.
+3. Ejecutar `devtools sync --dry-run` muestra qué artefactos se copiarían sin aplicar cambios reales.
+4. Si el destino tiene cambios locales no commiteados, el comando pregunta al usuario antes de sobreescribir (prompt "¿Sobrescribir cambios locales? [y/N]").
+5. Si un artefacto en el manifest no existe en el source, el comando imprime warning pero continúa con los demás (no falla fatalmente).
+6. Si `devtools.manifest.json` tiene JSON inválido, el comando muestra error descriptivo indicando línea y campo problemático.
+7. Si no hay cambios desde la última sincronización, el comando imprime "✓ Todo sincronizado, nada que hacer" y sale con exit code 0.
+8. El manifest soporta formato definido en `sync-strategy.md`: `version`, `source`, `sync`, `artifacts[]`.
+
+---
+
+## Notas Técnicas
+
+**Formato `devtools.manifest.json`** (ver `sync-strategy.md` para spec completa):
+```json
+{
+  "version": "1.0.0",
+  "source": { "type": "local", "path": "/ruta/a/devtools-ai" },
+  "sync": { "mode": "copy", "destination_base": ".github" },
+  "artifacts": [
+    {
+      "namespace": "global",
+      "items": ["clean-code-guardian", "git-workflow"],
+      "type": "skills",
+      "destination": "skills/global"
+    }
+  ]
+}
+```
+
+**Fuente de referencia**: `bankinter-devtools/cli-tools/sync_skills/`
+
+**Decisiones abiertas**: ¿El lock.json va en .gitignore del consumidor o se commitea?
+
+**Supuestos**: Modo `copy` local primero; modo `git-submodule` en US futura.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-005 (CLI base), pero no bloquea otras migraciones |
+| **Negociable** | ✅ | Formato del lock.json ajustable |
+| **Valiosa** | ✅ | Reduce tiempo de sincronización de 2h manual a <5 min automático |
+| **Estimable** | ✅ | Parser JSON + copia + lock: 8-12 horas |
+| **Small** | ✅ | 8 CA, cubre flujo completo de sync |
+| **Testeable** | ✅ | Todos los CA verificables con manifest de prueba |
+
+---
+
+## Épica Relacionada
+
+EP-2 — Distribuir artefactos de automatización IA sin duplicación
+
+---
+
+## Prioridad
+
+**P1** (Alta) — Habilita distribución de artefactos a proyectos consumidores.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-005 (CLI base); `sync-strategy.md` como especificación

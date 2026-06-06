@@ -1,18 +1,10 @@
-# US-007 — Migrar skills backend Kotlin/Ktor
+# US-007 — Centralizar skills backend Kotlin/Ktor probadas en producción
 
-## Contexto de la necesidad
-El proyecto `mycardiochef/middleware` contiene 6 skills de backend Kotlin/Ktor probadas en producción. Migrarlas al namespace centralizado `skills/backend/kotlin-ktor/` las hace disponibles para cualquier proyecto Ktor sin duplicación ni mantenimiento paralelo.
+**Como** desarrollador backend Kotlin,  
+**quiero** encontrar las 6 skills de mycardiochef disponibles en `skills/backend/kotlin-ktor/`,  
+**para** reutilizarlas en cualquier proyecto Ktor sin copiarlas manualmente ni mantener versiones paralelas.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-007
-- **Título usuario**: Migrar skills backend Kotlin/Ktor desde mycardiochef
-- **Descripción usuario**: Como desarrollador backend Kotlin, quiero encontrar las skills de mycardiochef disponibles en `skills/backend/kotlin-ktor/`, para usarlas en cualquier proyecto Ktor sin copiarlas manualmente.
-- **Épica relacionada**: EP-7 — Stack Backend
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - 6 skills migradas con frontmatter actualizado y paths relativos válidos
-  - Cada skill tiene `references/overview.md` con Mermaid
-  - Skills pasan `validate-skill.sh` sin errores
+---
 
 ## Requerimientos de inicio
 
@@ -22,23 +14,59 @@ El proyecto `mycardiochef/middleware` contiene 6 skills de backend Kotlin/Ktor p
 | RQ-002 | Skills a migrar identificadas y accesibles | Necesario | Funcional | Ver lista en sección 2 |
 | RQ-003 | validate-skill.sh operativo (US-004) | Necesario | Funcional | Para verificar skills migradas |
 
-## 2. Cobertura funcional
-- **Skills a migrar** (fuente → destino):
-  1. `MC:skills/kotlin-mcp-server-generator/` → `skills/backend/kotlin-ktor/kotlin-mcp-server-generator/`
-  2. `MC:skills/logging-kotlin/` → `skills/backend/kotlin-ktor/logging-kotlin/`
-  3. `MC:skills/unit-testing-kotlin/` → `skills/backend/kotlin-ktor/unit-testing-kotlin/`
-  4. `MC:skills/postgresql-crud/` → `skills/backend/kotlin-ktor/postgresql-crud/`
-  5. `MC:skills/mycardio-middleware-auth-flow/` → `skills/backend/kotlin-ktor/ktor-auth-flow/` *(renombrada: elimina referencia a mycardiochef)*
-  6. `MC:skills/middleware-webscraping-contract/` → `skills/backend/kotlin-ktor/webscraping-contract/`
+## Criterios de Aceptación
 
-- **Por cada skill migrada**:
-  1. Copiar todos los ficheros del directorio fuente
-  2. Actualizar frontmatter `name` al nuevo nombre si cambió
-  3. Verificar y actualizar paths relativos internos
-  4. Crear `references/overview.md` si no existe
-  5. Ejecutar `validate-skill.sh` sobre el destino
+1. Las 6 skills existen en `skills/backend/kotlin-ktor/`: `kotlin-mcp-server-generator`, `logging-kotlin`, `unit-testing-kotlin`, `postgresql-crud`, `ktor-auth-flow` (renombrada desde `mycardio-middleware-auth-flow`), `webscraping-contract`.
+2. Cada skill migrada pasa validación: `./scripts/validate-skill.sh skills/backend/kotlin-ktor/<skill-name>/` devuelve exit code 0.
+3. Ningún archivo migrado contiene referencias a paths de mycardiochef (verificable con `grep -r "mycardiochef" skills/backend/kotlin-ktor/` sin resultados).
+4. Cada skill tiene `references/overview.md` con bloque Mermaid (si no existía en el origen, se crea uno básico).
+5. El frontmatter `name` de cada skill refleja el nuevo nombre (especialmente `ktor-auth-flow`).
+6. Los paths relativos internos (links a otros archivos de la misma skill) son válidos en el nuevo namespace.
+7. Ejecutar `ls -1 skills/backend/kotlin-ktor/` muestra exactamente 6 directorios.
+8. Las skills migradas mantienen el historial de commits (usar `cp -r` o `git mv` según aplique).
 
-- **Salidas**: 6 directorios en `skills/backend/kotlin-ktor/` con estructura válida
+---
+
+## Notas Técnicas
+
+**Path fuente**: `/Users/manelcc/.../mycardiochef/middleware/.github/skills/`
+
+**Skills a migrar** (fuente → destino):
+1. `kotlin-mcp-server-generator/` → `skills/backend/kotlin-ktor/kotlin-mcp-server-generator/`
+2. `logging-kotlin/` → `skills/backend/kotlin-ktor/logging-kotlin/`
+3. `unit-testing-kotlin/` → `skills/backend/kotlin-ktor/unit-testing-kotlin/`
+4. `postgresql-crud/` → `skills/backend/kotlin-ktor/postgresql-crud/`
+5. `mycardio-middleware-auth-flow/` → `skills/backend/kotlin-ktor/ktor-auth-flow/` *(renombrada)*
+6. `middleware-webscraping-contract/` → `skills/backend/kotlin-ktor/webscraping-contract/`
+
+**Decisiones abiertas**: ¿Migrar también `mycardio-middleware-user-profile`?
+
+**Supuestos**: Los nombres simplificados son suficientemente descriptivos sin prefijo proyecto.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 (namespace existe) y US-004 (validador) |
+| **Negociable** | ✅ | Nombres de skills renombradas ajustables |
+| **Valiosa** | ✅ | Hace disponibles skills probadas en producción para cualquier proyecto Ktor |
+| **Estimable** | ✅ | Migración de 6 directorios + validación: 4-6 horas |
+| **Small** | ✅ | 8 CA, cubre migración completa de 6 skills |
+| **Testeable** | ✅ | Todos los CA verificables con comandos de validación |
+
+---
+
+## Épica Relacionada
+
+EP-7 — Stack Backend
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Primera población del namespace backend con skills probadas.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (namespace existe), US-004 (validador disponible)

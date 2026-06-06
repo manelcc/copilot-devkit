@@ -1,19 +1,10 @@
-# US-005 — Bootstrap CLI devtools
+# US-005 — Unificar herramientas en un CLI instalable
 
-## Contexto de la necesidad
-Para que los proyectos consumidores puedan sincronizar artefactos y los contributors puedan crear nuevas skills con consistencia, se necesita un CLI Python (`devtools`) con estructura modular, entry points declarados y la base del código migrada desde `bankinter-devtools/cli-tools/`.
+**Como** desarrollador que usa el repositorio DevTools-AI,  
+**quiero** un comando `devtools` instalable con subcomandos para sync, scaffold y validate,  
+**para** no depender de scripts bash dispersos y tener una interfaz consistente para todas las operaciones.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-005
-- **Título usuario**: Bootstrap del CLI devtools (estructura Python + migración base)
-- **Descripción usuario**: Como desarrollador que usa el repositorio, quiero un comando `devtools` instalable que sirva de base para sync, scaffold y validate, para no depender de scripts bash dispersos.
-- **Épica relacionada**: EP-9 — CLI Tools
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - `cli-tools/pyproject.toml` con entry point `devtools`
-  - Subcomandos: `sync`, `scaffold`, `validate`, `list` (stubs aceptados inicialmente)
-  - Migración del código base de `bankinter-devtools/cli-tools/` como punto de partida
-  - `devtools --help` funcional tras `pip install -e cli-tools/`
+---
 
 ## Requerimientos de inicio
 
@@ -23,15 +14,69 @@ Para que los proyectos consumidores puedan sincronizar artefactos y los contribu
 | RQ-002 | Entry point `devtools` declarado en pyproject.toml | Necesario | Funcional | Permite `devtools --help` |
 | RQ-003 | Subcomandos sync, scaffold, validate, list registrados | Necesario | Funcional | Stubs aceptados en esta US |
 
-## 2. Cobertura funcional
-- **Flujo principal**:
-  1. `./setup.sh` ejecuta `pip install -e cli-tools/`
-  2. `devtools --help` muestra subcomandos disponibles
-  3. `devtools sync --help`, `devtools scaffold --help`, `devtools validate --help` funcionan
-- **Entradas**: Instalación via pip desde el repo local
-- **Validaciones**: Entry point debe existir y ser ejecutable; `--help` no puede dar ImportError
-- **Salidas**: Comando `devtools` disponible en PATH
-- **Casos límite**: Si ya existe un `devtools` en PATH de otro paquete, advertir conflicto
+## Criterios de Aceptación
+
+1. Ejecutar `pip install -e cli-tools/` desde la raíz del repo sale sin errores y registra el entry point `devtools` en PATH.
+2. Ejecutar `devtools --help` muestra lista de subcomandos disponibles: `sync`, `scaffold`, `validate`, `list`.
+3. Cada subcomando tiene ayuda funcional: `devtools sync --help`, `devtools scaffold --help`, `devtools validate --help`, `devtools list --help` ejecutan sin ImportError.
+4. El archivo `cli-tools/pyproject.toml` declara el entry point: `devtools = "devtools.cli:main"`.
+5. La estructura del CLI sigue el patrón de `bankinter-devtools/cli-tools/`: módulos `commands/`, `utils/`, tests en `tests/`.
+6. Los 4 subcomandos pueden ser stubs (imprimen "TODO: implementar en US-XXX"), pero deben ejecutarse sin error.
+7. Ejecutar `devtools --version` muestra la versión definida en `pyproject.toml`.
+8. Si ya existe un comando `devtools` en PATH de otro paquete, `pip install` advierte del conflicto.
+
+---
+
+## Notas Técnicas
+
+**Estructura `cli-tools/`**:
+```
+cli-tools/
+  pyproject.toml
+  devtools/
+    __init__.py
+    cli.py           ← entry point principal
+    commands/
+      sync.py        ← stub
+      scaffold.py    ← stub
+      validate.py    ← stub
+      list_cmd.py    ← stub
+    utils/
+      __init__.py
+  tests/
+    __init__.py
+```
+
+**Fuente de migración**: `bankinter-devtools/cli-tools/`
+
+**Decisiones abiertas**: ¿Se usa `argparse` o `click` como base del CLI?
+
+**Supuestos**: Python 3.11+ disponible.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 (directorio `cli-tools/` existe) |
+| **Negociable** | ✅ | Librería CLI (argparse vs click) ajustable |
+| **Valiosa** | ✅ | Base para todas las herramientas CLI del proyecto |
+| **Estimable** | ✅ | Estructura + 4 stubs: 4-6 horas |
+| **Small** | ✅ | 8 CA, cubre instalación + ayuda de subcomandos |
+| **Testeable** | ✅ | Todos los CA verificables con comandos CLI |
+
+---
+
+## Épica Relacionada
+
+EP-9 — CLI Tools
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Base para US-006 (sync) y futuras herramientas CLI.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (directorio `cli-tools/` existe); `bankinter-devtools/cli-tools/` como fuente

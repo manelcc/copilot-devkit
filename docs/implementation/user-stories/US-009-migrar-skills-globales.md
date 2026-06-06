@@ -1,19 +1,10 @@
-# US-009 — Migrar skills globales (clean-code, git, MR)
+# US-009 — Aplicar convenciones de calidad cross-stack
 
-## Contexto de la necesidad
-Las skills de quality, git y MR de mycardiochef son útiles en cualquier stack (Android, iOS, Backend). Migrarlas al namespace `skills/global/` las hace disponibles cross-stack sin duplicación y sin dependencia del proyecto de origen.
+**Como** desarrollador en cualquier stack (Android, iOS, Backend),  
+**quiero** las skills de clean-code-guardian, git-workflow, mr-description-generator y feature-lifecycle disponibles en `skills/global/`,  
+**para** seguir convenciones de calidad, git y MR en todos los proyectos sin duplicar código.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-009
-- **Título usuario**: Migrar skills globales de calidad, git y MR description
-- **Descripción usuario**: Como desarrollador en cualquier stack, quiero las skills de clean-code-guardian, git-workflow y mr-description-generator disponibles en `skills/global/`, para seguir convenciones de calidad y git en todos los proyectos.
-- **Épica relacionada**: EP-8 — Global Cross-Stack
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - 3 skills migradas a `skills/global/` con catálogos multi-lenguaje
-  - clean-code-guardian incluye catálogos para Kotlin, Java, Swift, Python
-  - git-workflow y mr-description-generator con templates genéricos (sin referencias a mycardiochef)
-  - Fuente: `mycardiochef/.github/skills/clean-code-guardian/`, `git-workflow/`, `mr-description-generator/`
+---
 
 ## Requerimientos de inicio
 
@@ -22,18 +13,57 @@ Las skills de quality, git y MR de mycardiochef son útiles en cualquier stack (
 | RQ-001 | Acceso a `mycardiochef/.github/skills/` | Necesario | Funcional | Path absoluto en constitution.md |
 | RQ-002 | feature-lifecycle skill se actualiza (no deprecated) | Necesario | Funcional | La versión deprecated en mycardiochef se reemplaza aquí |
 
-## 2. Cobertura funcional
-- **Skills a migrar** (fuente → destino):
-  1. `MC:skills/clean-code-guardian/` → `skills/global/clean-code-guardian/`
-     - Incluye: SKILL.md, references/, scripts/check-clean-code.sh, catálogos Kotlin/Java/Swift/Python
-  2. `MC:skills/git-workflow/` → `skills/global/git-workflow/`
-     - Eliminar referencias a ramas específicas de mycardiochef (feature/migración/*)
-     - Generalizar para cualquier proyecto
-  3. `MC:skills/mr-description-generator/` → `skills/global/mr-description-generator/`
-     - Template MR genérico (sin campos específicos de mycardiochef)
-  4. `MC:skills/feature-lifecycle/` → `skills/global/feature-lifecycle/`
-     - Reemplaza la versión deprecated; usa git-workflow como base
-     - Eliminar estados DEPRECATED del frontmatter
+## Criterios de Aceptación
+
+1. Las 4 skills existen en `skills/global/`: `clean-code-guardian`, `git-workflow`, `mr-description-generator`, `feature-lifecycle`.
+2. La skill `clean-code-guardian` incluye `scripts/check-clean-code.sh` funcional y catálogos JSON para Kotlin, Java, Swift, Python.
+3. El script `check-clean-code.sh` ejecuta sin errores en macOS con bash 3.2+.
+4. La skill `git-workflow` no contiene referencias a ramas específicas de mycardiochef (verificable con `grep "feature/migración" skills/global/git-workflow/` sin resultados).
+5. La skill `mr-description-generator` usa template genérico: secciones "Qué hace", "Por qué", "Cómo probar", "Checklist" sin campos específicos de proyecto.
+6. La skill `feature-lifecycle` no tiene `deprecated: true` en frontmatter y referencia a `git-workflow` como base.
+7. Ejecutar `./scripts/validate-skill.sh` sobre las 4 skills devuelve exit code 0.
+8. Ninguna skill contiene paths absolutos a mycardiochef (verificable con `grep -r "/mycardiochef/" skills/global/` sin resultados).
+
+---
+
+## Notas Técnicas
+
+**Path fuente**: `/Users/manelcc/.../mycardiochef/middleware/.github/skills/`
+
+**Adaptaciones por skill**:
+- `clean-code-guardian`: copiar completo incluyendo scripts y catálogos
+- `git-workflow`: generalizar convenciones de rama a `feature/<tipo>/<descripción>`
+- `mr-description-generator`: eliminar campos custom de mycardiochef
+- `feature-lifecycle`: eliminar estado deprecated, reescribir referenciando `git-workflow`
+
+**Decisiones abiertas**: ¿El template MR es suficientemente genérico para GitLab y GitHub?
+
+**Supuestos**: Convenciones de rama son compatibles con múltiples workflows.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 y US-004, pero no bloquea otras migraciones |
+| **Negociable** | ✅ | Template MR ajustable por proyecto consumidor |
+| **Valiosa** | ✅ | Skills cross-stack disponibles para Android, iOS, Backend |
+| **Estimable** | ✅ | Migración de 4 skills + generalización: 6-8 horas |
+| **Small** | ✅ | 8 CA, cubre migración completa de 4 skills globales |
+| **Testeable** | ✅ | Todos los CA verificables con validador y grep |
+
+---
+
+## Épica Relacionada
+
+EP-8 — Global Cross-Stack
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Skills globales son base para todos los stacks.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (namespace global existe), US-004 (validador)

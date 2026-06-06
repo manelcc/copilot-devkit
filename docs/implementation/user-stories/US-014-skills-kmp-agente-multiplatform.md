@@ -1,39 +1,58 @@
-# US-014 — Crear skills KMP y agente multiplatform
+# US-014 — Compartir lógica de negocio multiplataforma con KMP
 
-## Contexto de la necesidad
-Kotlin Multiplatform es uno de los stacks de mayor crecimiento para compartir lógica de negocio entre Android e iOS. Esta US crea las skills y el agente que cubren el módulo compartido KMP, habilitando a los equipos a implementar y mantener código KMP con guía de calidad.
+**Como** desarrollador trabajando con Kotlin Multiplatform,  
+**quiero** skills que me guíen en la estructura del módulo compartido KMP y un agente experto,  
+**para** implementar lógica multiplataforma (Android + iOS) con patrones correctos.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-014
-- **Título usuario**: Skills KMP shared module y agente multiplatform
-- **Descripción usuario**: Como desarrollador trabajando con Kotlin Multiplatform, quiero skills que me guíen en la estructura del módulo compartido y un agente KMP, para implementar lógica multiplataforma con patrones correctos.
-- **Épica relacionada**: EP-6 — Multiplatform KMP/CMP
-- **Prioridad sugerida**: Alta (P1)
-- **Criterios funcionales trazados**:
-  - `skills/multiplatform/kmp/kmp-shared-module-patterns/`
-  - `agents/multiplatform/kmp/kmp-expert.agent.md`
-  - `instructions/kmp.instructions.md`
+---
 
-## 2. Cobertura funcional
-- **`kmp-shared-module-patterns/`** — cubre:
-  - Estructura de módulo KMP: `commonMain`, `androidMain`, `iosMain`
-  - `expect`/`actual` declarations
-  - Ktor Client multiplataforma (HTTP)
-  - SQLDelight (base de datos compartida)
-  - `kotlinx.coroutines` en contexto KMP
-  - Shared ViewModels: patrón para exponerlos a iOS (StateFlow → Swift)
-  - Interop iOS: `@ObjCName`, `@Throws`, KMP-NativeCoroutines
+## Criterios de Aceptación
 
-- **`kmp-expert.agent.md`** — comportamiento:
-  - Detecta si la tarea es en módulo shared, Android o iOS
-  - Invoca patrones KMP según el contexto
-  - Handoffs a android-compose-expert o ios-swiftui-expert si la tarea es de UI
+1. La skill `skills/multiplatform/kmp/kmp-shared-module-patterns/` cubre: estructura `commonMain`/`androidMain`/`iosMain`, `expect`/`actual`, Ktor Client, SQLDelight, `kotlinx.coroutines`, shared ViewModels, interop iOS (`@ObjCName`, `@Throws`).
+2. El agente `agents/multiplatform/kmp/kmp-expert.agent.md` detecta si la tarea es en módulo shared, Android o iOS y delega correctamente.
+3. Los handoffs del agente referencian: `android-compose-expert`, `ios-swiftui-expert` (para tareas de UI específicas).
+4. El archivo `instructions/kmp.instructions.md` existe con `applyTo: "**/*.kt"` (scoped a módulos multiplatform).
+5. Las instrucciones incluyen reglas de: (1) `expect`/`actual` patterns, (2) convenciones de naming para APIs públicas multiplataforma, (3) restricciones de dependencies en `commonMain`.
+6. La skill pasa validación: `./scripts/validate-skill.sh skills/multiplatform/kmp/kmp-shared-module-patterns/` devuelve exit code 0.
+7. La skill tiene `references/overview.md` con diagrama Mermaid del módulo KMP típico.
+8. Ejecutar `devtools scaffold skill kmp-shared-module-patterns multiplatform/kmp` crea la estructura correcta.
 
-- **`instructions/kmp.instructions.md`**:
-  - `applyTo: "**/*.kt"` (módulos multiplatform)
-  - Reglas de expect/actual
-  - Convenciones de naming para APIs públicas multiplataforma
-  - Restricciones de dependencies en commonMain
+---
+
+## Notas Técnicas
+
+**Skill creada desde cero** (no migración)
+
+**Fuente de patrones**: Proyectos KMP reales, documentación oficial de Kotlin Multiplatform.
+
+**Decisiones abiertas**: ¿`kmp.instructions.md` aplica solo a `shared/` o a todo el proyecto?
+
+**Supuestos**: Kotlin Multiplatform 1.9+ con nuevo memory model estable.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001, US-003, no bloquea otras US |
+| **Negociable** | ✅ | Contenido de skill ajustable |
+| **Valiosa** | ✅ | KMP es stack creciente; skill permite implementar lógica compartida Android+iOS |
+| **Estimable** | ✅ | Creación de skill + agente + instrucciones: 8-12 horas |
+| **Small** | ✅ | 8 CA, cubre skill + agente + instrucciones |
+| **Testeable** | ✅ | Todos los CA verificables con validador |
+
+---
+
+## Épica Relacionada
+
+EP-6 — Multiplatform KMP/CMP
+
+---
+
+## Prioridad
+
+**P1** (Alta) — Habilita stack KMP en el repositorio.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (namespace `multiplatform/kmp/` existe), US-003 (templates)

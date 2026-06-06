@@ -1,37 +1,23 @@
-# US-004 — Pre-commit, validación y setup local
+# US-004 — Prevenir skills mal formadas con validación automática
 
-## Contexto de la necesidad
-Para garantizar la calidad del catálogo sin depender de revisión manual en cada PR, se necesitan scripts de validación automática que rechacen skills mal formadas antes de que lleguen a la rama principal, y un setup.sh que configure el entorno del contributor en un solo paso.
+**Como** contributor del repositorio,  
+**quiero** que un pre-commit rechace automáticamente skills mal formadas y que un único comando configure mi entorno,  
+**para** mantener la calidad del catálogo sin revisión manual y arrancar a contribuir en menos de 5 minutos.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-004
-- **Título usuario**: Pre-commit hooks, validación de skills y setup local del desarrollador
-- **Descripción usuario**: Como contributor del repositorio, quiero que un pre-commit rechace automáticamente skills mal formadas y que un único comando configure mi entorno, para mantener calidad sin revisión manual y arrancar en minutos.
-- **Épica relacionada**: EP-1 — Fundamentos e Inicialización
-- **Prioridad sugerida**: Alta (P1)
-- **Criterios funcionales trazados**:
-  - `scripts/validate-skill.sh` valida frontmatter, secciones y overview.md Mermaid
-  - `.githooks/pre-commit` llama al validador para skills modificadas
-  - `setup.sh` instala hooks, CLI y verifica dependencias
-  - Referencia: `bankinter-devtools/.githooks/pre-push` y `bankinter-devtools/scripts/validate-skill.sh`
+---
 
-## 2. Cobertura funcional
-- **Flujo principal**:
-  1. Contributor hace `git commit` con cambios en `skills/`
-  2. Pre-commit detecta ficheros `skills/**/SKILL.md` modificados
-  3. Para cada uno llama `validate-skill.sh <path>`
-  4. Si alguno falla, el commit se rechaza con mensaje descriptivo
-  5. Si todos pasan, el commit se acepta
-- **Entradas**: Path a un directorio de skill
-- **Validaciones del script**:
-  1. `SKILL.md` existe en el path
-  2. Frontmatter YAML tiene claves `name` y `description`
-  3. Sección `## When to use` presente
-  4. Sección `## When NOT to use` presente
-  5. `references/overview.md` existe
-  6. `references/overview.md` contiene bloque ` ```mermaid `
-- **Salidas**: Exit 0 (válida) o Exit 1 con mensaje detallado de qué falta
-- **Casos límite**: Skills sin cambios no se validan (solo diff del commit)
+## Criterios de Aceptación
+
+1. Dado que modifico un archivo en `skills/my-skill/SKILL.md`, cuando ejecuto `git commit`, el pre-commit valida automáticamente la skill antes de aceptar el commit.
+2. El script `scripts/validate-skill.sh` verifica: (1) `SKILL.md` existe, (2) frontmatter YAML tiene `name` y `description`, (3) secciones "When to use" y "When NOT to use" presentes, (4) `references/overview.md` existe, (5) `references/overview.md` contiene bloque ` ```mermaid `.
+3. Si una skill falla validación, el commit se rechaza con mensaje descriptivo indicando exactamente qué campo o sección falta.
+4. Ejecutar `./setup.sh` sin argumentos configura el entorno en menos de 2 minutos: (1) verifica Python >= 3.11, (2) instala CLI con `pip install -e cli-tools/`, (3) configura hooks con `git config core.hooksPath .githooks`, (4) da permisos de ejecución a scripts.
+5. Ejecutar `validate-skill.sh skills/_TEMPLATE/` devuelve exit code 0 (los templates pasan validación).
+6. El pre-commit solo valida skills modificadas en el commit actual (detectadas con `git diff --cached --name-only`).
+7. Ejecutar `./setup.sh` imprime resumen al final: "✓ Python 3.11+", "✓ CLI instalado", "✓ Hooks configurados".
+8. Los scripts tienen manejo de errores: `set -euo pipefail` en bash, mensajes descriptivos sin stack traces técnicos.
+
+---
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (directorios), US-003 (templates que el validador debe aceptar)
@@ -39,45 +25,50 @@ Para garantizar la calidad del catálogo sin depender de revisión manual en cad
 - **Pendientes de validación**: ¿Se validan también los `.agent.md` en pre-commit?
 - **Bloqueantes**: Ninguno
 
-## 4. Solución funcional
-
-**`scripts/validate-skill.sh`** — lógica:
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-SKILL_DIR="$1"
-ERRORS=0
-
-# 1. Verificar SKILL.md
-[ -f "$SKILL_DIR/SKILL.md" ] || { echo "✗ SKILL.md no encontrado en $SKILL_DIR"; ERRORS=$((ERRORS+1)); }
-# 2. Verificar frontmatter (name y description)
-# 3. Verificar secciones obligatorias
-for section in "When to use" "When NOT to use"; do
-  grep -q "## $section" "$SKILL_DIR/SKILL.md" || { echo "✗ Sección '$section' ausente"; ERRORS=$((ERRORS+1)); }
-done
-# 4. Verificar overview.md con mermaid
-[ -f "$SKILL_DIR/references/overview.md" ] || { echo "✗ references/overview.md no encontrado"; ERRORS=$((ERRORS+1)); }
-grep -q '```mermaid' "$SKILL_DIR/references/overview.md" || { echo "✗ Bloque mermaid ausente en overview.md"; ERRORS=$((ERRORS+1)); }
-
-[ $ERRORS -eq 0 ] && echo "✓ $SKILL_DIR válida" || exit 1
-```
-
-**`setup.sh`** — comportamiento:
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-echo "=== DevTools-AI Setup ==="
-# 1. Verificar Python >= 3.11
-# 2. pip install -e cli-tools/
-# 3. git config core.hooksPath .githooks
-# 4. chmod +x scripts/*.sh .githooks/*
-# 5. Imprimir resumen de instalado
-```
+## Notas Técnicas
 
 **Referencia fuente**:
 - `bankinter-devtools/scripts/validate-skill.sh`
 - `bankinter-devtools/.githooks/pre-push`
 - `bankinter-devtools/setup.sh`
+
+**Estructura de archivos**:
+```
+scripts/
+  validate-skill.sh
+.githooks/
+  pre-commit
+setup.sh
+```
+
+**Decisiones abiertas**: ¿Se validan también los `.agent.md` en pre-commit o solo skills?
+
+**Supuestos**: Python 3.11+ disponible en entorno del contributor.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 y US-003, pero no bloquea otras US |
+| **Negociable** | ✅ | Validaciones específicas ajustables; setup.sh pasos negociables |
+| **Valiosa** | ✅ | Previene 100% de PRs con skills mal formadas |
+| **Estimable** | ✅ | 2 scripts bash + 1 hook: 6-8 horas |
+| **Small** | ✅ | 8 CA, cubre flujo validación + setup |
+| **Testeable** | ✅ | Todos los CA verificables ejecutando comandos |
+
+---
+
+## Épica Relacionada
+
+EP-1 — Habilitar contribución colaborativa en el repositorio DevTools-AI
+
+---
+
+## Prioridad
+
+**P1** (Alta) — Sin validación, calidad del catálogo depende de revisión manual.
 
 ## 5. Checklist de calidad
 - **CRITICAL**

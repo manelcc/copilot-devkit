@@ -1,34 +1,24 @@
-# US-002 — README, governance y copilot-instructions
+# US-002 — Entender el repositorio sin consultar documentación externa
 
-## Contexto de la necesidad
-Para que cualquier consumidor o contributor entienda el repositorio en menos de 5 minutos, necesita un README claro y un `.github/copilot-instructions.md` que configure Copilot. La `constitution.md` ya existe; esta US la expone y conecta con el punto de entrada.
+**Como** consumidor o contributor del repositorio DevTools-AI,  
+**quiero** un README que explique el propósito, estructura y cómo empezar en menos de 5 minutos,  
+**para** usar o contribuir al repo sin buscar documentación dispersa o preguntar al equipo.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-002
-- **Título usuario**: README principal, governance visible y configuración Copilot
-- **Descripción usuario**: Como consumidor o contributor del repositorio, quiero un README que explique el propósito, la estructura y cómo empezar en menos de 5 minutos, para poder usar o contribuir al repo sin buscar documentación dispersa.
-- **Épica relacionada**: EP-1 — Fundamentos e Inicialización
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - README con propósito, tabla de stacks, mapa de estructura y quick-start
-  - `.github/copilot-instructions.md` que referencia documentos clave
-  - `constitution.md` ya existe — enlazar desde README
+---
 
-## 2. Cobertura funcional
-- **Flujo principal**:
-  1. Contributor abre el repositorio por primera vez
-  2. Lee README → entiende propósito y estructura en < 5 min
-  3. Sigue quick-start → ejecuta `./setup.sh` y `devtools sync`
-- **Entradas**: `constitution.md`, `epics.md`, `sync-strategy.md` (existentes)
-- **Validaciones**: README no puede tener links rotos; copilot-instructions.md debe referenciar rutas relativas válidas
-- **Salidas**: `README.md` navegable, `.github/copilot-instructions.md` funcional
-- **Casos límite**: Si se añaden stacks nuevos, README se actualiza en la misma PR
+## Criterios de Aceptación
 
-## 3. Dependencias y restricciones
-- **Dependencias funcionales/técnicas**: US-001 (estructura de directorios debe existir para que los links sean válidos)
-- **Riesgos aplicables**: README desactualizado genera confusión en consumidores
-- **Pendientes de validación**: ¿Se necesita README por cada namespace o solo el raíz?
-- **Bloqueantes**: Ninguno si US-001 está completada
+1. Dado que abro el repositorio en GitHub, cuando leo el README completo, entiendo el propósito, los stacks cubiertos y cómo empezar en menos de 5 minutos.
+2. El README contiene una tabla con los 9 stacks definidos en `constitution.md` (columnas: Stack, Lenguaje, Frameworks clave).
+3. El README incluye un árbol de estructura del repositorio hasta nivel 2 de profundidad.
+4. El README tiene sección "Quick-start para consumidores" con comando exacto: `pip install -e cli-tools/ && devtools sync`.
+5. El README tiene sección "Quick-start para contributors" con comando exacto: `./setup.sh && devtools scaffold skill my-skill global`.
+6. Ningún link en README apunta a archivo inexistente (verificable con `markdown-link-check` o manualmente).
+7. El archivo `.github/copilot-instructions.md` existe y referencia: `constitution.md`, `epics.md`, template de skills en `skills/_TEMPLATE/SKILL.md`.
+8. Los comandos del quick-start ejecutan sin error en entorno con Python 3.11+ y Git configurado.
+9. El README tiene menos de 200 líneas y usa encabezados Markdown (`#`, `##`) para navegación.
+
+---
 
 ## 4. Solución funcional
 - **Secciones del README**:
@@ -65,11 +55,42 @@ Para que cualquier consumidor o contributor entienda el repositorio en menos de 
   - Tabla de stacks debe tener los mismos 9 stacks que `constitution.md`
 - **Errores**: Skills no existentes aún se indican como "(próximamente)" sin link roto
 
-## 8. Notas y Definition of Ready
-- **Decisiones abiertas**: ¿Incluir badges de CI en README desde el inicio?
-- **Supuestos**: Quick-start asume Python 3.11+ instalado
-- **Dependencias previas**: US-001 completada
-- **Definition of Ready**:
-  - [ ] US-001 completada (estructura existe)
-  - [ ] Tabla de stacks definitiva aprobada en `constitution.md`
-  - [ ] Comandos de quick-start verificados manualmente
+## Notas Técnicas
+
+**Secciones del README**:
+1. Título + descripción (2-3 líneas)
+2. Tabla de stacks cubiertos
+3. Estructura del repositorio (árbol a 2 niveles)
+4. Quick-start para consumidores
+5. Quick-start para contributors
+6. Link a governance (`docs/implementation/constitution.md`)
+7. Link a backlog y roadmap (`docs/implementation/epics.md`)
+
+**Decisiones abiertas**: ¿Incluir badges de CI en README desde el inicio?
+
+**Supuestos**: Quick-start asume Python 3.11+ instalado.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 (estructura existe), pero no bloquea otras US |
+| **Negociable** | ✅ | Número de secciones del README ajustable; comandos no |
+| **Valiosa** | ✅ | Reduce tiempo de onboarding de 2h a <10 min |
+| **Estimable** | ✅ | Redacción + validación de links: 3-4 horas |
+| **Small** | ✅ | 9 CA, cubre un flujo (lectura → comprensión) |
+| **Testeable** | ✅ | Todos los CA verificables con ejecución de comandos o inspección manual |
+
+---
+
+## Épica Relacionada
+
+EP-1 — Habilitar contribución colaborativa en el repositorio DevTools-AI
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Sin README, consumidores no saben cómo usar el repo.

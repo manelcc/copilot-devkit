@@ -1,18 +1,10 @@
-# US-011 — Migrar skill migrate-xml-to-compose e instrucciones Android Compose
+# US-011 — Migrar de XML a Jetpack Compose con guía automatizada
 
-## Contexto de la necesidad
-La migración de XML Views a Jetpack Compose es una de las tareas más frecuentes en proyectos Android legacy. La skill de awesome-copilot para este caso ya existe y está probada. Migrarla al namespace `skills/android/compose/` junto con las instrucciones específicas de Compose cierra el stack Android moderno con cobertura básica.
+**Como** desarrollador Android migrando de XML Views a Jetpack Compose,  
+**quiero** la skill de migración disponible en `skills/android/compose/` y las instrucciones Compose configuradas,  
+**para** obtener guía estructurada y código de calidad sin buscar en repositorios externos.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-011
-- **Título usuario**: Skill migración XML-to-Compose e instrucciones Android Compose
-- **Descripción usuario**: Como desarrollador Android migrando de XML a Jetpack Compose, quiero la skill de migración disponible en `skills/android/compose/` y las instrucciones de Compose configuradas, para obtener guía y código de calidad sin buscar en repos externos.
-- **Épica relacionada**: EP-3 — Stack Android Compose
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - `skills/android/compose/migrate-xml-to-compose/` migrada y adaptada
-  - `instructions/android-compose.instructions.md` con reglas Kotlin + Compose
-  - Referencia: skill `migrate-xml-views-to-jetpack-compose` de awesome-copilot (`~/.claude/skills/`)
+---
 
 ## Requerimientos de inicio
 
@@ -21,21 +13,56 @@ La migración de XML Views a Jetpack Compose es una de las tareas más frecuente
 | RQ-001 | Acceso a `~/.claude/skills/migrate-xml-views-to-jetpack-compose/` | Necesario | Funcional | Disponible en entorno local |
 | RQ-002 | Conocimiento de stacks Android Compose actuales (Navigation 3, Hilt, Material3) | Necesario | Funcional | Para instrucciones.md |
 
-## 2. Cobertura funcional
-- **Skill a migrar**:
-  - Fuente: `~/.claude/skills/migrate-xml-views-to-jetpack-compose/`
-  - Destino: `skills/android/compose/migrate-xml-to-compose/`
-  - Adaptaciones: frontmatter actualizado, paths relativos válidos, referencias a awesome-copilot documentadas en references/
+## Criterios de Aceptación
 
-- **`instructions/android-compose.instructions.md`** — reglas:
-  - `applyTo: "**/*.kt"` (scoped a proyectos Compose)
-  - Composables: funciones sin estado, state hoisting, preview
-  - Navigation: Navigation 3 (`NavController`, `NavHost`, `composable {}`)
-  - DI: Hilt con `@HiltViewModel`, `hiltViewModel()`
-  - Async: Coroutines + Flow con `collectAsStateWithLifecycle()`
-  - Theming: Material3, `MaterialTheme`, dark mode
-  - Testing: `composeTestRule`, `onNodeWithText`, `performClick`
-  - Referencia a `skills/android/compose/` para tareas específicas
+1. La skill existe en `skills/android/compose/migrate-xml-to-compose/` con estructura válida (SKILL.md + references/overview.md).
+2. El frontmatter `name` de la skill es `migrate-xml-to-compose` y el campo `description` menciona "XML Views", "Jetpack Compose", "migration".
+3. El archivo `references/overview.md` incluye nota de origen: "Migrada desde awesome-copilot: [link]".
+4. La skill pasa validación: `./scripts/validate-skill.sh skills/android/compose/migrate-xml-to-compose/` devuelve exit code 0.
+5. El archivo `instructions/android-compose.instructions.md` existe con `applyTo: "**/*.kt"`.
+6. Las instrucciones incluyen reglas de: (1) Composables sin estado, (2) Navigation 3, (3) Hilt DI, (4) Coroutines + Flow, (5) Material3, (6) Testing con `composeTestRule`.
+7. Las instrucciones referencian `skills/android/compose/` para tareas específicas.
+8. Las instrucciones tienen menos de 250 líneas (reglas core, no exhaustivas).
+
+---
+
+## Notas Técnicas
+
+**Path fuente**: `~/.claude/skills/migrate-xml-views-to-jetpack-compose/`
+
+**Adaptaciones necesarias**:
+- Actualizar frontmatter `name` a `migrate-xml-to-compose`
+- Añadir sección en `references/` con link al origen
+- Verificar paths relativos
+
+**Decisiones abiertas**: ¿Navigation 3 o Navigation 2 como estándar en instrucciones?
+
+**Supuestos**: La skill de awesome-copilot está actualizada con las últimas versiones de Compose.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 y US-004, no bloquea otras migraciones |
+| **Negociable** | ✅ | Contenido de instrucciones ajustable |
+| **Valiosa** | ✅ | Skill de migración es una de las más demandadas en Android |
+| **Estimable** | ✅ | Migración + creación de instrucciones: 4-6 horas |
+| **Small** | ✅ | 8 CA, cubre migración + instrucciones |
+| **Testeable** | ✅ | Todos los CA verificables con validador |
+
+---
+
+## Épica Relacionada
+
+EP-3 — Stack Android Compose
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Primera skill del namespace Android Compose.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (namespace `android/compose/` existe), US-004 (validador)

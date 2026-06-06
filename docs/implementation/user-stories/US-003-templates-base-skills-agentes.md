@@ -1,19 +1,10 @@
-# US-003 — Templates base de skills y agentes
+# US-003 — Crear artefactos consistentes sin partir de cero
 
-## Contexto de la necesidad
-Para mantener la calidad del catálogo, los contributors necesitan un punto de partida (template) al crear una nueva skill o agente. Sin templates, cada artefacto sigue una estructura diferente, rompiendo la experiencia de los consumidores y dificultando la validación automática.
+**Como** contributor creando una nueva skill o agente,  
+**quiero** un template completo como punto de partida,  
+**para** generar artefactos con estructura consistente sin necesitar estudiar ejemplos existentes o documentación.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-003
-- **Título usuario**: Templates base para skills y agentes
-- **Descripción usuario**: Como contributor creando una nueva skill o agente, quiero un template completo como punto de partida, para generar artefactos consistentes sin partir de cero.
-- **Épica relacionada**: EP-1 — Fundamentos e Inicialización
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - `skills/_TEMPLATE/SKILL.md` con todas las secciones obligatorias
-  - `skills/_TEMPLATE/references/overview.md` con Mermaid placeholder
-  - `agents/_TEMPLATE.agent.md` con frontmatter y secciones estándar
-  - El validador de US-004 debe aceptar estos templates sin errores
+---
 
 ## Requerimientos de inicio
 
@@ -76,6 +67,56 @@ Para mantener la calidad del catálogo, los contributors necesitan un punto de p
   - [ ] Template de agente incluye al menos un handoff de ejemplo
 - **LOW**
   - [ ] Comentarios en templates explican cada sección
+
+## Criterios de Aceptación
+
+1. El archivo `skills/_TEMPLATE/SKILL.md` existe y contiene frontmatter YAML con campos `name` y `description`.
+2. El template de skill incluye secciones obligatorias: "When to use", "When NOT to use", "Inputs", "Steps", "Expected outputs", "Validation", "Examples".
+3. El archivo `skills/_TEMPLATE/references/overview.md` contiene un bloque Mermaid placeholder de tipo `flowchart TD`.
+4. El archivo `agents/_TEMPLATE.agent.md` existe y contiene frontmatter con campos `description`, `tools` y `model`.
+5. Ejecutar `./scripts/validate-skill.sh skills/_TEMPLATE/` devuelve exit code 0 (sin errores).
+6. Todos los placeholders en templates están marcados con `[UpperCase]` para fácil localización (ejemplo: `[Name]`, `[Namespace]`).
+7. El template de skill incluye al menos un ejemplo realista con prompt de usuario y acción esperada (no solo "example placeholder").
+8. Ejecutar `devtools scaffold skill test-skill global` usando estos templates genera un directorio `skills/global/test-skill/` con archivos válidos.
+
+---
+
+## Notas Técnicas
+
+**Fuentes de referencia**:
+- `~/.copilot/skills/skill-generator/` — estructura de referencia
+- `.github/skills/prd-to-epics-mapper/` — ejemplo skill compleja existente
+
+**Decisiones abiertas**: ¿Se necesita template separado para skills con `scripts/`?
+
+**Supuestos**: El validador de US-004 acepta estos templates sin modificaciones.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 (directorios existen), pero no de US-004 |
+| **Negociable** | ✅ | Número de secciones del template ajustable |
+| **Valiosa** | ✅ | Reduce tiempo de creación de artefacto de 2h a 30 min |
+| **Estimable** | ✅ | Redacción de 2 templates: 4-6 horas |
+| **Small** | ✅ | 8 CA, cubre un flujo (scaffold → validación) |
+| **Testeable** | ✅ | Todos los CA verificables con comandos de validación |
+
+---
+
+## Épica Relacionada
+
+EP-1 — Habilitar contribución colaborativa en el repositorio DevTools-AI
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Sin templates, cada contributor inventa su propia estructura.
+
+---
 
 ## 6. Casos de prueba
 - **Funcionales**:

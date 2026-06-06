@@ -1,37 +1,64 @@
-# US-010 — Crear agente project-orchestrator e instrucciones globales
+# US-010 — Delegar tareas automáticamente según el stack
 
-## Contexto de la necesidad
-Para que cualquier usuario del repo pueda ser guiado al agente o skill correcto según su stack y tarea, se necesita un agente orquestador global que detecte el contexto y delegue, y unas instrucciones globales que configuren Copilot para cualquier proyecto que importe artefactos del repo central.
+**Como** usuario del repositorio en cualquier stack,  
+**quiero** un agente orquestador que detecte mi stack y tarea y delegue al agente o skill correcto,  
+**para** no necesitar memorizar qué skill invocar manualmente.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-010
-- **Título usuario**: Agente project-orchestrator global e instrucciones globales
-- **Descripción usuario**: Como usuario del repositorio en cualquier stack, quiero un agente orquestador que sepa delegar al agente o skill correcto según mi contexto, para no tener que saber de memoria qué skill invocar.
-- **Épica relacionada**: EP-8 — Global Cross-Stack
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - `agents/global/project-orchestrator.agent.md` detecta stack y delega
-  - `agents/global/qa-testcase.agent.md` para generación de casos de prueba
-  - `instructions/global.instructions.md` con reglas aplicables a todos los stacks
-  - Fuente: `mycardiochef/.github/agents/project-orchestrator.agent.md` + `qa-testcase-agent.agent.md`
+---
 
-## 2. Cobertura funcional
-- **`project-orchestrator.agent.md`** — comportamiento:
-  1. Detecta el stack del proyecto activo (Android, iOS, KMP, Backend Kotlin, Python)
-  2. Detecta el tipo de tarea (feature, fix, review, test, migration, MR)
-  3. Delega al agente de stack correspondiente o invoca la skill adecuada
-  4. Handoffs: todos los agentes de stack
+## Criterios de Aceptación
 
-- **`qa-testcase.agent.md`** — comportamiento:
-  1. Recibe una US o descripción funcional
-  2. Genera casos de prueba funcionales, edge cases y errores
-  3. Adaptado al framework de testing del stack (JUnit, XCTest, pytest, etc.)
+1. El agente `agents/global/project-orchestrator.agent.md` detecta el stack del proyecto activo buscando archivos característicos: `build.gradle.kts` → Android, `Package.swift` → iOS, `Application.kt` con `embeddedServer` → Backend Kotlin, `pyproject.toml` → Python.
+2. El orquestador detecta el tipo de tarea (feature, fix, review, test, migration, MR) y delega al agente de stack correcto o invoca la skill adecuada.
+3. Los handoffs del orquestador referencian todos los agentes de stack: `android-compose-expert`, `ios-swiftui-expert`, `kmp-expert`, agentes backend.
+4. El agente `agents/global/qa-testcase.agent.md` genera casos de prueba (funcionales, edge cases, errores) adaptados al framework del stack (JUnit, XCTest, pytest).
+5. El archivo `instructions/global.instructions.md` existe con `applyTo: "**"` (aplica a todos los archivos).
+6. Las instrucciones globales incluyen: (1) nomenclatura de commits, (2) convenciones MR/PR, (3) referencia al agente orquestador, (4) referencia a `skills/global/`.
+7. Las instrucciones globales tienen menos de 200 líneas (reglas básicas, no exhaustivas).
+8. Ejecutar `@project-orchestrator` en un proyecto Android delega correctamente al agente Android (verificable manualmente).
 
-- **`instructions/global.instructions.md`** — contenido:
-  - Reglas de nomenclatura de ficheros y commits (aplicables a todos los stacks)
-  - Convenciones de MR/PR
-  - Referencia al agente `project-orchestrator` para tareas complejas
-  - Referencia a `skills/global/` para operaciones transversales
+---
+
+## Notas Técnicas
+
+**Detección de stack en el orquestador** (heurística):
+- `build.gradle.kts` + `AndroidManifest.xml` → Android
+- `Package.swift` / `.xcodeproj` → iOS
+- `build.gradle.kts` con `kotlin("multiplatform")` → KMP
+- `Application.kt` con `embeddedServer` → Backend Kotlin
+- `pyproject.toml` / `main.py` → Python
+- `pom.xml` con `spring-boot` → Spring Java
+
+**Fuente de referencia**: `mycardiochef/.github/agents/project-orchestrator.agent.md`
+
+**Decisiones abiertas**: ¿El orquestador necesita leer un archivo de configuración del proyecto para detectar el stack?
+
+**Supuestos**: Heurística de detección cubre el 90% de casos; proyectos ambiguos requieren especificación manual.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001; referencia agentes que se crean en US paralelas pero no los bloquea |
+| **Negociable** | ✅ | Heurística de detección ajustable |
+| **Valiosa** | ✅ | Reduce fricción del usuario: no necesita saber qué agente usar |
+| **Estimable** | ✅ | Creación de 2 agentes + instrucciones: 6-8 horas |
+| **Small** | ✅ | 8 CA, cubre orquestador + qa-testcase + instrucciones |
+| **Testeable** | ✅ | Todos los CA verificables con pruebas manuales en proyectos tipo |
+
+---
+
+## Épica Relacionada
+
+EP-8 — Global Cross-Stack
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Orquestador es punto de entrada principal del repositorio.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (namespace global existe); US-008/009 (agentes y skills que el orquestador referencia)

@@ -1,19 +1,10 @@
-# US-015 — Comandos CLI scaffold y validate
+# US-015 — Automatizar creación y validación de skills
 
-## Contexto de la necesidad
-Para que los contributors puedan crear nuevas skills con consistencia y validar las existentes desde la línea de comandos, el CLI necesita los subcomandos `scaffold` y `validate` implementados. Estos comandos automatizan los pasos manuales que actualmente requieren copiar templates y ejecutar scripts bash.
+**Como** contributor del repositorio,  
+**quiero** usar `devtools scaffold skill` y `devtools validate skill` desde la terminal,  
+**para** crear y verificar skills sin conocer la estructura interna del repo ni ejecutar scripts bash manualmente.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-015
-- **Título usuario**: Comandos devtools scaffold y validate completamente funcionales
-- **Descripción usuario**: Como contributor del repositorio, quiero usar `devtools scaffold skill` y `devtools validate skill` desde la terminal, para crear y verificar skills sin conocer la estructura interna del repo.
-- **Épica relacionada**: EP-9 — CLI Tools
-- **Prioridad sugerida**: Alta (P1)
-- **Criterios funcionales trazados**:
-  - `devtools scaffold skill <name> <namespace>` genera la estructura completa desde template
-  - `devtools validate skill <path>` valida y reporta problemas
-  - `devtools validate skill <path> --fix` corrige problemas automáticos
-  - Referencia: `scripts/validate-skill.sh` (US-004) se envuelve en el CLI
+---
 
 ## Requerimientos de inicio
 
@@ -23,27 +14,54 @@ Para que los contributors puedan crear nuevas skills con consistencia y validar 
 | RQ-002 | US-003 completada (templates existen) | Necesario | Funcional | scaffold usa `skills/_TEMPLATE/` como fuente |
 | RQ-003 | US-004 completada (validate-skill.sh funcional) | Necesario | Funcional | validate CLI envuelve el script bash |
 
-## 2. Cobertura funcional
+## Criterios de Aceptación
 
-**`devtools scaffold skill <name> <namespace>`**:
-1. Verifica que `skills/_TEMPLATE/` existe
-2. Verifica que el namespace destino existe en `skills/`
-3. Si el nombre ya existe → error con mensaje claro
-4. Copia `skills/_TEMPLATE/` a `skills/<namespace>/<name>/`
-5. Reemplaza en SKILL.md: `[Name]` → `<name>`, `[namespace]` → `<namespace>`
-6. Imprime path del fichero creado
-7. (opcional) Abre SKILL.md en el editor por defecto
+1. Ejecutar `devtools scaffold skill my-skill global` crea el directorio `skills/global/my-skill/` con archivos `SKILL.md` y `references/overview.md` desde el template.
+2. El comando `scaffold` reemplaza placeholders: `[Name]` → `my-skill`, `[namespace]` → `global` en el contenido de `SKILL.md`.
+3. Si el nombre de skill ya existe en el namespace, el comando devuelve error descriptivo sin sobreescribir.
+4. Ejecutar `devtools validate skill skills/global/my-skill/` llama internamente a `scripts/validate-skill.sh` y presenta resultado en formato tabla con ✓/✗ por criterio.
+5. El comando `validate` devuelve exit code 0 si la skill es válida, exit code 1 si hay errores.
+6. Ejecutar `devtools validate skill skills/global/my-skill/ --fix` corrige automáticamente: (1) frontmatter faltante genera stub, (2) `references/overview.md` faltante genera con Mermaid básico.
+7. El comando `validate --fix` imprime qué se corrigió: "✓ Generado frontmatter stub", "✓ Creado references/overview.md".
+8. Ambos comandos muestran ayuda útil: `devtools scaffold --help`, `devtools validate --help`.
 
-**`devtools validate skill <path>`**:
-1. Llama `scripts/validate-skill.sh <path>` internamente
-2. Presenta resultado en formato tabla con ✓/✗ por criterio
-3. Exit 0 si válida, Exit 1 si hay errores
+---
 
-**`devtools validate skill <path> --fix`**:
-1. Detecta problemas automáticamente corregibles:
-   - Frontmatter faltante → genera stub
-   - `references/overview.md` faltante → genera con Mermaid básico
-2. Informa al usuario de qué se corrigió
+## Notas Técnicas
+
+**Dependencias de US previas**:
+- US-003 (templates existen)
+- US-004 (validate-skill.sh funcional)
+- US-005 (CLI base con subcomandos stub)
+
+**Decisiones abiertas**: ¿`scaffold` abre el archivo SKILL.md en el editor por defecto tras crearlo?
+
+**Supuestos**: El template `skills/_TEMPLATE/` no cambia frecuentemente.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-003, US-004, US-005 |
+| **Negociable** | ✅ | Comportamiento de `--fix` ajustable |
+| **Valiosa** | ✅ | Reduce tiempo de creación de skill de 15 min manual a 30 segundos automatizado |
+| **Estimable** | ✅ | Implementación de 2 subcomandos: 6-8 horas |
+| **Small** | ✅ | 8 CA, cubre scaffold + validate con flags |
+| **Testeable** | ✅ | Todos los CA verificables ejecutando comandos CLI |
+
+---
+
+## Épica Relacionada
+
+EP-9 — CLI Tools
+
+---
+
+## Prioridad
+
+**P1** (Alta) — Completa las herramientas CLI core del repositorio.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-003 (templates), US-004 (script bash), US-005 (CLI base)

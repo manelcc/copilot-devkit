@@ -1,40 +1,62 @@
-# US-012 — Crear skills y agente Android Compose (patterns, Nav3, Hilt)
+# US-012 — Implementar features Android Compose con patrones modernos
 
-## Contexto de la necesidad
-Más allá de la migración, los proyectos Android Compose necesitan skills que guíen la implementación de patrones modernos: state management, Navigation 3, Hilt DI y un agente que orqueste todas estas capacidades. Esta US crea el núcleo de skills Android Compose para proyectos greenfield y maduros.
+**Como** desarrollador Android con Jetpack Compose,  
+**quiero** skills que me guíen en patrones de Compose, Navigation 3 y un agente experto que las orqueste,  
+**para** implementar features de calidad sin buscar referencias externas cada vez.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-012
-- **Título usuario**: Skills de patrones Android Compose y agente experto
-- **Descripción usuario**: Como desarrollador Android con Jetpack Compose, quiero skills que me guíen en patrones de Compose, Navigation 3 y un agente experto que las orqueste, para implementar features de calidad sin buscar referencias externas.
-- **Épica relacionada**: EP-3 — Stack Android Compose
-- **Prioridad sugerida**: Alta (P1)
-- **Criterios funcionales trazados**:
-  - `skills/android/compose/jetpack-compose-patterns/`
-  - `skills/android/compose/android-navigation-compose/` (Navigation 3)
-  - `agents/android/compose/android-compose-expert.agent.md`
-  - Referencia a `mycardiochef/.github/skills/` para patrones Android
+---
 
-## 2. Cobertura funcional
-- **`jetpack-compose-patterns/`** — cubre:
-  - Composable stateless vs stateful
-  - State hoisting y `remember`/`rememberSaveable`
-  - `LazyColumn`, `LazyRow`, grids
-  - Side effects: `LaunchedEffect`, `SideEffect`, `DisposableEffect`
-  - Custom Layout y Modifier chains
-  - Performance: `derivedStateOf`, `key()`, `Stable`/`Immutable`
+## Criterios de Aceptación
 
-- **`android-navigation-compose/`** — cubre:
-  - Navigation 3: `NavController`, `NavHost`, `composable {}`
-  - Passing arguments (safe args pattern en Compose)
-  - Deep links
-  - Multiple backstacks
-  - Bottom navigation + NavHost
+1. La skill `skills/android/compose/jetpack-compose-patterns/` existe con secciones: state hoisting, `remember`/`rememberSaveable`, `LazyColumn`, side effects (`LaunchedEffect`, `DisposableEffect`), custom Layout, performance (`derivedStateOf`, `Stable`, `Immutable`).
+2. La skill `skills/android/compose/android-navigation-compose/` cubre Navigation 3: `NavController`, `NavHost`, `composable {}`, passing arguments, deep links, multiple backstacks.
+3. El agente `agents/android/compose/android-compose-expert.agent.md` detecta tipo de tarea (nueva feature, migración, refactor, review, testing) e invoca skills relevantes.
+4. Los handoffs del agente referencian: `migrate-xml-to-compose`, `jetpack-compose-patterns`, `android-navigation-compose`.
+5. Cada skill pasa validación: `./scripts/validate-skill.sh skills/android/compose/<skill-name>/` devuelve exit code 0.
+6. Cada skill tiene `references/overview.md` con diagrama Mermaid del workflow.
+7. Las skills incluyen al menos un ejemplo realista de código (no solo placeholders).
+8. Ejecutar `devtools scaffold skill jetpack-compose-patterns android/compose` crea la estructura correcta desde template.
 
-- **`android-compose-expert.agent.md`** — comportamiento:
-  - Detecta tipo de tarea: nueva feature, migración, refactor, review, testing
-  - Invoca skills relevantes según la tarea
-  - Handoffs a: `migrate-xml-to-compose`, `jetpack-compose-patterns`, `android-navigation-compose`
+---
+
+## Notas Técnicas
+
+**Skills a crear desde cero** (no migración):
+- `jetpack-compose-patterns`
+- `android-navigation-compose`
+
+**Agente creado desde template**: `agents/_TEMPLATE.agent.md`
+
+**Fuente de patrones**: Proyectos Android modernos, documentación oficial de Jetpack Compose.
+
+**Decisiones abiertas**: ¿Incluir skill de Hilt en esta US o en US futura?
+
+**Supuestos**: Navigation 3 es suficientemente estable para skill producción.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001, US-003, US-011 (migrate ya existe) |
+| **Negociable** | ✅ | Contenido de skills ajustable |
+| **Valiosa** | ✅ | Skills core para cualquier proyecto Android Compose greenfield |
+| **Estimable** | ✅ | Creación de 2 skills + 1 agente: 8-12 horas |
+| **Small** | ✅ | 8 CA, cubre 2 skills + agente orquestador |
+| **Testeable** | ✅ | Todos los CA verificables con validador |
+
+---
+
+## Épica Relacionada
+
+EP-3 — Stack Android Compose
+
+---
+
+## Prioridad
+
+**P1** (Alta) — Completa el namespace Android Compose con skills core.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001, US-003 (templates), US-011 (skill migrate ya existe)

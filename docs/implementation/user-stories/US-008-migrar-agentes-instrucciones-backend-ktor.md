@@ -1,33 +1,61 @@
-# US-008 — Migrar agentes e instrucciones backend Ktor
+# US-008 — Orquestar tareas Ktor con agentes centralizados
 
-## Contexto de la necesidad
-El proyecto `mycardiochef/middleware` tiene 6 agentes especializados en Kotlin/Ktor y documentos de instrucciones probados en producción. Migrarlos al repo central los hace disponibles para cualquier proyecto Ktor, eliminando la dependencia de mantenerlos en cada proyecto por separado.
+**Como** desarrollador backend Kotlin,  
+**quiero** encontrar los agentes especializados de mycardiochef disponibles en `agents/backend/kotlin-ktor/` y las instrucciones Ktor configuradas,  
+**para** orquestar tareas Ktor desde cualquier proyecto sin mantener copias locales de agentes probados en producción.
 
-## 1. Encabezado y trazabilidad
-- **ID US**: US-008
-- **Título usuario**: Migrar agentes Kotlin/Ktor e instrucciones backend desde mycardiochef
-- **Descripción usuario**: Como desarrollador backend Kotlin, quiero encontrar los agentes especializados de mycardiochef en `agents/backend/kotlin-ktor/`, para orquestar tareas Ktor desde cualquier proyecto sin mantener copias locales.
-- **Épica relacionada**: EP-7 — Stack Backend
-- **Prioridad sugerida**: Alta (P0)
-- **Criterios funcionales trazados**:
-  - 6 agentes migrados con frontmatter y handoffs actualizados
-  - `instructions/backend-kotlin.instructions.md` creada con reglas Ktor
-  - Referencias internas actualizadas a nuevas rutas del repo central
-  - Fuente: `mycardiochef/.github/agents/` + `mycardiochef/.github/copilot-instructions.md`
+---
 
-## 2. Cobertura funcional
-- **Agentes a migrar** (fuente → destino):
-  1. `MC:agents/kotlin-expert-pattern.agent.md` → `agents/backend/kotlin-ktor/`
-  2. `MC:agents/kotlin-server-quality.agent.md` → `agents/backend/kotlin-ktor/`
-  3. `MC:agents/kotlin-mcp-expert.agent.md` → `agents/backend/kotlin-ktor/`
-  4. `MC:agents/payload-logging-trace.agent.md` → `agents/backend/kotlin-ktor/`
-  5. `MC:agents/x-correlation-id-strategy.agent.md` → `agents/backend/kotlin-ktor/`
-  6. `MC:agents/devops-agent.agent.md` → `agents/backend/kotlin-ktor/`
+## Criterios de Aceptación
 
-- **Instrucciones a crear**:
-  - `instructions/backend-kotlin.instructions.md` con `applyTo: "**/*.kt"` (en proyectos backend)
-  - Contenido: reglas de estructura Ktor, HMAC auth, Flyway, Coroutines, documentación Kotlin
-  - Fuente: `MC:.github/copilot-instructions.md` + `MC:.github/copilot-kotlin-server-rules.md` + `MC:.github/copilot-hmac-auth.md`
+1. Los 6 agentes existen en `agents/backend/kotlin-ktor/`: `kotlin-expert-pattern`, `kotlin-server-quality`, `kotlin-mcp-expert`, `payload-logging-trace`, `x-correlation-id-strategy`, `devops-agent`.
+2. Cada agente migrado tiene frontmatter válido con `description` y referencias a skills actualizadas (de `skills/kotlin-mcp-server-generator/` a `skills/backend/kotlin-ktor/kotlin-mcp-server-generator/`).
+3. El archivo `instructions/backend-kotlin.instructions.md` existe con `applyTo: "**/*.kt"` en frontmatter.
+4. Las instrucciones incluyen reglas de: (1) estructura Ktor (Application.kt, routing), (2) HMAC auth, (3) Flyway migrations, (4) Coroutines patterns, (5) documentación Kotlin.
+5. Ningún agente contiene referencias específicas al proyecto mycardiochef (DB names, endpoints específicos del proyecto).
+6. Los handoffs de agentes referencian otros agentes del namespace `backend/kotlin-ktor/` correctamente.
+7. Ejecutar `grep -r "mycardiochef" agents/backend/kotlin-ktor/` no devuelve resultados (0 referencias al proyecto origen).
+8. Las instrucciones consolidadas tienen menos de 300 líneas (reglas genéricas, no exhaustivas).
+
+---
+
+## Notas Técnicas
+
+**Path fuente**: `/Users/manelcc/.../mycardiochef/middleware/.github/`
+
+**Fuentes de instrucciones a consolidar**:
+- `copilot-instructions.md`
+- `copilot-kotlin-server-rules.md`
+- `copilot-hmac-auth.md`
+
+**Decisiones abiertas**: ¿Los agentes `project-orchestrator` y `qa-testcase` de mycardiochef se migran aquí o en US-010?
+
+**Supuestos**: Reglas específicas de mycardiochef se omiten; solo reglas genéricas de Ktor.
+
+---
+
+## Validación INVEST
+
+| Criterio | ✅ / ⚠️ | Observación |
+|---|---|---|
+| **Independiente** | ✅ | Depende de US-001 (namespace existe) |
+| **Negociable** | ✅ | Contenido de instrucciones ajustable |
+| **Valiosa** | ✅ | Hace disponibles agentes probados en producción para cualquier proyecto Ktor |
+| **Estimable** | ✅ | Migración de 6 agentes + consolidación de instrucciones: 6-8 horas |
+| **Small** | ✅ | 8 CA, cubre migración de agentes + creación de instrucciones |
+| **Testeable** | ✅ | Todos los CA verificables con grep y revisión manual |
+
+---
+
+## Épica Relacionada
+
+EP-7 — Stack Backend
+
+---
+
+## Prioridad
+
+**P0** (Bloqueante) — Junto con US-007, completa el namespace backend Ktor.
 
 ## 3. Dependencias y restricciones
 - **Dependencias funcionales/técnicas**: US-001 (namespaces existen)
