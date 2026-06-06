@@ -6,7 +6,7 @@ description: >
   "valida el backlog", "qué le falta a esta US", "está ready esta historia", "prepara el sprint backlog",
   "no cumple la DoD", "ayúdame a refinar", "necesito épicas para", "desglosa este requisito en historias".
   Do NOT use for code generation, architecture design, infrastructure setup, or CI/CD pipelines.
-tools: [read, search, edit]
+tools: [vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, todo]
 model: "Claude Sonnet 4.5 (copilot)"
 argument-hint: "Describe qué necesitas: crear épicas, redactar historias, validar backlog, refinar un ítem..."
 ---

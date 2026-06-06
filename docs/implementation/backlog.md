@@ -517,4 +517,4 @@ sin copiarlos manualmente ni romper actualizaciones futuras.
 | US-065 | Agente backend-python-expert | EP-7 | 3 |
 | US-075 | Agente qa-testcase global | EP-8 | 5 |
 | US-084 | Comando devtools list | EP-9 | 3 |
-| US-014 | Detección incompatibilidades sync | EP-2 | 5 |
+| US-086 | Detección incompatibilidades sync | EP-2 | 5 |

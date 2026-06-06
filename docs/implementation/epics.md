@@ -88,7 +88,7 @@ flowchart TD
 | US-011 | Implementar `devtools sync` modo git-submodule                         | P1        |
 | US-012 | Implementar `devtools sync` modo copy-on-demand                        | P1        |
 | US-013 | Generar y validar manifest de versión por proyecto                     | P1        |
-| US-014 | Detectar y reportar incompatibilidades en sincronización               | P2        |
+| US-086 | Detectar y reportar incompatibilidades en sincronización               | P2        |
 | US-015 | Documentar integración para proyectos consumidores                     | P1        |
 
 **Referencia**: Inspirado en `bankinter-devtools/cli-tools/` y `.specify/integrations/`

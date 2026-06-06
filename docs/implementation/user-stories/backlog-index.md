@@ -141,7 +141,7 @@ Como contributor, quiero `devtools scaffold skill` y `devtools validate skill` c
 | US-019 | Skills backend Python FastAPI | EP-7 |
 | US-020 | Skills backend Spring Java | EP-7 |
 | US-021 | Skills Android Legacy (XML+Java) | EP-4 |
-| US-022 | Detección incompatibilidades sync + docs consumidores | EP-2 |
+| US-086 | Detección incompatibilidades sync + docs consumidores | EP-2 |
 | US-023 | Comando devtools list (inventario de artefactos) | EP-9 |
 
 ---
