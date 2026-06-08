@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "devtools"
+version = "0.1.0"
+description = "DevTools CLI scaffolding"
+requires-python = ">=3.11"
+
+[project.scripts]
+devtools = "devtools:main"
