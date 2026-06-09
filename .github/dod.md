@@ -123,6 +123,6 @@ Los spikes de investigación tienen su propia mini-DoD:
 | Artefacto | Cómo usa esta DoD |
 |---|---|
 | `Scrum Master` agent | La consulta para validar cada ítem antes de aceptarlo |
-| `us-ready-writer` skill | Incorpora los CA técnicos (4.4, 4.5) en cada historia generada |
-| `prd-to-epics-mapper` skill | Verifica que cada épica tenga criterios de éxito medibles (alineados con 4.1) |
+| `scrum-master-create-us` skill | Incorpora los CA técnicos (4.4, 4.5) en cada historia generada |
+| `scrum-master-create-epics` skill | Verifica que cada épica tenga criterios de éxito medibles (alineados con 4.1) |
 | `constitution.md` | Esta DoD implementa el principio V — "Calidad verificable" |

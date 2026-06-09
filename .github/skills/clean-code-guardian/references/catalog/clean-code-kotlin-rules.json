@@ -1,0 +1,2279 @@
+{
+  "catalog": "clean-code-kotlin-rules",
+  "version": "1.0.0",
+  "schema": "clean-code-rule-v1",
+  "language": "kotlin",
+  "rule_count": 97,
+  "rules": [
+    {
+      "id": "CC-KT-001",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "high",
+      "title": "Clase con una sola responsabilidad (SRP)",
+      "description": "Una clase debe tener una y solo una razon para cambiar; su tamano se mide por responsabilidades.",
+      "rationale": "Clases con multiples responsabilidades son dificiles de entender y mantener.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si la descripcion incluye y/o/pero, probablemente hay demasiadas responsabilidades."
+      },
+      "bad_example": "class SuperDashboard { fun getFocus(){} fun getVersion(){} }",
+      "good_example": "class Dashboard(...); class Version(...)",
+      "fix_strategy": [
+        "Identificar responsabilidades",
+        "Extraer comportamientos no relacionados"
+      ],
+      "tags": [
+        "srp",
+        "classes",
+        "cohesion"
+      ],
+      "references": [
+        "CC-10",
+        "G17"
+      ]
+    },
+    {
+      "id": "CC-KT-002",
+      "language": "kotlin",
+      "category": "functions",
+      "severity": "high",
+      "title": "Funciones deben hacer una sola cosa",
+      "description": "Una funcion debe operar en un unico nivel de abstraccion.",
+      "rationale": "Funciones enfocadas son mas faciles de nombrar, probar y reutilizar.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si puedes extraer una funcion con nombre significativo, la original hacia mas de una cosa."
+      },
+      "bad_example": "fun renderPage(page){ if(isTest(page)) includeSetup(page); renderHtml(page) }",
+      "good_example": "fun renderTestPage(page){ includeSetup(page); renderHtml(page) }",
+      "fix_strategy": [
+        "Extraer metodos por nivel",
+        "Eliminar secciones logicas internas"
+      ],
+      "tags": [
+        "functions",
+        "abstraction",
+        "granularity"
+      ],
+      "references": [
+        "CC-03",
+        "G30"
+      ]
+    },
+    {
+      "id": "CC-KT-003",
+      "language": "kotlin",
+      "category": "names",
+      "severity": "medium",
+      "title": "Nombres que revelan la intencion",
+      "description": "El nombre debe explicar por que existe, que hace y como se usa.",
+      "rationale": "Nombres descriptivos reducen necesidad de comentarios.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar nombres de una letra o genericos como data/info."
+      },
+      "bad_example": "val d: Int",
+      "good_example": "val daysSinceCreation: Int",
+      "fix_strategy": [
+        "Renombrar con terminos de dominio",
+        "Evitar nombres que requieran comentario"
+      ],
+      "tags": [
+        "naming",
+        "readability"
+      ],
+      "references": [
+        "CC-02",
+        "N1"
+      ]
+    },
+    {
+      "id": "CC-KT-004",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "high",
+      "title": "Eliminar duplicacion (DRY)",
+      "description": "La duplicacion representa una abstraccion pendiente.",
+      "rationale": "Aumenta riesgo de errores y complejidad innecesaria.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques similares o algoritmos repetidos con pequenas variaciones."
+      },
+      "bad_example": "fun printSum(){println(a+b)} fun printResult(){println(a+b)}",
+      "good_example": "fun printTotal(sum:Int){ println(sum) }",
+      "fix_strategy": [
+        "Extraer funciones comunes",
+        "Usar polimorfismo para ramas repetidas"
+      ],
+      "tags": [
+        "dry",
+        "abstraction",
+        "duplication"
+      ],
+      "references": [
+        "G5",
+        "CC-17"
+      ]
+    },
+    {
+      "id": "CC-KT-005",
+      "language": "kotlin",
+      "category": "comments",
+      "severity": "medium",
+      "title": "No comentar codigo malo, reescribirlo",
+      "description": "Los comentarios no compensan codigo confuso.",
+      "rationale": "El codigo evoluciona y los comentarios se desactualizan.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar funciones con bloques de comentarios explicando la logica interna."
+      },
+      "bad_example": "if (emp.flags and HOURLY != 0 && emp.age > 65) // comentario explicativo",
+      "good_example": "if (employee.isEligibleForFullBenefits())",
+      "fix_strategy": [
+        "Refactorizar a funciones con nombres claros",
+        "Eliminar comentarios tras refactor"
+      ],
+      "tags": [
+        "comments",
+        "refactoring"
+      ],
+      "references": [
+        "CC-04",
+        "C4"
+      ]
+    },
+    {
+      "id": "CC-KT-006",
+      "language": "kotlin",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Evitar argumentos de bandera (flags)",
+      "description": "Un booleano en una firma suele indicar dos comportamientos.",
+      "rationale": "Complica firmas y llamadas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Funciones que reciben Boolean para alternar comportamiento."
+      },
+      "bad_example": "fun render(isSuite:Boolean){ ... }",
+      "good_example": "fun renderForSuite(); fun renderForSingleTest()",
+      "fix_strategy": [
+        "Dividir en funciones especializadas",
+        "Usar APIs expresivas"
+      ],
+      "tags": [
+        "functions",
+        "clean-code"
+      ],
+      "references": [
+        "F3",
+        "G15"
+      ]
+    },
+    {
+      "id": "CC-KT-007",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "high",
+      "title": "Ley de Demeter (Talk to Friends)",
+      "description": "Un metodo debe hablar con colaboradores directos, no con cadenas de objetos internos.",
+      "rationale": "Reduce acoplamiento y fragilidad.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar cadenas como a.getB().getC().doSomething()."
+      },
+      "bad_example": "val path = ctxt.options.scratchDir.absolutePath",
+      "good_example": "val path = ctxt.createScratchFileStream(fileName)",
+      "fix_strategy": [
+        "Tell, Don't Ask",
+        "Delegar accion al objeto dueno"
+      ],
+      "tags": [
+        "coupling",
+        "demeter",
+        "classes"
+      ],
+      "references": [
+        "CC-06",
+        "G36"
+      ]
+    },
+    {
+      "id": "CC-KT-008",
+      "language": "kotlin",
+      "category": "functions",
+      "severity": "low",
+      "title": "Funciones pequenas",
+      "description": "Las funciones deben ser pequenas y con anidamiento bajo.",
+      "rationale": "Facilita lectura y mantenimiento.",
+      "detection": {
+        "type": "threshold",
+        "metric": "function_lines",
+        "operator": "<=",
+        "value": 20,
+        "notes": "Idealmente menos de 20 lineas y anidamiento bajo."
+      },
+      "bad_example": "Funcion de 50 lineas con when/for anidados.",
+      "good_example": "Jerarquia de funciones pequenas y delegadas.",
+      "fix_strategy": [
+        "Extraer bloques internos",
+        "Reducir sangria con retornos tempranos"
+      ],
+      "tags": [
+        "functions",
+        "size",
+        "refactoring"
+      ],
+      "references": [
+        "CC-03",
+        "G34"
+      ]
+    },
+    {
+      "id": "CC-KT-009",
+      "language": "kotlin",
+      "category": "tests",
+      "severity": "high",
+      "title": "Las Tres Leyes de TDD",
+      "description": "No escribir produccion sin test fallando y avanzar en ciclos cortos rojo-verde-refactor.",
+      "rationale": "Mejora cobertura y diseno.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar codigo de produccion sin pruebas unitarias asociadas."
+      },
+      "bad_example": "Implementar toda la funcionalidad y testear al final.",
+      "good_example": "Ciclos rapidos entre test fallando e implementacion minima.",
+      "fix_strategy": [
+        "Adoptar Rojo-Verde-Refactor",
+        "Entregar pruebas junto al codigo"
+      ],
+      "tags": [
+        "tdd",
+        "unit-tests",
+        "quality"
+      ],
+      "references": [
+        "CC-09",
+        "T1"
+      ]
+    },
+    {
+      "id": "CC-KT-010",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Reemplazar numeros magicos por constantes",
+      "description": "Evitar literales en logica y usar constantes con nombre.",
+      "rationale": "Las constantes aportan contexto y mejoran trazabilidad.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar literales numericos relevantes en codigo de negocio."
+      },
+      "bad_example": "val pay = hours * 8.0",
+      "good_example": "const val WORK_HOURS_PER_DAY=8.0; val pay=hours*WORK_HOURS_PER_DAY",
+      "fix_strategy": [
+        "Crear constantes a nivel de archivo/companion",
+        "Nombrar segun significado"
+      ],
+      "tags": [
+        "magic-numbers",
+        "naming"
+      ],
+      "references": [
+        "G25",
+        "N5"
+      ]
+    },
+    {
+      "id": "CC-KT-011",
+      "language": "kotlin",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Numero ideal de argumentos",
+      "description": "Priorizar funciones con pocos argumentos.",
+      "rationale": "Muchos argumentos complican comprension y pruebas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Contar parametros en firmas."
+      },
+      "bad_example": "fun makeCircle(x:Double,y:Int,radius:Double)",
+      "good_example": "fun makeCircle(center: Point, radius: Double)",
+      "fix_strategy": [
+        "Agrupar argumentos en data class",
+        "Mover comportamiento al objeto principal"
+      ],
+      "tags": [
+        "functions",
+        "refactoring"
+      ],
+      "references": [
+        "F1",
+        "CC-03"
+      ]
+    },
+    {
+      "id": "CC-KT-012",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "high",
+      "title": "Preferir polimorfismo a Switch/When",
+      "description": "Para comportamiento por tipo, usar polimorfismo sobre bloques when repetidos.",
+      "rationale": "Reduce violaciones de SRP y OCP.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar when que selecciona comportamiento por tipo."
+      },
+      "bad_example": "when(emp.type){ COMMISSIONED -> ... HOURLY -> ... }",
+      "good_example": "Interfaz Employee con calculatePay() en subtipos.",
+      "fix_strategy": [
+        "Mover when a fabrica",
+        "Implementar variaciones en subtipos"
+      ],
+      "tags": [
+        "polymorphism",
+        "ocp",
+        "srp"
+      ],
+      "references": [
+        "G23",
+        "CC-13"
+      ]
+    },
+    {
+      "id": "CC-KT-013",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Funciones con un solo nivel de abstraccion",
+      "description": "No mezclar orquestacion de alto nivel con detalles tecnicos de bajo nivel.",
+      "rationale": "Mezclar niveles dificulta lectura y evolucion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar funciones con llamadas de alto nivel y manipulaciones de bajo nivel juntas."
+      },
+      "bad_example": "fun render(){ appendHeader(); appendNewLine() }",
+      "good_example": "fun render(){ appendHeaderWithSpacing() }",
+      "fix_strategy": [
+        "Extraer detalles tecnicos a funciones privadas",
+        "Aplicar stepdown rule"
+      ],
+      "tags": [
+        "abstraction",
+        "readability"
+      ],
+      "references": [
+        "G34",
+        "CC-03"
+      ]
+    },
+    {
+      "id": "CC-KT-014",
+      "language": "kotlin",
+      "category": "tests",
+      "severity": "medium",
+      "title": "Reglas F.I.R.S.T. para pruebas",
+      "description": "Las pruebas deben ser Fast, Independent, Repeatable, Self-validating y Timely.",
+      "rationale": "Sin FIRST, las suites se vuelven lentas y poco confiables.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Revisar lentitud, dependencias y validacion manual en tests."
+      },
+      "bad_example": "Tests inestables por red o dependientes de otro test.",
+      "good_example": "Tests independientes y reproducibles con resultado binario claro.",
+      "fix_strategy": [
+        "Usar mocks/fakes",
+        "Configurar estado por prueba"
+      ],
+      "tags": [
+        "tests",
+        "first",
+        "quality"
+      ],
+      "references": [
+        "T9",
+        "CC-09"
+      ]
+    },
+    {
+      "id": "CC-KT-015",
+      "language": "kotlin",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "Preferir excepciones a codigos de retorno",
+      "description": "Evitar codigos de error propagados manualmente en el flujo principal.",
+      "rationale": "Separa logica de negocio de manejo de errores.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar if(error==...) tras llamadas de negocio."
+      },
+      "bad_example": "if (deletePage(page) == E_OK) { ... }",
+      "good_example": "try { deletePage(page) } catch(e: Exception) { log(e) }",
+      "fix_strategy": [
+        "Lanzar excepciones descriptivas",
+        "Extraer bloques try/catch"
+      ],
+      "tags": [
+        "exceptions",
+        "error-handling"
+      ],
+      "references": [
+        "G17",
+        "CC-07"
+      ]
+    },
+    {
+      "id": "CC-KT-016",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Distancia vertical minima",
+      "description": "Mantener cerca conceptos estrechamente relacionados.",
+      "rationale": "Evita desplazamientos innecesarios y mejora contexto local.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Declaraciones muy lejos de su primer uso o metodos relacionados separados."
+      },
+      "bad_example": "Variable declarada al inicio y usada solo al final de una funcion larga.",
+      "good_example": "Variables y helpers cerca del punto de uso.",
+      "fix_strategy": [
+        "Mover declaraciones cerca del uso",
+        "Ordenar funciones de alto nivel a detalle"
+      ],
+      "tags": [
+        "formatting",
+        "readability"
+      ],
+      "references": [
+        "G10",
+        "CC-05"
+      ]
+    },
+    {
+      "id": "CC-KT-017",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Cohesion alta",
+      "description": "Las clases deben tener pocas variables de instancia usadas por la mayoria de metodos.",
+      "rationale": "Alta cohesion indica unidad logica consistente.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar grupos de metodos que usan subconjuntos disjuntos de campos."
+      },
+      "bad_example": "Clase con 10 campos donde cada grupo de metodos usa campos distintos.",
+      "good_example": "Separar en clases pequenas cohesionadas.",
+      "fix_strategy": [
+        "Dividir clase cuando baja la cohesion",
+        "Evitar estado de instancia innecesario"
+      ],
+      "tags": [
+        "cohesion",
+        "classes",
+        "refactoring"
+      ],
+      "references": [
+        "G8",
+        "CC-10"
+      ]
+    },
+    {
+      "id": "CC-KT-018",
+      "language": "kotlin",
+      "category": "concurrency",
+      "severity": "high",
+      "title": "SRP en concurrencia",
+      "description": "Separar codigo de concurrencia de la logica de negocio.",
+      "rationale": "Concurrencia tiene complejidad propia y ciclo de vida distinto.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar locks/threads/coroutines gestionados dentro de clases de dominio/servicio sin encapsulacion."
+      },
+      "bad_example": "Servicio de pedidos crea hilos manualmente para enviar correos.",
+      "good_example": "Scheduler/worker dedicado para politicas de concurrencia.",
+      "fix_strategy": [
+        "Encapsular gestion de hilos",
+        "Usar abstracciones de ejecucion controladas"
+      ],
+      "tags": [
+        "concurrency",
+        "srp",
+        "multithreading"
+      ],
+      "references": [
+        "CC-13",
+        "G17"
+      ]
+    },
+    {
+      "id": "CC-KT-019",
+      "language": "kotlin",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "No devolver null (Null Safety)",
+      "description": "Evitar null como retorno cuando existan alternativas seguras del lenguaje.",
+      "rationale": "Disminuye comprobaciones repetitivas y riesgo de fallos en ejecucion.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Uso excesivo de retornos null y comprobaciones if (x != null)."
+      },
+      "bad_example": "fun getEmployees(): List<Employee>? = null",
+      "good_example": "fun getEmployees(): List<Employee> = emptyList()",
+      "fix_strategy": [
+        "Devolver colecciones vacias",
+        "Aplicar Special Case Object cuando proceda"
+      ],
+      "tags": [
+        "null-safety",
+        "error-handling"
+      ],
+      "references": [
+        "G26",
+        "CC-07"
+      ]
+    },
+    {
+      "id": "CC-KT-020",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar variables explicativas",
+      "description": "Dividir calculos complejos en variables intermedias con nombre.",
+      "rationale": "Hace el codigo autoexplicativo paso a paso.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar expresiones booleanas/matematicas densas en una linea."
+      },
+      "bad_example": "if (match.find() && match.group(1).contains(key))",
+      "good_example": "val isKeyPresent = match.group(1).contains(key); if (isKeyPresent) ...",
+      "fix_strategy": [
+        "Extraer condiciones a variables con nombre",
+        "Dividir formulas en pasos"
+      ],
+      "tags": [
+        "readability",
+        "refactoring"
+      ],
+      "references": [
+        "G19",
+        "CC-17"
+      ]
+    },
+    {
+      "id": "CC-KT-021",
+      "language": "kotlin",
+      "category": "names",
+      "severity": "medium",
+      "title": "Usar nomenclatura estandar",
+      "description": "Usar nombres alineados con convenciones y patrones conocidos.",
+      "rationale": "Mejora comunicacion y comprension compartida.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Clases que implementan patrones sin reflejarlo en el nombre."
+      },
+      "bad_example": "class AutoHangup(val modem: Modem)",
+      "good_example": "class AutoHangupModemDecorator(val modem: Modem)",
+      "fix_strategy": [
+        "Renombrar segun patron implementado",
+        "Seguir convenciones del SDK"
+      ],
+      "tags": [
+        "naming",
+        "patterns"
+      ],
+      "references": [
+        "N3",
+        "CC-17"
+      ]
+    },
+    {
+      "id": "CC-KT-022",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Encapsular condicionales",
+      "description": "Extraer logica booleana compleja a funciones con intencion clara.",
+      "rationale": "Los if complejos son dificiles de leer en contexto.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Bloques if con multiples operadores logicos."
+      },
+      "bad_example": "if (timer.hasExpired() && !timer.isRecurrent())",
+      "good_example": "if (shouldBeDeleted(timer))",
+      "fix_strategy": [
+        "Extraer condicion a funcion privada/extension"
+      ],
+      "tags": [
+        "readability",
+        "functions"
+      ],
+      "references": [
+        "G28",
+        "CC-17"
+      ]
+    },
+    {
+      "id": "CC-KT-023",
+      "language": "kotlin",
+      "category": "comments",
+      "severity": "low",
+      "title": "Eliminar codigo comentado",
+      "description": "No mantener codigo desactivado por comentarios en el archivo.",
+      "rationale": "Agrega ruido y ya existe historial en control de versiones.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques de codigo dentro de // o /* */."
+      },
+      "bad_example": "// val stream = formatter.getResultStream()",
+      "good_example": "Borrar bloque comentado y usar historial de git si hiciera falta.",
+      "fix_strategy": [
+        "Borrar codigo comentado"
+      ],
+      "tags": [
+        "comments",
+        "clutter"
+      ],
+      "references": [
+        "C5",
+        "CC-17"
+      ]
+    },
+    {
+      "id": "CC-KT-024",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "high",
+      "title": "Seguir la regla del Boy Scout",
+      "description": "Deja el codigo mas limpio de como lo encontraste.",
+      "rationale": "Evita degradacion progresiva y promueve mejora continua.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Comprobar si cada cambio deja pequenas mejoras cercanas."
+      },
+      "bad_example": "Anadir funcionalidad y dejar deuda tecnica obvia alrededor.",
+      "good_example": "Aprovechar cada cambio para una mejora pequena adicional.",
+      "fix_strategy": [
+        "Aplicar micro-mejoras constantes en cada tarea"
+      ],
+      "tags": [
+        "professionalism",
+        "clean-code"
+      ],
+      "references": [
+        "CC-01",
+        "CC-15"
+      ]
+    },
+    {
+      "id": "CC-KT-025",
+      "language": "kotlin",
+      "category": "collections",
+      "severity": "medium",
+      "title": "Usar DTOs para datos puros",
+      "description": "Usar data class para transporte de datos y separar reglas de negocio complejas.",
+      "rationale": "Diferencia claramente objetos de comportamiento y estructuras de datos.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Clases con muchos campos publicos y sin comportamiento significativo."
+      },
+      "bad_example": "Clase mezcla esquema de datos con reglas complejas de negocio.",
+      "good_example": "data class Address(val street: String, val city: String)",
+      "fix_strategy": [
+        "Usar data class para transporte",
+        "Mover reglas de negocio a servicios/objetos de dominio"
+      ],
+      "tags": [
+        "dto",
+        "data-structures",
+        "kotlin"
+      ],
+      "references": [
+        "CC-06",
+        "G14"
+      ]
+    },
+    {
+      "id": "CC-KT-026",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Nombres de paquetes en min\u00fasculas",
+      "description": "Los nombres de los paquetes deben ser siempre en min\u00fasculas y no deben utilizar guiones bajos.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-027",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Clases en UpperCamelCase",
+      "description": "Los nombres de las clases y objetos deben empezar por may\u00fascula y seguir el estilo UpperCamelCase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-028",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Funciones y variables en lowerCamelCase",
+      "description": "Los nombres de funciones, propiedades y variables locales deben empezar por min\u00fascula y seguir el estilo camelCase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-029",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "low",
+      "title": "Uso de guiones bajos en nombres de tests",
+      "description": "En c\u00f3digo de prueba (y solo all\u00ed), se permite el uso de guiones bajos para separar componentes l\u00f3gicos o nombres con espacios entre comillas invertidas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-030",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Constantes en SCREAMING_SNAKE_CASE",
+      "description": "Las propiedades marcadas con 'const' o propiedades 'val' de nivel superior con datos inmutables deben usar may\u00fasculas y guiones bajos.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-031",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Propiedades de respaldo con prefijo de guion bajo",
+      "description": "Si una clase tiene una propiedad privada que respalda una p\u00fablica, la privada debe llamarse igual que la p\u00fablica pero con un guion bajo como prefijo.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-032",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Acr\u00f3nimos largos como palabras comunes",
+      "description": "Los acr\u00f3nimos de m\u00e1s de dos letras deben capitalizar solo la primera letra (ej. XmlFormatter), no todas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-033",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "low",
+      "title": "Acr\u00f3nimos cortos en may\u00fasculas",
+      "description": "Los acr\u00f3nimos de exactamente dos letras deben mantenerse en may\u00fasculas (ej. IOStream).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-034",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Indetaci\u00f3n de 4 espacios",
+      "description": "Se deben usar 4 espacios para la indentaci\u00f3n. No se permiten tabuladores.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-035",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Llaves al estilo K&R (Egyptian Brackets)",
+      "description": "La llave de apertura debe ir al final de la l\u00ednea que inicia el bloque, y la de cierre en una l\u00ednea separada.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-036",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacios alrededor de operadores binarios",
+      "description": "Se deben poner espacios a ambos lados de los operadores binarios.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-037",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin espacios en operadores de rango",
+      "description": "No se deben poner espacios alrededor del operador '..' o '.. 0)",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-039",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin espacio antes de par\u00e9ntesis en llamadas",
+      "description": "No debe haber espacio entre el nombre de la funci\u00f3n y el par\u00e9ntesis en una declaraci\u00f3n o llamada.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-040",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacio tras los dos puntos ( : )",
+      "description": "Siempre debe haber un espacio despu\u00e9s de los dos puntos.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-041",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacio antes de dos puntos en herencia",
+      "description": "Debe haber un espacio antes de ':' cuando se usa para herencia o implementaci\u00f3n de interfaces.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-042",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Orden jer\u00e1rquico de miembros de clase",
+      "description": "Los miembros de una clase deben ir en orden: 1. Propiedades e inicializadores, 2. Constructores secundarios, 3. M\u00e9todos, 4. Companion object.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-043",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sobrecargas contiguas",
+      "description": "Los m\u00e9todos con el mismo nombre deben aparecer juntos en el archivo.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-044",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "medium",
+      "title": "Un solo enunciado por l\u00ednea",
+      "description": "No se deben poner m\u00faltiples sentencias en una sola l\u00ednea. No usar punto y coma para separar sentencias.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-045",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "low",
+      "title": "Evitar archivos 'Util' sin prop\u00f3sito",
+      "description": "Se debe evitar el uso de nombres gen\u00e9ricos como 'Util' o 'Helpers' en archivos que contienen declaraciones de nivel superior.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-046",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir inmutabilidad (val sobre var)",
+      "description": "Siempre que una variable o propiedad no necesite ser modificada despu\u00e9s de la inicializaci\u00f3n, debe declararse con 'val'.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-047",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de colecciones inmutables",
+      "description": "Se deben usar interfaces de colecci\u00f3n inmutables (List, Set, Map) por defecto.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-048",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Preferir plantillas de cadena (Templates)",
+      "description": "Se debe usar la interpolaci\u00f3n de cadenas ($variable) en lugar de la concatenaci\u00f3n.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-049",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Eliminar llaves innecesarias en templates",
+      "description": "No usar ${} si se trata de una variable simple en una plantilla de cadena.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-050",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir par\u00e1metros por defecto a sobrecargas",
+      "description": "Si un m\u00e9todo requiere m\u00faltiples variaciones con distintos par\u00e1metros, usar valores por defecto en lugar de sobrecargar el m\u00e9todo.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-051",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Uso de la convenci\u00f3n 'it' en lambdas",
+      "description": "En lambdas cortas y no anidadas, preferir 'it' en lugar de nombrar el par\u00e1metro expl\u00edcitamente.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-052",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir if para binario y when para 3+ opciones",
+      "description": "Usar 'if' para condiciones de dos v\u00edas y 'when' para tres o m\u00e1s.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-053",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir funciones de orden superior a bucles",
+      "description": "Se debe preferir el uso de filter, map, etc., sobre bucles for tradicionales.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-054",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Uso de funciones de extensi\u00f3n",
+      "description": "Utilizar funciones de extensi\u00f3n para a\u00f1adir funcionalidad a clases sin herencia.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-055",
+      "language": "kotlin",
+      "category": "functions",
+      "severity": "low",
+      "title": "Omitir tipo de retorno Unit",
+      "description": "Si una funci\u00f3n no retorna nada, no se debe declarar expl\u00edcitamente el tipo de retorno Unit.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-056",
+      "language": "kotlin",
+      "category": "complexity",
+      "severity": "high",
+      "title": "L\u00edmite de complejidad cognitiva",
+      "description": "Un m\u00e9todo no debe exceder un umbral de complejidad cognitiva (generalmente 15).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-057",
+      "language": "kotlin",
+      "category": "complexity",
+      "severity": "medium",
+      "title": "M\u00e1ximo de 7 par\u00e1metros (S107)",
+      "description": "Las funciones no deben tener m\u00e1s de 7 par\u00e1metros de entrada.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-058",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "L\u00edmite de break/continue en bucles (S135)",
+      "description": "Un bucle no debe tener m\u00e1s de una sentencia de control de flujo (break o continue).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-059",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Uso de comas finales (Trailing Commas)",
+      "description": "Se recomienda usar una coma al final del \u00faltimo elemento en listas multil\u00ednea (par\u00e1metros, enums, etc.).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-060",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de 'it' vs nombres expl\u00edcitos",
+      "description": "Usar nombres expl\u00edcitos en lambdas anidadas. 'it' solo debe usarse en lambdas simples de un nivel.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-061",
+      "language": "kotlin",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Javadoc/KDoc conciso",
+      "description": "El primer p\u00e1rrafo de un KDoc debe ser un fragmento corto que resuma la funci\u00f3n, sin frases introductorias como 'Este m\u00e9todo retorna...'.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-062",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar el operador '!!'",
+      "description": "Se debe evitar el uso del operador de aserci\u00f3n de no nulidad (!!).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-063",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir lambdas fuera de par\u00e9ntesis",
+      "description": "Si el \u00faltimo par\u00e1metro de una funci\u00f3n es una lambda, debe pasarse fuera de los par\u00e9ntesis.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-064",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar funciones de alcance (Scope functions) correctamente",
+      "description": "Usar 'apply' para inicializaci\u00f3n, 'let' para transformaciones de nulidad, 'also' para efectos secundarios.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-065",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "low",
+      "title": "Nombres de interfaces como adjetivos",
+      "description": "A menudo es preferible nombrar las interfaces como adjetivos (ej. Readable, Closeable).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-066",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Cuerpo de expresi\u00f3n para funciones simples",
+      "description": "Se debe preferir el cuerpo de expresi\u00f3n (=) para funciones que consisten en una sola instrucci\u00f3n.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-067",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "low",
+      "title": "Nombres de tipos gen\u00e9ricos simples",
+      "description": "Los par\u00e1metros de tipo deben ser una sola letra may\u00fascula (T, E, K, V).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-068",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "No usar tipos crudos (Raw Types) de Java",
+      "description": "Evitar el uso de colecciones de Java sin par\u00e1metros de tipo al interactuar con APIs de Java.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-069",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Encapsular condiciones complejas",
+      "description": "Extraer condiciones l\u00f3gicas complejas a variables o funciones con nombres descriptivos.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-070",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Evitar l\u00f3gica en constructores",
+      "description": "Los constructores y bloques 'init' deben limitarse a la inicializaci\u00f3n de estado b\u00e1sica.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-071",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Separaci\u00f3n de miembros con l\u00edneas en blanco",
+      "description": "Debe haber una l\u00ednea en blanco entre propiedades, constructores y funciones de una clase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-072",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar Type Aliases para tipos complejos",
+      "description": "Si un tipo funcional o gen\u00e9rico se repite mucho, usar 'typealias'.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-073",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Orden de modificadores est\u00e1ndar",
+      "description": "Seguir el orden: public/protected/private, expect/actual, final/open/abstract/sealed/const, external, override, etc.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-074",
+      "language": "kotlin",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "No capturar Throwable",
+      "description": "Capturar excepciones espec\u00edficas o Exception, pero nunca Throwable.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-075",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir 'isNotBlank' a '!isEmpty'",
+      "description": "Usar las funciones de extensi\u00f3n de String m\u00e1s descriptivas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-076",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Uso de par\u00e9ntesis de agrupaci\u00f3n",
+      "description": "Usar par\u00e9ntesis en expresiones mixtas para mayor claridad, incluso si la precedencia lo hace innecesario.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-077",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Data Classes para transporte de datos",
+      "description": "Usar 'data class' para clases que solo contienen estado.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-078",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "low",
+      "title": "Evitar sufijos de tipo en nombres de variables",
+      "description": "No incluir el nombre de la clase o tipo en el nombre de la variable (ej. userList).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-079",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar comparaciones redundantes con Booleanos",
+      "description": "No comparar variables booleanas con 'true' o 'false' en condicionales.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-080",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir 'lateinit' a nulidad si se inicializa despu\u00e9s",
+      "description": "Si una propiedad no nula se inicializa despu\u00e9s del constructor (ej. en @Before de tests), usar 'lateinit'.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-081",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Usar 'trimIndent' en bloques de texto",
+      "description": "Usar siempre 'trimIndent()' o 'trimMargin()' en literales de cadena multil\u00ednea.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-082",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "high",
+      "title": "Evitar recursi\u00f3n sin caso base claro",
+      "description": "Toda funci\u00f3n recursiva debe tener una condici\u00f3n de salida evidente y ser preferiblemente iterativa si es profunda.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-083",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar 'check' y 'require' para validaciones",
+      "description": "Usar 'require()' para validar argumentos y 'check()' para el estado interno.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-084",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Omitir el 'this' innecesario",
+      "description": "No usar 'this' para acceder a miembros a menos que sea necesario para resolver ambig\u00fcedades.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-085",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "low",
+      "title": "Nombres de m\u00e9todos como verbos",
+      "description": "Los nombres de los m\u00e9todos deben ser verbos o frases verbales.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-086",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir 'operator' para funciones matem\u00e1ticas",
+      "description": "Usar el modificador 'operator' cuando una funci\u00f3n implemente operaciones est\u00e1ndar (+, -, etc.).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-087",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Propiedades antes que funciones",
+      "description": "Declarar todas las propiedades de una clase antes de cualquier funci\u00f3n.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-088",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Usar 'equals' seguro (==)",
+      "description": "Usar '==' en lugar de '.equals()' para comparaciones de objetos.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-089",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "low",
+      "title": "Orden de declaraciones en archivos multiplataforma",
+      "description": "Usar sufijos claros (.jvm, .android) para implementaciones espec\u00edficas en proyectos multiplataforma.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-090",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "low",
+      "title": "Omitir modificador 'public' por defecto",
+      "description": "No declarar expl\u00edcitamente 'public' ya que es el modificador por defecto en Kotlin.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-091",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar anidamiento profundo",
+      "description": "No superar los 3 niveles de indentaci\u00f3n dentro de una funci\u00f3n.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-092",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacio tras '//' en comentarios",
+      "description": "Debe haber un espacio entre las barras de comentario y el texto.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-093",
+      "language": "kotlin",
+      "category": "naming",
+      "severity": "low",
+      "title": "Variables locales con nombres buscables",
+      "description": "Evitar nombres de una sola letra para variables locales que no sean contadores de bucles.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-094",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar funciones de f\u00e1brica para constructores complejos",
+      "description": "Si una clase tiene constructores muy complejos o m\u00faltiples sobrecargas, usar funciones de f\u00e1brica.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-095",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir rangos a comparaciones manuales",
+      "description": "Usar 'x in 1..10' en lugar de 'x >= 1 && x = 0 && score ' si no es necesario.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-098",
+      "language": "kotlin",
+      "category": "classes",
+      "severity": "low",
+      "title": "Declaraciones de alto nivel agrupadas por tema",
+      "description": "Agrupar funciones y propiedades de nivel superior en un archivo si est\u00e1n sem\u00e1nticamente relacionadas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-099",
+      "language": "kotlin",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Alineaci\u00f3n vertical prohibida",
+      "description": "No usar espacios para alinear verticalmente tokens en diferentes l\u00edneas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-KT-100",
+      "language": "kotlin",
+      "category": "general",
+      "severity": "high",
+      "title": "Regla del Boy Scout",
+      "description": "Deja siempre el c\u00f3digo un poco m\u00e1s limpio de como lo encontraste.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Kotlin rule text."
+      },
+      "fix_strategy": [
+        "Aplicar refactor segun la regla"
+      ],
+      "tags": [
+        "clean-code",
+        "kotlin"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    }
+  ]
+}
