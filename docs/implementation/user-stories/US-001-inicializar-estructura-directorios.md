@@ -1,20 +1,21 @@
 # US-001 — Inicializar estructura de directorios simétrica por stack
 
 **Como** contributor del repositorio DevTools-AI,  
-**quiero** encontrar todos los namespaces de stacks creados desde el primer commit,  
+**quiero** encontrar todos los namespaces de stacks desde el primer commit en una topología estable y consistente,  
 **para** añadir artefactos en la ubicación correcta sin consultar documentación adicional ni depender de terceros.
 
 ---
 
 ## Criterios de Aceptación
 
-1. Dado un clon limpio del repositorio, cuando ejecuto `tree .github -L 3`, entonces existen `agents/`, `skills/` y `prompts/` con subdirectorios para estos stacks: `global`, `android/{compose,legacy,kmp}`, `ios/{swiftui,uikit}`, `multiplatform/{kmp,cmp}`, `backend/{kotlin-ktor,python,spring-java}`.
-2. Dado el árbol creado, cuando inspecciono cada directorio hoja en `.github/agents`, `.github/skills` y `.github/prompts`, entonces cada directorio hoja contiene un archivo `.gitkeep` versionado en Git.
-3. Dado cualquier namespace existente en `.github/agents`, cuando busco su ruta equivalente en `.github/skills` y `.github/prompts`, entonces la ruta existe en ambos directorios (simetría 1:1).
-4. Dado la estructura base del repositorio, cuando inspecciono `cli-tools/`, entonces existe `pyproject.toml` con el entry point `devtools` declarado y existe `cli-tools/devtools/__init__.py`.
-5. Dado `.github/instructions/`, cuando abro `global.instructions.md`, entonces el archivo existe con contenido stub `# TODO: completar en US-XXX`.
-6. Dado un árbol incorrecto donde falta al menos un namespace en uno de los tres directorios (`agents/`, `skills/`, `prompts/`), cuando ejecuto la verificación de simetría acordada por el equipo en refinación, entonces la validación falla con resultado no conforme.
-7. Dado la US completada, cuando se revisa en sesión de refinación, entonces no quedan decisiones abiertas sobre la topología de `prompts/` para Sprint 0 (se adopta estructura jerárquica simétrica).
+1. Dado un clon limpio del repositorio, cuando ejecuto `tree -L 3`, entonces existen en raíz los directorios `agents/`, `skills/`, `prompts/` e `instructions/`.
+2. Dado el árbol creado, cuando inspecciono `agents/`, `skills/` y `prompts/`, entonces existen los stacks `global`, `android/{compose,legacy,kmp}`, `ios/{swiftui,uikit}`, `multiplatform/{kmp,cmp}`, `backend/{kotlin-ktor,python,spring-java}`.
+3. Dado cualquier namespace existente en `agents/`, cuando busco su ruta equivalente en `skills/` y `prompts/`, entonces la ruta existe en ambos directorios (simetría 1:1).
+4. Dado la estructura en `.github/`, cuando inspecciono sus contenidos, entonces existe `copilot-instructions.md` como entry point global y existe `.github/agents/` con los orquestadores `project-orchestrator.agent.md` y `feature-lifecycle.agent.md`.
+5. Dado el árbol creado, cuando inspecciono cada directorio hoja de `agents/`, `skills/` y `prompts/`, entonces cada directorio hoja contiene un archivo `.gitkeep` versionado en Git.
+6. Dado `instructions/`, cuando abro los archivos por stack, entonces existen al menos: `global.instructions.md`, `android-compose.instructions.md`, `android-legacy.instructions.md`, `ios-swiftui.instructions.md`, `ios-uikit.instructions.md`, `kmp.instructions.md`, `cmp.instructions.md` y `backend-kotlin.instructions.md`.
+7. Dado `cli-tools/`, cuando inspecciono su estructura, entonces existe `bin/` y `devtools/{sync_skills,validate_skill,scaffold}`.
+8. Dado un árbol incorrecto donde falta al menos un namespace en alguno de los tres directorios (`agents/`, `skills/`, `prompts/`), cuando ejecuto la validación de simetría acordada por el equipo, entonces la verificación falla con resultado no conforme.
 
 ---
 
@@ -23,28 +24,40 @@
 Estructura objetivo:
 
 ```text
-.github/
+devtools/
+├── .github/
+│   ├── copilot-instructions.md
+│   └── agents/
+│       ├── project-orchestrator.agent.md
+│       └── feature-lifecycle.agent.md
 ├── agents/
 │   ├── global/
 │   ├── android/{compose,legacy,kmp}/
 │   ├── ios/{swiftui,uikit}/
 │   ├── multiplatform/{kmp,cmp}/
 │   └── backend/{kotlin-ktor,python,spring-java}/
-├── skills/ (misma estructura que agents/)
-├── prompts/ (misma estructura que agents/)
+├── skills/ (misma jerarquía que agents/)
+├── prompts/ (misma jerarquía que agents/)
 ├── instructions/
-│   └── global.instructions.md (stub)
-└── dod.md
-
-cli-tools/
-├── pyproject.toml
-└── devtools/__init__.py
-
-scripts/
-└── validate-skill.sh (stub, alcance de US-004)
-
-docs/implementation/
-└── user-stories/
+│   ├── global.instructions.md
+│   ├── android-compose.instructions.md
+│   ├── android-legacy.instructions.md
+│   ├── ios-swiftui.instructions.md
+│   ├── ios-uikit.instructions.md
+│   ├── kmp.instructions.md
+│   ├── cmp.instructions.md
+│   └── backend-kotlin.instructions.md
+├── cli-tools/
+│   ├── bin/
+│   └── devtools/{sync_skills,validate_skill,scaffold}/
+├── docs/
+│   ├── CONTRIBUTING.md
+│   ├── architecture/
+│   └── stacks/
+├── scripts/
+│   ├── validate-skill.sh
+│   └── setup.sh
+└── README.md
 ```
 
 Supuestos:
@@ -79,7 +92,7 @@ EP-1 — Habilitar contribución colaborativa en el repositorio DevTools-AI
 
 ## Prioridad
 
-**P0 (Bloqueante)** — Sin esta estructura no se puede contribuir de forma consistente en skills, agentes ni prompts.
+**P0 (Bloqueante)** — Sin esta estructura no se puede contribuir de forma consistente en agentes, skills y prompts.
 
 ```mermaid
 flowchart TD
@@ -89,7 +102,7 @@ flowchart TD
   B --> E{Simetria 1:1}
   C --> E
   D --> E
-  E -->|Si| F[Crear instructions y cli-tools]
+  E -->|Si| F[Crear .github e instructions]
   E -->|No| G[Corregir namespaces faltantes]
   G --> E
   F --> H[US-001 lista para cierre]
