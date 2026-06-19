@@ -112,7 +112,7 @@ para mantener estructura y frontmatter consistentes.
 
 ## US-005 — Pre-commit hooks y script de validación
 
-**Épica**: EP-1 | **Prioridad**: P1 | **SP**: 5 | **Estado**: `[ ]`
+**Épica**: EP-1 | **Prioridad**: P1 | **SP**: 5 | **Estado**: `[x]`
 
 ### Descripción
 Como contributor,  
@@ -120,11 +120,11 @@ quiero que el pre-commit rechace skills mal formadas antes de llegar a main,
 para mantener la calidad del catálogo sin revisión manual de cada PR.
 
 ### Criterios de aceptación
-- [ ] `scripts/validate-skill.sh <path>` valida: frontmatter YAML, secciones obligatorias, overview.md con Mermaid
-- [ ] `.githooks/pre-commit` llama al script para todo `skills/**/*.md` modificado
-- [ ] `setup.sh` instala el hook automáticamente (`git config core.hooksPath .githooks`)
-- [ ] El script sale con código 1 y mensaje descriptivo si falla
-- [ ] El script sale con código 0 y lista de skills validadas si todo ok
+- [x] `scripts/validate-skill.sh <path>` valida: frontmatter YAML, secciones obligatorias, overview.md con Mermaid
+- [x] `.githooks/pre-commit` llama al script para todo `skills/**/*.md` modificado
+- [x] `setup.sh` instala el hook automáticamente (`git config core.hooksPath .githooks`)
+- [x] El script sale con código 1 y mensaje descriptivo si falla
+- [x] El script sale con código 0 y lista de skills validadas si todo ok
 
 ### Referencias
 - `BK:scripts/validate-skill.sh`
