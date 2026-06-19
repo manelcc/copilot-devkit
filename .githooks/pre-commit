@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# .githooks/pre-commit
+# Pre-commit hook that validates all modified skill files
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+VALIDATE_SCRIPT="${REPO_ROOT}/scripts/validate-skill.sh"
+
+if [ ! -f "$VALIDATE_SCRIPT" ]; then
+  echo "[ERROR] Validation script not found: ${VALIDATE_SCRIPT}"
+  exit 1
+fi
+
+# Find modified SKILL.md and overview.md files
+MODIFIED_SKILLS=()
+
+# Find all modified files in skills/
+while IFS= read -r file; do
+  if [[ "$file" == skills/*/SKILL.md ]]; then
+    # Extract skill directory
+    skill_dir=$(echo "$file" | cut -d/ -f1-3)
+    MODIFIED_SKILLS+=("$skill_dir")
+  elif [[ "$file" == skills/*/references/overview.md ]]; then
+    # Extract skill directory
+    skill_dir=$(echo "$file" | sed 's|/references/.*||')
+    # Add only if not already in array
+    if [[ ! " ${MODIFIED_SKILLS[@]} " =~ " ${skill_dir} " ]]; then
+      MODIFIED_SKILLS+=("$skill_dir")
+    fi
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACM)
+
+# Exit if no skills were modified
+if [ ${#MODIFIED_SKILLS[@]} -eq 0 ]; then
+  echo "[INFO] No skill files modified"
+  exit 0
+fi
+
+echo ""
+echo "=================================================="
+echo "[INFO] Pre-commit hook: Validating modified skills"
+echo "=================================================="
+
+# Run validation
+FAILED=0
+for skill_dir in "${MODIFIED_SKILLS[@]}"; do
+  if ! bash "$VALIDATE_SCRIPT" "$skill_dir"; then
+    FAILED=1
+  fi
+done
+
+echo ""
+echo "=================================================="
+
+if [ $FAILED -eq 0 ]; then
+  echo "[OK] All skills passed validation"
+  echo "Proceeding with commit..."
+  echo "=================================================="
+  exit 0
+else
+  echo "[ERROR] Skill validation FAILED"
+  echo "Commit blocked. Fix errors above and try again."
+  echo ""
+  echo "To bypass (NOT recommended): git commit --no-verify"
+  echo "=================================================="
+  exit 1
+fi
