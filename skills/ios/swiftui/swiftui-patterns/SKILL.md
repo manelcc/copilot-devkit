@@ -157,3 +157,4 @@ struct FeedView: View {
 ## Sources
 - Apple SwiftUI documentation: https://developer.apple.com/documentation/swiftui
 - Apple Swift Concurrency documentation: https://developer.apple.com/documentation/swift/concurrency
+- Community reference (Agent Skill): https://github.com/efremidze/swift-patterns-skill
