@@ -36,6 +36,7 @@ Implementar features iOS con SwiftUI usando arquitectura clara, concurrencia mod
 7. Patrones de diseño (obligatorio en planning/implementación):
 - Antes de implementar, identificar patrón candidato aplicable (mínimo 1, ideal 2 candidatos con trade-off).
 - Durante revisión de implementación, indicar explícitamente qué patrón quedó aplicado.
+- Si no hay evidencia suficiente del patrón aplicado, marcar el diagnóstico como hipótesis-no-verificada (no bloqueante).
 - Detectar y reportar antipatrones potenciales (si existen) con severidad y remediación.
 - Usar la skill `ios-patterns` para esta evaluación cuando la tarea lo requiera.
 

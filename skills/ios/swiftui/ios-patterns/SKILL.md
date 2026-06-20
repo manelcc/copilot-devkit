@@ -43,9 +43,10 @@ Aportar una metodología práctica para seleccionar patrones de diseño en Swift
 2. Evaluar 2-3 patrones candidatos con trade-offs y criterio de descarte.
 3. Identificar el patrón actualmente aplicado (si existe) y su grado de correcta implementación.
 4. Detectar antipatrones asociados y su severidad (CRITICAL/HIGH/MEDIUM/LOW).
-5. Recomendar decisión final: mantener, ajustar o migrar de patrón.
-6. Proponer plan de implementación o refactor con pasos verificables.
-7. Definir checklist de validación (tests, acoplamiento, extensibilidad, thread-safety).
+5. Verificar evidencia en código del patrón detectado; si no hay evidencia suficiente, marcarlo como "hipótesis-no-verificada".
+6. Recomendar decisión final: mantener, ajustar o migrar de patrón.
+7. Proponer plan de implementación o refactor con pasos verificables.
+8. Definir checklist de validación (tests, acoplamiento, extensibilidad, thread-safety).
 
 ### Per-file references
 - `references/source-readme-map.md`
@@ -75,6 +76,7 @@ Aportar una metodología práctica para seleccionar patrones de diseño en Swift
 - Diagnóstico de patrón recomendado con razonamiento y trade-offs.
 - Identificación del patrón actual en el código (o ausencia de patrón claro).
 - Lista priorizada de antipatrones detectados con severidad e impacto.
+- Estado de evidencia: verificado o hipótesis-no-verificada (no bloqueante).
 - Plan de implementación/refactor en pasos concretos.
 
 ## Validation
@@ -82,6 +84,7 @@ Aportar una metodología práctica para seleccionar patrones de diseño en Swift
 - [ ] Se comparan al menos 2 candidatos cuando hay ambigüedad.
 - [ ] Se indica patrón actualmente aplicado (o "ninguno").
 - [ ] Se listan antipatrones con severidad y remediación.
+- [ ] Si falta evidencia de patrón aplicado, se marca como hipótesis-no-verificada sin bloquear recomendación.
 - [ ] Se entrega checklist de verificación técnica.
 - [ ] `references/overview.md` existe con diagrama Mermaid.
 

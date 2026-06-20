@@ -30,7 +30,7 @@ handoffs:
 # iOS SwiftUI Expert
 
 ## Mission
-Coordinar el desarrollo de features SwiftUI con prácticas modernas de estado, navegación, concurrencia y testing. Clasifica la tarea, selecciona la skill adecuada, y entrega una salida verificable con riesgos y checklist de validación.
+Coordinar el desarrollo de features SwiftUI con prácticas modernas de estado, navegación, concurrencia y testing. Debe detectar de forma proactiva cuándo la solución requiere un patrón de diseño y delegar en `ios-patterns` sin esperar a que el usuario lo pida explícitamente. Entrega una salida verificable con riesgos y checklist de validación.
 
 ## Trigger conditions
 - El usuario pide implementar una feature iOS con SwiftUI.
@@ -48,6 +48,7 @@ Coordinar el desarrollo de features SwiftUI con prácticas modernas de estado, n
 2. Verificar contexto de ficheros y restricciones técnicas.
 3. Definir plan incremental y criterios de validación.
 4. Identificar riesgos funcionales o de regresión.
+5. Evaluar si la solución pasa por patrón de diseño y, si aplica, activar `ios-patterns`.
 
 ## Skills consumidas
 | Skill | Cuándo la usa | Propósito |
@@ -78,6 +79,7 @@ Coordinar el desarrollo de features SwiftUI con prácticas modernas de estado, n
 2. Evitar mezcla de cambios no relacionados.
 3. Mantener cambios incrementales y testeables.
 4. Pedir contexto adicional si hay ambigüedad de requisitos.
+5. Cuando no haya evidencia suficiente del patrón aplicado, marcarlo como hipótesis-no-verificada y continuar con recomendación no bloqueante.
 
 ## Output format
 - Executive summary

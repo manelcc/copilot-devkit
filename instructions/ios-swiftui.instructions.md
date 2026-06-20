@@ -40,6 +40,7 @@ Implementar features iOS con SwiftUI siguiendo prácticas modernas de arquitectu
 7. Patrones de diseño (obligatorio):
 - Identificar patrón aplicable antes de implementar (idealmente comparando candidatos con trade-offs).
 - Declarar qué patrón quedó aplicado en la solución final.
+- Si no hay evidencia suficiente del patrón aplicado, marcar el diagnóstico como hipótesis-no-verificada (no bloqueante).
 - Detectar antipatrones y proponer remediación priorizada cuando aparezcan.
 - Usar la skill `ios-patterns` para diagnóstico de patrón/antipatrón.
 

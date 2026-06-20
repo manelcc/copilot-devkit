@@ -35,8 +35,8 @@ Proyecto analizado:
 - Antipatrones + severidad + remediacion
 - Checklist de verificacion
 
-## Dudas abiertas para decidir alcance
+## Decisiones cerradas
 
-1. Quieres que integremos tambien una mini "quality-skill iOS" local (solo para patrones/antipatrones), o mantenemos esta logica dentro de `ios-patterns`?
-2. Quieres que añadamos un prompt especifico tipo `ios-expert-patterns.prompt.md` como punto de entrada guiado para el equipo?
-3. Quieres que el agente bloquee recomendacion si no puede justificar evidencia de patron aplicado en codigo?
+1. Mantener la logica de quality de patrones/antipatrones dentro de la skill `ios-patterns` (sin mini skill separada).
+2. No crear prompt guiado adicional; el agente experto SwiftUI debe detectar de forma proactiva cuando la solucion requiere patron.
+3. La ausencia de evidencia suficiente de patron aplicado se reporta como `hipótesis-no-verificada`, con caracter no bloqueante.
