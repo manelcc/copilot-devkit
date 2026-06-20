@@ -4,11 +4,12 @@ description: "Design patterns and best practices for Kotlin Multiplatform shared
 triggers:
   - "how to structure expect/actual in KMP"
   - "set up Ktor Client in shared module"
-  - "design shared ViewModel for KMP"
+  - "design shared Interactor for KMP"
   - "configure SQLDelight for multiplatform"
   - "iOS interop patterns in Kotlin"
   - "KMP module dependencies"
   - "handle platform-specific logic in shared code"
+  - "where should ViewModels live in KMP?"
 non_triggers:
   - "format my Kotlin code" (use linter)
   - "migrate Android to KMP" (use migration-specific skill)
@@ -28,7 +29,8 @@ This skill provides battle-tested patterns for designing and implementing Kotlin
 - Designing APIs that bridge `commonMain` and platform-specific code
 - Working with expect/actual declarations and need guidance on scope
 - Setting up data access layer (SQLDelight or Exposed) for multiplatform
-- Implementing shared business logic (ViewModels, repositories, use cases)
+- Implementing shared business logic (repositories, use cases, interactors)
+- Exposing reactive state (Flow/StateFlow) for UI consumption without tying to platform ViewModels
 - Handling iOS interop requirements (@ObjCName, @Throws, nullability)
 - Reviewing pull requests that modify shared module boundaries
 - Troubleshooting circular dependencies or platform-specific leaks
@@ -36,8 +38,9 @@ This skill provides battle-tested patterns for designing and implementing Kotlin
 **Trigger scenarios:**
 - "I need to design a data repository that works on Android and iOS"
 - "Where should I put expect/actual for a network client?"
-- "How do I expose a shared ViewModel to iOS without platform code?"
+- "How do I expose shared business logic (Flow/StateFlow) to platform ViewModels?"
 - "What's the right way to configure SQLDelight in a shared module?"
+- "Should my ViewModel be in commonMain or platform-specific code?"
 
 ## When NOT to use
 
@@ -77,7 +80,7 @@ Identify the architectural tier the user is working in:
 | Tier | Scope | Patterns |
 |------|-------|----------|
 | **Domain** | Business logic (entities, use cases) | Clean Architecture; no platform deps |
-| **Application** | Interactors, ViewModels, services | expect/actual for coroutines; shared state management |
+| Application | Interactors, use cases, shared state (Flow/StateFlow) | expect/actual for coroutines; NO platform ViewModels |
 | **Infrastructure** | Data access (DB, network, file I/O) | SQLDelight, Ktor Client; platform-specific factories |
 | **Entrypoint** | Android Activities, iOS ViewControllers | Platform-specific; imports from infrastructure layer |
 
@@ -105,24 +108,28 @@ interface UserRepository {
 
 #### Application Patterns
 
-**Shared ViewModel (No UI code)**
+**Shared Interactor (Pure Business Logic, No Platform ViewModels in commonMain)**
 ```kotlin
-// commonMain
-expect class SharedViewModel {
-    val uiState: StateFlow<UiState>
-    fun onAction(action: UserAction)
+// commonMain: Pure business logic, no ViewModel
+class UserInteractor(private val repository: UserRepository) {
+    suspend fun loadUsers(): Flow<List<User>> = repository.observeUsers()
+    suspend fun saveUser(user: User) = repository.saveUser(user)
 }
 
-// androidMain
-actual class SharedViewModel : ViewModel() {
-    override val uiState = MutableStateFlow<UiState>(UiState.Initial)
-    override fun onAction(action: UserAction) { ... }
+// androidMain: Android ViewModel consumes interactor
+class UserViewModel(private val interactor: UserInteractor) : ViewModel() {
+    val uiState = interactor.loadUsers()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 }
 
-// iosMain
-actual class SharedViewModel {
-    override let uiState: StateFlow<UiState>
-    override func onAction(action: UserAction) { ... }
+// iosMain: iOS ViewController/ViewModel consumes interactor
+class UserViewModel {
+    private let interactor: UserInteractor
+    @Published var users: [User] = []
+    
+    func loadUsers() {
+        // iOS-specific ViewModel logic
+    }
 }
 ```
 
@@ -319,25 +326,28 @@ actual val httpClient: HttpClient = HttpClient(Darwin) {
 }
 ```
 
-### Example 2: Shared ViewModel Pattern
+### Example 2: Shared Interactor Exposing Flow (Platform ViewModels Consume This)
 
 ```kotlin
-// commonMain
-expect class UserViewModel {
-    val users: StateFlow<List<User>>
-    fun loadUsers()
+// commonMain: Pure business logic, NO ViewModel here
+class UserInteractor(private val repository: UserRepository) {
+    suspend fun getUsers(): Flow<List<User>> = repository.observeUsers()
+    suspend fun saveUser(user: User) = repository.saveUser(user)
 }
 
-// androidMain
-actual class UserViewModel : ViewModel() {
-    actual override val users = MutableStateFlow<List<User>>(emptyList())
-    actual override fun loadUsers() { ... }
+// androidMain: Android ViewModel consumes Interactor
+class UserViewModel(private val interactor: UserInteractor) : ViewModel() {
+    val users = interactor.getUsers().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 }
 
-// iosMain
-actual class UserViewModel {
-    actual override let users: StateFlow<List<User>>
-    actual override func loadUsers() { ... }
+// iosMain: iOS ViewController/MVVM consumes Interactor
+class UserViewModel {
+    private let interactor: UserInteractor
+    @Published var users: [User] = []
+    
+    func onAppear() {
+        // iOS-specific lifecycle, consume interactor
+    }
 }
 ```
 

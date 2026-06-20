@@ -42,8 +42,9 @@ This agent assumes the user is working in or designing a KMP project with `commo
 - "How should I structure expect/actual for a network client?"
 - "My shared module has a circular dependency—how do I fix it?"
 - "Set up SQLDelight for Android and iOS in my KMP project"
-- "Review my shared ViewModel—does it respect KMP patterns?"
-- "How do I expose a shared repository to iOS without platform code?"
+- "Review my shared Interactor—does it respect KMP patterns?"
+- "How do I expose a shared Flow to Android/iOS ViewModels?"
+- "Where should ViewModels live in KMP architecture?"
 - "What's the right boundary between domain and infrastructure in KMP?"
 - "I'm getting expect/actual mismatch errors—help me debug"
 - "Design a serialization layer for my shared module"
@@ -116,7 +117,7 @@ find . -path "*/src/iosMain/kotlin" -type d
 | expect/actual placement | Consult skill → provide template → validate balance | 1-2 code blocks |
 | Serialization in shared | Recommend Kotlinx.serialization or Gson + expect/actual | 3-5 lines guidance |
 | Database setup (SQLDelight) | Guide through .sq file + expect for factory → platform impls | Build.gradle snippet + code |
-| Shared ViewModel | expect class + actual AndroidVM + actual iOSVM | 3 code blocks + guardrails |
+| Shared Interactor (Flow/StateFlow) | Expose reactive state in commonMain; platform wraps in ViewModel | Code + guardrails |
 | iOS interop (@ObjCName, @Throws) | Review API exposure, apply annotations, validate nullability | Checklist + examples |
 | Architecture validation | Run mental Clean Architecture check → identify violations | Find + fix plan |
 | Circular dependency | Trace imports → identify reverse dependency → refactor plan | Dependency graph |

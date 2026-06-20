@@ -152,6 +152,38 @@ actual fun doSomething() { ... }
 
 ## 3. Architecture Layer Enforcement
 
+### Rule 3.0: ViewModels Belong to Platform, NOT commonMain
+
+**❌ VIOLATION:**
+```kotlin
+// commonMain/kotlin/com/example/shared/UserViewModel.kt
+expect class UserViewModel {  // ← WRONG: ViewModel is presentation, not domain logic
+    val users: StateFlow<List<User>>
+    fun onAction(action: UserAction)
+}
+```
+
+**✅ CORRECT:**
+```kotlin
+// commonMain/kotlin/com/example/shared/UserInteractor.kt (Pure business logic)
+class UserInteractor(private val repo: UserRepository) {
+    suspend fun getUsers(): Flow<List<User>> = repo.observeUsers()
+}
+
+// androidMain/kotlin/com/example/android/UserViewModel.kt (Platform-specific)
+actual class UserViewModel(private val interactor: UserInteractor) : ViewModel() {
+    val uiState = interactor.getUsers().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+}
+
+// iosMain/kotlin/com/example/ios/UserViewModel.kt (Platform-specific)
+actual class UserViewModel {
+    private let interactor: UserInteractor
+    @Published var users: [User] = []
+}
+```
+
+**Rationale:** ViewModels are platform-specific presentation components (Android ViewModel, iOS @ObservedObject). commonMain provides business logic and reactive state (Flow/StateFlow); each platform wraps this in its own ViewModel implementation.
+
 ### Rule 3.1: Clean Architecture Dependency Direction
 
 ```
@@ -160,12 +192,12 @@ Domain ← Application ← Infrastructure ← Platform-Specific
 
 **Dependency flows inward; never outward.**
 
-| Layer | Responsibility | Imports Allowed From |
-|---|---|---|
-| **Domain** | Entities, repository interfaces, use cases | Nothing (pure Kotlin) |
-| **Application** | Orchestration, shared state, expect for coroutines | Domain |
-| **Infrastructure** | Data access, platform factories, expect for DB/network | Domain, Application |
-| **Platform** (androidMain/iosMain) | actual implementations, platform framework | All above |
+| Layer | Responsibility | Imports Allowed From | ❌ NO |
+|---|---|---|---|
+| **Domain** | Entities, repository interfaces, use cases | Nothing (pure Kotlin) | Platform code |
+| **Application** | Interactors, use cases, shared Flow<T>/StateFlow<T> | Domain | Platform ViewModels, Activities |
+| **Infrastructure** | Data access, platform factories, expect for DB/network | Domain, Application | UI framework |
+| **Platform** (androidMain/iosMain) | actual implementations, platform framework, **ViewModels** | All above | Direct commonMain changes |
 
 **❌ VIOLATION:**
 ```kotlin
@@ -485,9 +517,49 @@ expect fun createHttpClient(): HttpClient
 
 ---
 
-## 8. Documentation Requirements
+## 8. ViewModel Architecture Constraint
 
-### Rule 8.1: Public API Documentation
+### Rule 8.0: ViewModels are Platform-Specific Presentation
+
+Never place ViewModel declarations (expect/actual) in commonMain. Instead:
+
+1. **commonMain**: Define Interactor with suspend fun or Flow<T> return types
+2. **Platform layer**: Each platform (Android/iOS) implements its own ViewModel wrapper
+
+**Platform ViewModel Examples:**
+
+**Android:**
+```kotlin
+// androidMain
+class UserViewModel(private val interactor: UserInteractor) : ViewModel() {
+    val users = interactor.getUsers().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+}
+```
+
+**iOS:**
+```swift
+// iosMain (Kotlin/Native → Swift interop)
+class UserViewModel: ObservableObject {
+    private let interactor: UserInteractor
+    @Published var users: [User] = []
+    
+    func onAppear() {
+        // iOS-specific lifecycle
+    }
+}
+```
+
+**Shared Interactor (commonMain):**
+```kotlin
+class UserInteractor(private val repo: UserRepository) {
+    suspend fun getUsers(): Flow<List<User>> = repo.observeUsers()
+    suspend fun saveUser(user: User) = repo.saveUser(user)
+}
+```
+
+## 9. Documentation Requirements
+
+### Rule 9.0: Public API Documentation
 
 All public APIs in shared modules **must** be documented with KDoc, especially at platform boundaries.
 
@@ -507,19 +579,21 @@ All public APIs in shared modules **must** be documented with KDoc, especially a
 suspend fun fetchUser(id: String): User
 ```
 
-### Rule 8.2: Architecture Diagram
+### Rule 9.1: Architecture Diagram
 
 Shared modules with complex expect/actual logic should include a diagram (in `README.md` or skill references) showing:
 - Source set boundaries
 - expect/actual pairs
 - Layer dependencies
+- **IMPORTANT**: ViewModel placement (platform layer, NOT commonMain)
 
 ---
 
-## 9. Common Anti-Patterns to Avoid
+## 10. Common Anti-Patterns to Avoid
 
 | ❌ Anti-Pattern | ✅ Solution |
 |---|---|
+| **ViewModel in commonMain** | Keep ViewModels in androidMain/iosMain; use Interactor in commonMain |
 | expect in both commonMain and androidMain | Put expect only in commonMain |
 | actual in commonMain | Put actual only in platform-specific source sets |
 | Platform imports in commonMain | Use expect/actual abstraction |
@@ -531,10 +605,11 @@ Shared modules with complex expect/actual logic should include a diagram (in `RE
 
 ---
 
-## 10. Quality Gate Checklist
+## 11. Quality Gate Checklist
 
 Before merging KMP changes to develop:
 
+- [ ] **NO ViewModels in commonMain** (only Interactors exposing Flow/StateFlow)
 - [ ] No `android.*` or `Foundation` imports in `commonMain`
 - [ ] All `expect` declarations have matching `actual` in `androidMain` and `iosMain`
 - [ ] expect/actual signatures match exactly
