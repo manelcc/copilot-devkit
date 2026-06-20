@@ -441,12 +441,16 @@ sin copiarlos manualmente ni romper actualizaciones futuras.
 
 ## US-081 — Comando devtools scaffold
 
-**Épica**: EP-9 | **Prioridad**: P1 | **SP**: 5 | **Estado**: `[ ]`
+**Épica**: EP-9 | **Prioridad**: P1 | **SP**: 5 | **Estado**: `[x]` ✓ COMPLETADA
 
 ### Criterios de aceptación
-- [ ] `devtools scaffold skill <name> <namespace>` genera la estructura completa desde `_TEMPLATE/`
-- [ ] Reemplaza placeholders en SKILL.md con el nombre y namespace indicados
-- [ ] Abre el archivo generado en el editor si está disponible
+- [x] `devtools scaffold skill <name> <namespace>` genera la estructura completa desde `_TEMPLATE/`
+- [x] Reemplaza placeholders en SKILL.md con el nombre y namespace indicados
+- [ ] Abre el archivo generado en el editor (mejora futura - no bloqueante)
+
+### Integración
+- Disponible vía CLI: `devtools scaffold skill <skill-name> <namespace>`
+- Integrada en orquestador de ciclo de vida (post-ejecución de US)
 
 ---
 

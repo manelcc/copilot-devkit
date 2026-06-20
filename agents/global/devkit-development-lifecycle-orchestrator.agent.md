@@ -58,6 +58,10 @@ After completing the cycle:
 2. Confirm commits are executed (or user has manual control).
 3. Confirm MR/PR description is generated and ready for publication.
 4. Ask the user if they want to proceed with branch push and MR/PR creation.
+5. **Optional**: Ask if they want to generate a reusable feature-skill from this implementation:
+   - If yes → Run: `devtools scaffold skill <feature-name> <stack-namespace>`
+   - Example: `devtools scaffold skill user-authentication backend/kotlin-ktor`
+   - Persists at: `skills/<stack-namespace>/<feature-name>/SKILL.md`
 
 ---
 
