@@ -41,3 +41,8 @@ Apply these rules to Android Kotlin code targeting Jetpack Compose. Keep solutio
 - Use `skills/android/compose/devkit-migrate-xml-to-compose/` for XML to Compose migration workflows.
 - Use `skills/android/compose/devkit-jetpack-compose-patterns/` for idiomatic architecture and UI patterns.
 
+## External Android Skills Integration
+- When local devkit skills do not cover an edge case, consult `https://github.com/android/skills` as a complementary source.
+- Prefer local devkit conventions first, then adapt external guidance to project naming, architecture, and testing rules.
+- If external guidance conflicts with repository standards, keep repository standards and document the trade-off in the change notes.
+

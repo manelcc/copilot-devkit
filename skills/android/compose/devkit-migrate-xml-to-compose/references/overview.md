@@ -20,3 +20,4 @@ flowchart TD
 - Keep migrations incremental to avoid high-risk rewrites.
 - Hoist state early to prevent tightly coupled composables.
 - Remove XML only after reference checks and regression validation.
+- Use `https://github.com/android/skills` as a complementary source when local guidance is not enough.

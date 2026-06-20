@@ -12,6 +12,7 @@
 |---|---|---|---|---|
 | RQ-001 | Acceso a `~/.claude/skills/migrate-xml-views-to-jetpack-compose/` | Necesario | Funcional | Disponible en entorno local |
 | RQ-002 | Conocimiento de stacks Android Compose actuales (Navigation 3, Hilt, Material3) | Necesario | Funcional | Para instrucciones.md |
+| RQ-003 | Acceso opcional a `https://github.com/android/skills` para ampliar cobertura | Necesario | Integración | Fuente externa para casos no cubiertos por skill local |
 
 ## Criterios de Aceptación
 
@@ -23,12 +24,15 @@
 6. Las instrucciones incluyen reglas de: (1) Composables sin estado, (2) Navigation 3, (3) Hilt DI, (4) Coroutines + Flow, (5) Material3, (6) Testing con `composeTestRule`.
 7. Las instrucciones referencian `skills/android/compose/` para tareas específicas.
 8. Las instrucciones tienen menos de 250 líneas (reglas core, no exhaustivas).
+9. Las instrucciones documentan cuándo usar `https://github.com/android/skills` como fuente de apoyo para casos avanzados o gaps de la skill local.
 
 ---
 
 ## Notas Técnicas
 
 **Path fuente**: `~/.claude/skills/migrate-xml-views-to-jetpack-compose/`
+
+**Fuente externa complementaria**: `https://github.com/android/skills`
 
 **Adaptaciones necesarias**:
 - Actualizar frontmatter `name` a `migrate-xml-to-compose`
@@ -118,6 +122,7 @@ EP-3 — Stack Android Compose
 - **Dependencias previas**: US-001, US-004 completadas
 - **Fuentes**:
   - `~/.claude/skills/migrate-xml-views-to-jetpack-compose/`
+    - `https://github.com/android/skills`
   - Documentación oficial Jetpack Compose
 - **Definition of Ready**:
   - [ ] US-001, US-004 completadas

@@ -44,6 +44,7 @@ Provide a safe, repeatable process to migrate a legacy Android XML screen to Jet
 6. Add interoperability (`ComposeView` or `AndroidView`) where full replacement is not immediate.
 7. Add Preview and UI tests to verify parity and reduce regression risk.
 8. Replace call sites and remove obsolete XML resources only when safe.
+9. For uncovered advanced cases, consult `https://github.com/android/skills` and adapt the guidance to this repository conventions.
 
 Reference source material from awesome-copilot is documented in `references/overview.md`.
 
