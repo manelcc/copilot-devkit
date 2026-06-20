@@ -20,3 +20,11 @@ flowchart TD
 - Patrón aplicable recomendado.
 - Patrón actual detectado en código.
 - Antipatrones detectados con remediación.
+
+## Mirrored source references
+- source-readme-map.md
+- behavioral-patterns.md
+- creational-patterns.md
+- structural-patterns.md
+- concurrency-patterns.md
+- swift-patterns.md

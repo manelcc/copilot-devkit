@@ -42,10 +42,19 @@ Aportar una metodología práctica para seleccionar patrones de diseño en Swift
 1. Clasificar el problema: creación, estructura, comportamiento, concurrencia o patrón Swift-específico.
 2. Evaluar 2-3 patrones candidatos con trade-offs y criterio de descarte.
 3. Identificar el patrón actualmente aplicado (si existe) y su grado de correcta implementación.
-4. Detectar antipatrones asociados y su riesgo (alto/medio/bajo).
+4. Detectar antipatrones asociados y su severidad (CRITICAL/HIGH/MEDIUM/LOW).
 5. Recomendar decisión final: mantener, ajustar o migrar de patrón.
 6. Proponer plan de implementación o refactor con pasos verificables.
 7. Definir checklist de validación (tests, acoplamiento, extensibilidad, thread-safety).
+
+### Per-file references
+- `references/source-readme-map.md`
+- `references/behavioral-patterns.md`
+- `references/creational-patterns.md`
+- `references/structural-patterns.md`
+- `references/concurrency-patterns.md`
+- `references/swift-patterns.md`
+- `references/anti-patterns.md`
 
 ### Pattern families covered
 - Creacionales: Singleton, Factory Method, Abstract Factory, Builder, Prototype, Lazy Initialization, Dependency Injection.
@@ -65,7 +74,7 @@ Aportar una metodología práctica para seleccionar patrones de diseño en Swift
 ## Expected outputs
 - Diagnóstico de patrón recomendado con razonamiento y trade-offs.
 - Identificación del patrón actual en el código (o ausencia de patrón claro).
-- Lista priorizada de antipatrones detectados con impacto.
+- Lista priorizada de antipatrones detectados con severidad e impacto.
 - Plan de implementación/refactor en pasos concretos.
 
 ## Validation
