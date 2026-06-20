@@ -37,7 +37,17 @@ Implementar features iOS con SwiftUI siguiendo prácticas modernas de arquitectu
 - Añadir pruebas asíncronas para flujos async/await.
 - Añadir UI tests para journeys críticos.
 
+7. Patrones de diseño (obligatorio):
+- Identificar patrón aplicable antes de implementar (idealmente comparando candidatos con trade-offs).
+- Declarar qué patrón quedó aplicado en la solución final.
+- Detectar antipatrones y proponer remediación priorizada cuando aparezcan.
+- Usar la skill `ios-patterns` para diagnóstico de patrón/antipatrón.
+
 ## Referencias oficiales
 - SwiftUI: https://developer.apple.com/documentation/swiftui
 - Swift Concurrency: https://developer.apple.com/documentation/swift/concurrency
 - XCTest: https://developer.apple.com/documentation/xctest
+
+## Referencias complementarias
+- swift-patterns-skill: https://github.com/efremidze/swift-patterns-skill
+- ios-patterns (repo actual): skills/ios/swiftui/ios-patterns/

@@ -13,6 +13,9 @@ tools:
   - edit/editFiles
   - runCommands
 handoffs:
+  - target: "ios-patterns"
+    when: "La tarea requiere decidir patrón de diseño, identificar patrón aplicado o detectar antipatrones"
+    context: "Objetivo funcional, fragmentos de código y restricciones de arquitectura/testabilidad"
   - target: "swiftui-patterns"
     when: "La tarea es crear o refactorizar una pantalla SwiftUI"
     context: "Requisitos de UI, estados y navegación esperada"
@@ -49,6 +52,7 @@ Coordinar el desarrollo de features SwiftUI con prácticas modernas de estado, n
 ## Skills consumidas
 | Skill | Cuándo la usa | Propósito |
 |---|---|---|
+| `ios-patterns` | Planning, diseño o revisión de implementación | Selección de patrón, detección de patrón aplicado y antipatrones |
 | `swiftui-patterns` | Feature o refactor UI SwiftUI | Estado, navegación, listas y task lifecycle |
 | `ios-swift-concurrency` | Async/await y tareas concurrentes | Concurrencia estructurada y actor isolation |
 | `swiftui-testing-xctest` | Validación y cobertura de calidad | Unit/UI tests con XCTest |

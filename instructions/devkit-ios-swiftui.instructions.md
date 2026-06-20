@@ -33,6 +33,12 @@ Implementar features iOS con SwiftUI usando arquitectura clara, concurrencia mod
 - Añadir pruebas asíncronas para flujos async/await.
 - Añadir UI tests para journeys críticos.
 
+7. Patrones de diseño (obligatorio en planning/implementación):
+- Antes de implementar, identificar patrón candidato aplicable (mínimo 1, ideal 2 candidatos con trade-off).
+- Durante revisión de implementación, indicar explícitamente qué patrón quedó aplicado.
+- Detectar y reportar antipatrones potenciales (si existen) con severidad y remediación.
+- Usar la skill `ios-patterns` para esta evaluación cuando la tarea lo requiera.
+
 ## Matriz de herramientas Swift/iOS a considerar
 - `MCP de Xcode (mcpbridge)`: preferido para operaciones de archivos Xcode, diagnósticos y documentación si el entorno dispone de Xcode 26.3+.
 - `XcodeBuildMCP`: preferido para build/test en simulador con salida estructurada si se dispone de Xcode 16+ y macOS 14.5+.
@@ -55,3 +61,4 @@ Implementar features iOS con SwiftUI usando arquitectura clara, concurrencia mod
 
 ## Referencia complementaria de skill
 - swift-patterns-skill: https://github.com/efremidze/swift-patterns-skill
+- ios-patterns (repo actual): skills/ios/swiftui/ios-patterns/
