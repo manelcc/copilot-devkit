@@ -39,10 +39,15 @@ applyTo: "**"
 
 If stack detection is ambiguous, ask the user before delegating.
 
-## 5. Global skills reference
+## 5. Quality routing policy (mandatory)
 
-Use these cross-stack skills when task type requires them:
+- Use `skills/global/devkit-clean-architecture-quality/` when the request is architecture quality, design boundaries, concurrency safety, security, reliability, or systemic technical risk.
+- Use `skills/global/devkit-clean-code-guardian/` when the request is readability/maintainability only (naming, SRP, function length, nesting, magic numbers).
+- If both apply, run `devkit-clean-architecture-quality` first and then `devkit-clean-code-guardian` for local refactor hygiene.
 
+## 6. Global skills reference
+
+- `skills/global/devkit-clean-architecture-quality/`
 - `skills/global/devkit-clean-code-guardian/`
 - `skills/global/devkit-feature-lifecycle/`
 - `skills/global/devkit-git-workflow/`

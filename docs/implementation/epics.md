@@ -133,7 +133,7 @@ flowchart TD
 | ID     | Descripción                                           | Prioridad |
 | ------ | ----------------------------------------------------- | --------- |
 | US-040 | Migrar skills iOS de `bankinter-devtools/skills/ios/` | P0        |
-| US-041 | Crear skill `swiftui-patterns`                        | P1        |
+| US-041 | Consolidar skill `ios-patterns` con subtipo SwiftUI      | P1        |
 | US-042 | Crear skill `uikit-patterns` (legacy iOS)             | P2        |
 | US-043 | Crear agente `ios-swiftui-expert`                     | P1        |
 | US-044 | Crear agente `ios-uikit-expert`                       | P2        |

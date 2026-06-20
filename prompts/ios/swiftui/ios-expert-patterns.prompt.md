@@ -2,7 +2,7 @@
 title: "iOS Expert Patterns Finder"
 description: "Encuentra el patrón de diseño adecuado para tu problema iOS/Swift"
 version: "1.0"
-agent: "ios-swiftui-expert"
+agent: "devkit-ios-swiftui-expert"
 ---
 
 Carga y aplica la skill `ios-patterns`.

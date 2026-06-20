@@ -28,17 +28,21 @@ Route Android work to the correct execution path based on project subtype.
 |---|---|---|
 | feature | `skills/android/compose/devkit-jetpack-compose-patterns` | `skills/android/legacy/devkit-xml-java-patterns` |
 | fix | `skills/android/compose/devkit-jetpack-compose-patterns` | `skills/android/legacy/devkit-xml-java-patterns` |
-| review | `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-code-guardian` |
+| review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
 | test | `skills/global/devkit-feature-lifecycle` | `skills/global/devkit-feature-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` | `skills/global/devkit-mr-description-generator` |
+
+## Quality routing policy
+- If review asks for architecture, concurrency, security, reliability or systemic risks -> run `devkit-clean-architecture-quality` first.
+- If review asks for readability, naming, SRP, long functions or nesting -> run `devkit-clean-code-guardian`.
+- If both apply -> run both in that order.
 
 ## Execution rules
 1. Detect subtype first.
 2. If subtype is ambiguous, ask the user before changing code.
-3. Prioritize stack-specific skill first, then global skills for workflow, review, and MR.
+3. Prioritize stack-specific skill first, then global skills for workflow/review/MR.
 4. Keep changes scoped to Android folders only.
-5. Golden rule: for all feasible Android operations, prioritize CLI-executable flows over IDE-only manual steps.
-6. If local Android skills are insufficient for the requested scenario, consult `https://github.com/android/skills` and adapt the guidance to repository conventions.
+5. For feasible Android operations, prioritize CLI-executable flows over IDE-only manual steps.
 
 ## Output format
 - Detected subtype

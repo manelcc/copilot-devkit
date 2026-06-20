@@ -2,7 +2,7 @@
 name: "devkit-backend-kotlin-project-orchestrator"
 description: >
   Orchestrates Kotlin backend tasks by detecting Ktor vs MCP specialization and
-  delegating to the correct Kotlin backend agent.
+  delegating to the correct Kotlin backend path.
 model: Claude Sonnet 4.6 (copilot)
 tools:
   - search
@@ -21,15 +21,12 @@ handoffs:
   - target: "devkit-devops"
     when: "CI/CD pipeline generation or deployment automation is requested"
     context: "Provider, registry, environment targets, and secret constraints"
-  - target: "devkit-kotlin-server-quality"
-    when: "Code quality audit is requested"
-    context: "Scope, changed files, and risk focus"
 ---
 
 # Devkit Backend Kotlin Project Orchestrator
 
 ## Mission
-Detect backend Kotlin subtype (Ktor standard vs MCP) and route to the correct backend expert agent.
+Detect backend Kotlin subtype (Ktor standard vs MCP) and route to the correct backend expert path.
 
 ## Detection rules
 - If `build.gradle.kts` includes `io.modelcontextprotocol` -> MCP subtype.
@@ -41,10 +38,15 @@ Detect backend Kotlin subtype (Ktor standard vs MCP) and route to the correct ba
 |---|---|---|
 | feature | `devkit-kotlin-mcp-expert` | `devkit-kotlin-expert-pattern` |
 | fix | `devkit-kotlin-mcp-expert` | `devkit-kotlin-expert-pattern` |
-| review | `devkit-kotlin-server-quality` | `devkit-kotlin-server-quality` |
+| review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
 | test | `skills/global/devkit-feature-lifecycle` | `skills/global/devkit-feature-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` | `skills/global/devkit-mr-description-generator` |
 | ci/cd | `devkit-devops` | `devkit-devops` |
+
+## Quality routing policy
+- Architecture/system risks -> `devkit-clean-architecture-quality` first.
+- Readability/SRP/style risks -> `devkit-clean-code-guardian`.
+- Mixed scope -> both, in that order.
 
 ## Execution rules
 1. Detect subtype first.

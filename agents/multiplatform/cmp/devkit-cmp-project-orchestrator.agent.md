@@ -29,9 +29,14 @@ Route Compose Multiplatform work based on current target set and UI module bound
 |---|---|
 | feature | `instructions/devkit-cmp.instructions.md` |
 | fix | `instructions/devkit-cmp.instructions.md` |
-| review | `skills/global/devkit-clean-code-guardian` |
+| review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
 | test | `skills/global/devkit-feature-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` |
+
+## Quality routing policy
+- Architecture/system risks -> `devkit-clean-architecture-quality` first.
+- Readability/SRP/style risks -> `devkit-clean-code-guardian`.
+- Mixed scope -> both, in that order.
 
 ## Execution rules
 1. Detect target matrix first.

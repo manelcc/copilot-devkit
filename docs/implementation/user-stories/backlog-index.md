@@ -139,7 +139,7 @@ Como contributor, quiero `devtools scaffold skill` y `devtools validate skill` c
 
 | US | Descripción | Épica |
 |---|---|---|
-| US-016 | Skills Android Compose avanzadas (Hilt, Testing) | EP-3 |
+| US-016 | Formulario para definir ciclo de vida de desarrollo y generar template | EP-8 |
 | US-017 | Skills e instrucciones iOS UIKit legacy | EP-5 |
 | US-018 | Skills Compose Multiplatform (CMP) | EP-6 |
 | US-019 | Skills backend Python FastAPI | EP-7 |
