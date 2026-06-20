@@ -2,7 +2,7 @@
 
 **Merge Request:** `feature/US-014-skills-kmp-agente-multiplatform` → `develop`
 
-**Status:** 🚧 IN PROGRESS (Commit 1/2)
+**Status:** ✅ READY FOR REVIEW (Commit 4 — Complete)
 
 **Autor:** Copilot Dev Agent  
 **Fecha:** 2026-06-20
@@ -11,17 +11,27 @@
 
 ## Resumen Ejecutivo
 
-Se han creado **skill, agente e instructions** para guiar el desarrollo de módulos Kotlin Multiplatform (KMP) compartidos. El repositorio ahora tiene capacidad de orientar a desarrolladores en:
+Se han creado **skill, agente e instructions** para KMP + CMP. El repositorio ahora tiene capacidad de orientar a desarrolladores en:
 
+**KMP (Business Logic):**
 - Estructura y patrones de módulos `commonMain`, `androidMain`, `iosMain`
 - Aplicación correcta de `expect/actual` declarations
 - Reglas de Clean Architecture aplicadas a multiplatform
 - Interoperabilidad iOS (@ObjCName, @Throws)
 - Testing standards (JUnit5 + MockK en commonTest)
 
+**CMP (UI Layer):**
+- State management (MVI-inspired, Flow/StateFlow reactive)
+- Type-safe navigation (sealed class Destination)
+- Theming strategies (CompositionLocal, Light/Dark mode)
+- Performance optimization (LazyList keys, memoization)
+- Platform interop (expect/actual for IME, safe areas)
+
 ---
 
 ## Criterios de Aceptación (CA) — Estado
+
+**KMP (Shared Business Logic):**
 
 | CA | Descripción | Estado |
 |----|----|--------|
@@ -29,10 +39,20 @@ Se han creado **skill, agente e instructions** para guiar el desarrollo de módu
 | 2 | Agente `agents/multiplatform/kmp/devkit-kmp-expert.agent.md` detecta scope y delega a android-compose-expert, ios-swiftui-expert | ✅ DONE |
 | 3 | Handoffs del agente referencian expertos de Android e iOS | ✅ DONE |
 | 4 | Archivo `instructions/kmp.instructions.md` existe con `applyTo: "multiplatform/**/*.kt"` | ✅ DONE |
-| 5 | Instructions incluyen reglas de expect/actual, naming, restricciones de deps | ✅ DONE |
+| 5 | Instructions incluyen reglas de expect/actual, naming, restricciones de deps, arquitectura limpia | ✅ DONE |
 | 6 | Skill pasa `./scripts/devkit-validate-skill.sh` con exit code 0 | ✅ DONE |
 | 7 | Skill tiene `references/overview.md` con diagrama Mermaid de módulo KMP | ✅ DONE |
-| 8 | `devtools scaffold skill kmp-shared-module-patterns multiplatform/kmp` crea estructura (future: CLI enhancement) | ⏳ PENDING (out of scope) |
+
+**CMP (UI Layer — NEW):**
+
+| CA | Descripción | Estado |
+|----|----|--------|
+| 8 | Skill `skills/multiplatform/cmp/cmp-ui-patterns/` cubre: state management, navigation, theming, performance | ✅ DONE |
+| 9 | Agente `agents/multiplatform/cmp/devkit-cmp-expert.agent.md` detecta UI pattern y delega a android-compose-expert, ios-swiftui-expert | ✅ DONE |
+| 10 | Archivo `instructions/cmp.instructions.md` existe con `applyTo: "multiplatform/**/*.kt"` | ✅ DONE |
+| 11 | Instructions incluyen reglas de state, navigation, theming, performance, iOS interop | ✅ DONE |
+| 12 | Skill CMP pasa validación pre-commit | ✅ DONE |
+| 13 | Skill tiene `references/overview.md` con diagramas Mermaid de estado, navegación, theming | ✅ DONE |
 
 ---
 
