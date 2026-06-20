@@ -1,3 +1,3 @@
-def main() -> None:
-    """CLI entrypoint placeholder for US-001."""
-    print("devtools CLI stub")
+from devtools.cli import main
+
+__all__ = ["main"]
