@@ -1,0 +1,3248 @@
+{
+  "catalog": "clean-code-python-rules",
+  "version": "1.0.0",
+  "schema": "clean-code-rule-v1",
+  "language": "python",
+  "rule_count": 105,
+  "rules": [
+    {
+      "id": "CC-PY-001",
+      "language": "python",
+      "category": "classes",
+      "severity": "high",
+      "title": "Clase con una sola responsabilidad (SRP)",
+      "description": "Una clase debe tener una, y solo una, razon para cambiar.",
+      "rationale": "Las clases con multiples responsabilidades aumentan el acoplamiento y son dificiles de mantener y probar. El tamano de una clase se mide por sus responsabilidades, no solo por lineas de codigo.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si la descripcion de la clase requiere conectores como 'y', 'o', o 'pero', probablemente tiene demasiadas responsabilidades."
+      },
+      "bad_example": "class UserHandler:\n    def save_to_db(self): pass\n    def send_email(self): pass\n    def format_report(self): pass",
+      "good_example": "class UserRepository:\n    def save(self): pass\n\nclass UserNotifier:\n    def send_email(self): pass",
+      "fix_strategy": [
+        "Identificar responsabilidades distintas en la clase",
+        "Extraer metodos no relacionados a nuevas clases especializadas"
+      ],
+      "tags": [
+        "srp",
+        "classes",
+        "cohesion"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 10: Classes",
+          "page": 136,
+          "rule_code": "CC-10"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-002",
+      "language": "python",
+      "category": "functions",
+      "severity": "high",
+      "title": "Funciones pequenas",
+      "description": "Las funciones deben ser muy pequenas, idealmente de menos de 20 lineas.",
+      "rationale": "Las funciones pequenas son mas faciles de leer, entender y probar. Cada funcion debe contar una parte clara de la historia del sistema.",
+      "detection": {
+        "type": "threshold",
+        "metric": "lines_per_function",
+        "operator": "<",
+        "value": 20,
+        "notes": "Si hay multiples niveles de indentacion, la funcion suele ser demasiado grande."
+      },
+      "bad_example": "def process_data(data):\n    # 50 lineas de logica mezclada\n    pass",
+      "good_example": "def process_data(data):\n    validated = validate(data)\n    return transform(validated)",
+      "fix_strategy": [
+        "Extraer bloques logicos internos a funciones independientes con nombres descriptivos"
+      ],
+      "tags": [
+        "functions",
+        "size",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 34,
+          "rule_code": "G34"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-003",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Nombres que revelan la intencion",
+      "description": "El nombre de una variable, funcion o clase debe responder por que existe, que hace y como se usa.",
+      "rationale": "Un buen nombre ahorra tiempo de lectura y evita la necesidad de comentarios explicativos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar variables de una sola letra (excepto en loops cortos) o nombres genericos como 'data' o 'info'."
+      },
+      "bad_example": "d = 86400  # segundos en un dia",
+      "good_example": "SECONDS_IN_A_DAY = 86400",
+      "fix_strategy": [
+        "Renombrar basandose en el concepto del dominio que representan",
+        "Eliminar comentarios que solo explican el nombre de la variable"
+      ],
+      "tags": [
+        "naming",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 18,
+          "rule_code": "N1"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-004",
+      "language": "python",
+      "category": "functions",
+      "severity": "high",
+      "title": "Las funciones deben hacer una sola cosa",
+      "description": "Una funcion solo debe realizar los pasos que se encuentran un nivel por debajo de su nombre.",
+      "rationale": "Las funciones que hacen una sola cosa son mas reutilizables y faciles de razonar.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si puedes extraer otra funcion con un nombre que no sea una simple repeticion, la funcion original hace mas de una cosa."
+      },
+      "bad_example": "def setup_page():\n    check_auth()\n    load_settings()\n    render_html()",
+      "good_example": "def setup_auth(): pass\ndef load_page_data(): pass",
+      "fix_strategy": [
+        "Dividir la funcion en sub-pasos logicos"
+      ],
+      "tags": [
+        "functions",
+        "abstraction",
+        "srp"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 35,
+          "rule_code": "G30"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-005",
+      "language": "python",
+      "category": "general",
+      "severity": "high",
+      "title": "No te repitas (DRY)",
+      "description": "Cada pieza de conocimiento debe tener una representacion unica y autoritaria dentro del sistema.",
+      "rationale": "La duplicacion es la raiz de muchos males en el software; aumenta el esfuerzo de mantenimiento y el riesgo de errores.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques de codigo identicos o algoritmos muy similares en diferentes partes del proyecto."
+      },
+      "bad_example": "# Validacion de email en dos archivos distintos\nif '@' not in email: raise ValueError()",
+      "good_example": "def validate_email(email):\n    if '@' not in email: raise ValueError()",
+      "fix_strategy": [
+        "Extraer el codigo comun a una funcion o clase base",
+        "Usar decoradores o mixins para logica compartida en Python"
+      ],
+      "tags": [
+        "dry",
+        "duplication",
+        "maintenance"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 48,
+          "rule_code": "G5"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-006",
+      "language": "python",
+      "category": "comments",
+      "severity": "medium",
+      "title": "No comentes codigo malo, reescribelo",
+      "description": "Los comentarios no compensan el codigo deficiente.",
+      "rationale": "El codigo debe ser autodescriptivo. Los comentarios tienden a mentir con el tiempo porque no siempre se actualizan con el codigo.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones con bloques extensos de comentarios explicando 'que' hace el codigo en lugar de 'por que'."
+      },
+      "bad_example": "# Verificar si el empleado es elegible para beneficios\nif e.flags & 0x01 and e.age > 65:",
+      "good_example": "if employee.is_eligible_for_full_benefits():",
+      "fix_strategy": [
+        "Refactorizar la logica en funciones o variables con nombres claros",
+        "Eliminar el comentario tras la refactorizacion"
+      ],
+      "tags": [
+        "comments",
+        "readability",
+        "refactoring"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 4: Comments",
+          "page": 55,
+          "rule_code": "C4"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-007",
+      "language": "python",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Numero ideal de argumentos",
+      "description": "El numero ideal de argumentos para una funcion es cero. Despues uno, y luego dos. Tres debe evitarse.",
+      "rationale": "Los argumentos dificultan la comprension y complican las pruebas unitarias exponencialmente.",
+      "detection": {
+        "type": "threshold",
+        "metric": "parameter_count",
+        "operator": "<=",
+        "value": 2,
+        "notes": "Contar parametros en la definicion de la funcion."
+      },
+      "bad_example": "def make_circle(x, y, radius, color, border_width): pass",
+      "good_example": "def make_circle(center_point, radius, style): pass",
+      "fix_strategy": [
+        "Agrupar parametros relacionados en objetos, diccionarios o dataclasses",
+        "Convertir la funcion en un metodo de un objeto"
+      ],
+      "tags": [
+        "functions",
+        "complexity",
+        "testing"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 40,
+          "rule_code": "F1"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-008",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "No devolver None para indicar errores",
+      "description": "Evita devolver None para indicar errores. Lanza una excepcion en su lugar.",
+      "rationale": "Devolver None obliga al llamador a llenar el codigo de comprobaciones 'if x is not None', lo cual ensucia el flujo principal.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Funciones que retornan None en bloques de excepcion o casos de error."
+      },
+      "bad_example": "def get_user(id):\n    if not exists: return None",
+      "good_example": "def get_user(id):\n    if not exists: raise UserNotFoundError()",
+      "fix_strategy": [
+        "Lanzar excepciones personalizadas",
+        "Usar el patron Special Case (objeto vacio) si aplica"
+      ],
+      "tags": [
+        "error-handling",
+        "exceptions"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 7: Error Handling",
+          "page": 110,
+          "rule_code": "G26"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-009",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Distancia vertical minima",
+      "description": "Los conceptos estrechamente relacionados deben mantenerse verticalmente cerca unos de otros.",
+      "rationale": "Evita que el lector tenga que desplazarse constantemente por el archivo para encontrar definiciones de variables o funciones llamadas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Variables declaradas al inicio de funciones largas que se usan mucho despues."
+      },
+      "bad_example": "x = 10\n# ... 30 lineas de codigo ...\nprint(x)",
+      "good_example": "# ... 30 lineas de codigo ...\nx = 10\nprint(x)",
+      "fix_strategy": [
+        "Declarar variables justo antes de su primer uso",
+        "Colocar funciones privadas justo debajo de la funcion publica que las invoca"
+      ],
+      "tags": [
+        "formatting",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 80,
+          "rule_code": "G10"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-010",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Reemplazar numeros magicos por constantes",
+      "description": "No usar literales numericos o cadenas directamente en la logica del codigo.",
+      "rationale": "Las constantes con nombre dan contexto y facilitan cambios globales sin buscar y reemplazar.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar numeros como 3600, 5280 o cadenas especificas repetidas."
+      },
+      "bad_example": "if user.status == 4: pass",
+      "good_example": "STATUS_ACTIVE = 4\nif user.status == STATUS_ACTIVE: pass",
+      "fix_strategy": [
+        "Definir constantes al inicio del modulo o en un archivo de configuracion",
+        "Usar Enums de Python para conjuntos de valores relacionados"
+      ],
+      "tags": [
+        "magic-numbers",
+        "naming"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 300,
+          "rule_code": "G25"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-011",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Clases sustantivos, Metodos verbos",
+      "description": "Los nombres de las clases deben ser sustantivos. Los metodos deben ser verbos o frases verbales.",
+      "rationale": "Las clases representan objetos (entidades) y los metodos representan las acciones que esos objetos realizan.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar clases con nombres de verbos como 'Calculate' o metodos con nombres de sustantivos como 'data'."
+      },
+      "bad_example": "class DataProcessor:\n    def report(self): pass",
+      "good_example": "class ReportGenerator:\n    def create_report(self): pass",
+      "fix_strategy": [
+        "Renombrar siguiendo la convencion Noun/Verb"
+      ],
+      "tags": [
+        "naming",
+        "conventions"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 25,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-012",
+      "language": "python",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Separacion de Comando y Consulta (CQS)",
+      "description": "Las funciones deben hacer algo o responder algo, pero no ambos.",
+      "rationale": "Evita efectos secundarios inesperados cuando el usuario solo espera obtener informacion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar funciones que devuelven un valor util PERO tambien modifican el estado del objeto."
+      },
+      "bad_example": "def set_attribute(self, attr, value):\n    # cambia el valor y devuelve True/False si tuvo exito\n    pass",
+      "good_example": "def attribute_exists(self, attr): pass\ndef set_attribute(self, attr, value): pass",
+      "fix_strategy": [
+        "Dividir la funcion en una accion (void) y una consulta pura"
+      ],
+      "tags": [
+        "functions",
+        "cqs"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 45,
+          "rule_code": "CC-03"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-013",
+      "language": "python",
+      "category": "comments",
+      "severity": "low",
+      "title": "Eliminar codigo comentado",
+      "description": "No dejes codigo comentado en tus archivos fuente. Borralo de inmediato.",
+      "rationale": "El codigo comentado confunde al lector y genera dudas sobre su relevancia. Git mantiene el historial si alguna vez se necesita recuperar.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Bloques de codigo dentro de simbolos de comentario (#)."
+      },
+      "bad_example": "# def old_function():\n#     print('legacy')",
+      "good_example": "(Archivo limpio de codigo muerto)",
+      "fix_strategy": [
+        "Borrar el codigo comentado; el historial de git lo preserva"
+      ],
+      "tags": [
+        "comments",
+        "clutter"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 4: Comments",
+          "page": 68,
+          "rule_code": "C5"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-014",
+      "language": "python",
+      "category": "classes",
+      "severity": "high",
+      "title": "Ley de Demeter",
+      "description": "Un metodo de una clase solo debe llamar a metodos de su propia clase, de objetos creados por el mismo, o de objetos pasados como argumentos.",
+      "rationale": "Previene el acoplamiento excesivo entre estructuras de datos lejanas ('train wrecks').",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar cadenas largas de puntos como 'a.get_b().get_c().do_something()'."
+      },
+      "bad_example": "output_dir = ctxt.options.scratch_dir.absolute_path",
+      "good_example": "output_dir = ctxt.get_scratch_path()",
+      "fix_strategy": [
+        "Aplicar 'Dime, no preguntes' (Tell, Don't Ask)",
+        "Delegar la responsabilidad al objeto colaborador inmediato"
+      ],
+      "tags": [
+        "coupling",
+        "demeter",
+        "classes"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 6: Objects and Data Structures",
+          "page": 97,
+          "rule_code": "G36"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-015",
+      "language": "python",
+      "category": "general",
+      "severity": "high",
+      "title": "Regla del Boy Scout",
+      "description": "Deja el codigo un poco mas limpio de como lo encontraste.",
+      "rationale": "Fomenta la mejora continua y evita la degradacion gradual del software (code rot).",
+      "detection": {
+        "type": "semantic",
+        "notes": "Observar si tras un commit de una nueva funcionalidad, el codigo circundante tambien mejoro en estilo."
+      },
+      "bad_example": "Anadir una linea a una funcion desordenada sin tocar nada mas.",
+      "good_example": "Anadir la linea y aprovechar para renombrar una variable confusa en la misma funcion.",
+      "fix_strategy": [
+        "Realizar pequenas refactorizaciones constantes en cada tarea"
+      ],
+      "tags": [
+        "professionalism",
+        "clean-code"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 1: Clean Code",
+          "page": 14,
+          "rule_code": "CC-01"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-016",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Uso de una palabra por concepto",
+      "description": "Elige una palabra para cada concepto abstracto y mantente fiel a ella.",
+      "rationale": "Evita confusiones (ej. cual es la diferencia entre fetch, retrieve y get?).",
+      "detection": {
+        "type": "semantic",
+        "notes": "Diferentes clases usando verbos distintos para la misma accion (ej. DeviceManager.get vs UserStore.fetch)."
+      },
+      "bad_example": "UserStore.fetch(), OrderManager.get(), ImageDownloader.retrieve()",
+      "good_example": "UserStore.get(), OrderManager.get(), ImageDownloader.get()",
+      "fix_strategy": [
+        "Estandarizar el lexico tecnico del proyecto"
+      ],
+      "tags": [
+        "naming",
+        "consistency"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 26,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-017",
+      "language": "python",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Evitar argumentos de bandera (Flags)",
+      "description": "No pases booleanos a una funcion para cambiar su comportamiento.",
+      "rationale": "Llamar a una funcion con un booleano indica que la funcion hace mas de una cosa.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Funciones que reciben True/False para alternar entre dos logicas internas."
+      },
+      "bad_example": "def render(is_suite: bool): pass",
+      "good_example": "def render_for_suite(): pass\ndef render_for_single_test(): pass",
+      "fix_strategy": [
+        "Dividir la funcion en dos funciones independientes",
+        "Usar polimorfismo si aplica"
+      ],
+      "tags": [
+        "functions",
+        "clean-code"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 41,
+          "rule_code": "F3"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-018",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "Manejo de errores es una sola cosa",
+      "description": "Una funcion que maneja errores no debe hacer nada mas.",
+      "rationale": "Mantiene la estructura del codigo limpia y separa la logica principal del manejo de fallos.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones con bloques try-except extensos mezclados con mucha logica de negocio."
+      },
+      "bad_example": "def save():\n    try:\n        # 20 lineas de logica\n    except Exception: # manejo",
+      "good_example": "def save():\n    try:\n        do_save()\n    except Exception as e:\n        handle_error(e)",
+      "fix_strategy": [
+        "Extraer el cuerpo del bloque try a una funcion propia"
+      ],
+      "tags": [
+        "error-handling",
+        "abstraction"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 46,
+          "rule_code": "CC-03"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-019",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Encapsular condicionales complejas",
+      "description": "Extrae la logica de los condicionales complejos a funciones con nombres significativos.",
+      "rationale": "Los condicionales con multiples operadores logicos son dificiles de leer y entender.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Bloques 'if' con mas de dos operadores (and, or, not)."
+      },
+      "bad_example": "if timer.has_expired() and not timer.is_recurrent(): pass",
+      "good_example": "if should_be_deleted(timer): pass",
+      "fix_strategy": [
+        "Extraer la expresion booleana a una variable o funcion privada"
+      ],
+      "tags": [
+        "readability",
+        "logic"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 301,
+          "rule_code": "G28"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-020",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Usar nombres buscables",
+      "description": "Evita nombres de una sola letra para variables globales o de instancia.",
+      "rationale": "Los nombres cortos (como 'e') son imposibles de encontrar en una busqueda global del proyecto.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Variables de una sola letra fuera de contextos muy limitados como comprensiones de listas o loops 'for i in range'."
+      },
+      "bad_example": "x = 7  # dias",
+      "good_example": "DAYS_PER_WEEK = 7",
+      "fix_strategy": [
+        "Usar nombres mnemonicos largos para ambitos amplios"
+      ],
+      "tags": [
+        "naming",
+        "searchability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 22,
+          "rule_code": "N5"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-021",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Apertura vertical entre conceptos",
+      "description": "Usa lineas en blanco para separar pensamientos completos.",
+      "rationale": "Mejora la legibilidad visual permitiendo al ojo identificar grupos logicos de codigo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Funciones o clases pegadas sin espacio vertical."
+      },
+      "bad_example": "import os\nclass A: pass\ndef b(): pass",
+      "good_example": "import os\n\nclass A:\n    pass\n\ndef b():\n    pass",
+      "fix_strategy": [
+        "Seguir PEP 8: dos lineas entre clases/funciones de nivel superior, una linea entre metodos"
+      ],
+      "tags": [
+        "formatting",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 78,
+          "rule_code": "CC-05"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-022",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Elegir nombres al nivel de abstraccion correcto",
+      "description": "No elijas nombres que comuniquen la implementacion interna.",
+      "rationale": "Los nombres deben reflejar el nivel de abstraccion del contrato, no del detalle tecnico.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Interfaces o clases base que mencionan 'Sql', 'Csv' o detalles tecnicos en lugar de conceptos de negocio."
+      },
+      "bad_example": "def send_to_postgres_db(self): pass",
+      "good_example": "def save_data(self): pass",
+      "fix_strategy": [
+        "Renombrar basandose en la intencion general"
+      ],
+      "tags": [
+        "naming",
+        "abstraction"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 311,
+          "rule_code": "N2"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-023",
+      "language": "python",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Alta cohesion",
+      "description": "Las clases deben tener un numero pequeno de variables de instancia manipuladas por sus metodos.",
+      "rationale": "Una clase maxima cohesiva es aquella donde cada variable es usada por cada metodo.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si un grupo de metodos solo usa un subconjunto de variables de la clase, hay una clase oculta pidiendo salir."
+      },
+      "bad_example": "Clase con 10 variables donde 3 metodos usan solo las primeras 2.",
+      "good_example": "Dividir en dos clases mas pequenas y cohesivas.",
+      "fix_strategy": [
+        "Separar variables y metodos en nuevas clases cuando la cohesion baje"
+      ],
+      "tags": [
+        "cohesion",
+        "classes",
+        "refactoring"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 10: Classes",
+          "page": 140,
+          "rule_code": "G8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-024",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar condicionales negativos",
+      "description": "Los positivos son mas faciles de entender que los negativos.",
+      "rationale": "Reduce la carga cognitiva de procesar una doble negacion.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'if not is_not_ready' o nombres de variables con prefijos negativos."
+      },
+      "bad_example": "if not buffer.should_not_compact(): pass",
+      "good_example": "if buffer.should_compact(): pass",
+      "fix_strategy": [
+        "Invertir la logica para usar expresiones afirmativas"
+      ],
+      "tags": [
+        "logic",
+        "clean-code"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 302,
+          "rule_code": "G29"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-025",
+      "language": "python",
+      "category": "tests",
+      "severity": "high",
+      "title": "Las Tres Leyes de TDD",
+      "description": "No escribir codigo de produccion sin una prueba que falle primero.",
+      "rationale": "Asegura cobertura, mejora el diseno (testability) y reduce el miedo al cambio.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar si existe codigo de produccion sin su correspondiente prueba unitaria previa."
+      },
+      "bad_example": "Programar la logica completa y anadir tests al final.",
+      "good_example": "Ciclos de 30 segundos entre escribir un test que falla y el codigo que lo pasa.",
+      "fix_strategy": [
+        "Adoptar el ciclo Rojo-Verde-Refactor"
+      ],
+      "tags": [
+        "tdd",
+        "unit-tests",
+        "quality"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 9: Unit Tests",
+          "page": 122,
+          "rule_code": "T1"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-026",
+      "language": "python",
+      "category": "general",
+      "severity": "high",
+      "title": "Hacer explicito el acoplamiento temporal",
+      "description": "Si el orden de las llamadas importa, la estructura debe forzarlo.",
+      "rationale": "Evita errores de estado inconsistente al llamar funciones fuera de orden.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones que deben llamarse secuencialmente sin que sus argumentos o retornos lo indiquen."
+      },
+      "bad_example": "init(); process(); close();",
+      "good_example": "data = init(); processed = process(data); close(processed)",
+      "fix_strategy": [
+        "Usar los resultados de una funcion como parametros obligatorios de la siguiente"
+      ],
+      "tags": [
+        "coupling",
+        "logic"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 302,
+          "rule_code": "G31"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-027",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Usar nombres pronunciables",
+      "description": "Si no puedes pronunciar un nombre, no puedes discutirlo.",
+      "rationale": "La programacion es una actividad social; los nombres claros facilitan la comunicacion en el equipo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Abreviaturas cripticas como 'genymdhms' en lugar de 'generation_timestamp'."
+      },
+      "bad_example": "var modymdhms = date.now()",
+      "good_example": "modification_timestamp = date.now()",
+      "fix_strategy": [
+        "Sustituir abreviaturas por palabras completas"
+      ],
+      "tags": [
+        "naming",
+        "social"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 21,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-028",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Seguir la Metafora del Periodico",
+      "description": "El archivo debe leerse de arriba abajo, de lo general a lo detallado.",
+      "rationale": "Permite al lector captar la esencia rapidamente antes de entrar en detalles tecnicos.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones privadas al inicio del archivo y logica principal al final."
+      },
+      "bad_example": "Funciones de utilidad arriba, main abajo.",
+      "good_example": "Main/Logica principal arriba, detalles de implementacion al final.",
+      "fix_strategy": [
+        "Reordenar funciones en el archivo"
+      ],
+      "tags": [
+        "formatting",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 77,
+          "rule_code": "CC-05"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-029",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "No silenciar errores (Except vacio)",
+      "description": "Nunca dejes un bloque 'except' vacio.",
+      "rationale": "Ocultar errores hace que la depuracion sea imposible y deja el sistema en un estado impredecible.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Bloques 'except:' o 'except Exception: pass' sin logs ni logica."
+      },
+      "bad_example": "try: action()\nexcept: pass",
+      "good_example": "try: action()\nexcept ActionError as e: logger.error(e); raise",
+      "fix_strategy": [
+        "Anadir registro de error o relanzar la excepcion"
+      ],
+      "tags": [
+        "error-handling",
+        "safety"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 13: Concurrency",
+          "page": 187,
+          "rule_code": "G3"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-030",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar variables explicativas",
+      "description": "Divide calculos complejos en valores intermedios con nombres significativos.",
+      "rationale": "Hace que el codigo se explique por si mismo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Expresiones matematicas o booleanas largas en una sola linea."
+      },
+      "bad_example": "if data.split(',') == 'ADMIN': pass",
+      "good_example": "is_admin = data.split(',') == 'ADMIN'\nif is_admin: pass",
+      "fix_strategy": [
+        "Extraer partes de la expresion a constantes locales descriptivas"
+      ],
+      "tags": [
+        "readability",
+        "refactoring"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 296,
+          "rule_code": "G19"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-031",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Evitar nombres enganosos (Disinformation)",
+      "description": "Evita palabras que tengan significados tecnicos distintos en el entorno de programacion.",
+      "rationale": "No llames a una coleccion 'account_list' si no es realmente una lista de Python; usa 'account_group'.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Nombres que incluyen el tipo de dato de forma incorrecta o ambigua."
+      },
+      "bad_example": "hp = calculate_hypotenuse()  # hp suele ser 'Hewlett-Packard' o 'puntos de vida'",
+      "good_example": "hypotenuse = calculate_hypotenuse()",
+      "fix_strategy": [
+        "Usar terminos claros y evitar siglas tecnicas sobrecargadas"
+      ],
+      "tags": [
+        "naming",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 19,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-032",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Ser preciso en las decisiones de diseno",
+      "description": "Toma decisiones precisas sobre como manejar nulos, moneda y concurrencia.",
+      "rationale": "La ambiguedad es el origen de la mayoria de los bugs.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Uso de floats para dinero o ignorar casos de multiples resultados en una busqueda unica."
+      },
+      "bad_example": "price = 10.99  # Usar float para dinero",
+      "good_example": "price = Decimal('10.99')",
+      "fix_strategy": [
+        "Validar todas las condiciones de borde de forma estricta"
+      ],
+      "tags": [
+        "logic",
+        "professionalism"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 301,
+          "rule_code": "G26"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-033",
+      "language": "python",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Ocultar estructura interna",
+      "description": "Los objetos no deben exponer su estructura interna a traves de getters encadenados.",
+      "rationale": "Mantener la implementacion oculta permite cambiarla sin romper a los clientes.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Exceso de propiedades publicas o metodos que solo devuelven atributos internos."
+      },
+      "bad_example": "path = ctxt.get_options().get_dir().get_path()",
+      "good_example": "path = ctxt.create_scratch_file()",
+      "fix_strategy": [
+        "Crear metodos que realicen la accion deseada en lugar de pedir los datos"
+      ],
+      "tags": [
+        "encapsulation",
+        "classes"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 6: Objects and Data Structures",
+          "page": 99,
+          "rule_code": "CC-06"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-034",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Un solo nivel de abstraccion por funcion",
+      "description": "No mezcles detalles tecnicos con conceptos de alto nivel en la misma funcion.",
+      "rationale": "La mezcla de niveles confunde al lector sobre que es esencial y que es un detalle.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Llamadas a servicios de alto nivel mezcladas con manipulaciones de strings de bajo nivel o I/O manual."
+      },
+      "bad_example": "def render():\n    header = build_header()\n    print('<html>' + header + '</html>')",
+      "good_example": "def render():\n    header = build_header()\n    render_body(header)",
+      "fix_strategy": [
+        "Extraer detalles de bajo nivel a funciones auxiliares"
+      ],
+      "tags": [
+        "abstraction",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 36,
+          "rule_code": "G34"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-035",
+      "language": "python",
+      "category": "tests",
+      "severity": "medium",
+      "title": "Reglas F.I.R.S.T. para pruebas",
+      "description": "Las pruebas deben ser Rapidas, Independientes, Repetibles, Autovalidables y Oportunas.",
+      "rationale": "Si las pruebas son lentas o fragiles, los desarrolladores dejaran de ejecutarlas.",
+      "detection": {
+        "type": "threshold",
+        "metric": "test_execution_time_ms",
+        "operator": "<",
+        "value": 200,
+        "notes": "Medir tiempo de ejecucion y dependencias entre tests."
+      },
+      "bad_example": "Pruebas que requieren conexion a DB real o internet.",
+      "good_example": "Pruebas unitarias con mocks que corren en milisegundos.",
+      "fix_strategy": [
+        "Eliminar dependencias externas mediante mocks o stubs"
+      ],
+      "tags": [
+        "unit-tests",
+        "quality"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 9: Unit Tests",
+          "page": 132,
+          "rule_code": "T9"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-036",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar el mapeo mental",
+      "description": "Los lectores no deberian tener que traducir mentalmente tus nombres.",
+      "rationale": "La claridad es reina; el codigo profesional es el que otros entienden sin esfuerzo.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Uso de 'r' para 'url' o 'idx' en ambitos demasiado grandes."
+      },
+      "bad_example": "for r in list_of_urls: pass",
+      "good_example": "for url in list_of_urls: pass",
+      "fix_strategy": [
+        "Usar nombres explicitos y descriptivos"
+      ],
+      "tags": [
+        "naming",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 25,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-037",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "Escribe el Try-Except-Finally primero",
+      "description": "Define el alcance de la excepcion antes de programar la logica.",
+      "rationale": "Ayuda a mantener el estado consistente del programa independientemente de lo que pase en el bloque try.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Logica compleja escrita sin contemplar fallos desde el inicio."
+      },
+      "bad_example": "Escribir 20 lineas de I/O y luego envolverlas en un try general.",
+      "good_example": "Definir el try-except con un test que fuerce el error primero.",
+      "fix_strategy": [
+        "Usar TDD para definir el comportamiento ante fallos"
+      ],
+      "tags": [
+        "error-handling",
+        "tdd"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 7: Error Handling",
+          "page": 105,
+          "rule_code": "CC-07"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-038",
+      "language": "python",
+      "category": "general",
+      "severity": "high",
+      "title": "Preferir polimorfismo a if-elif-else por tipo",
+      "description": "Usa objetos polimorficos en lugar de estructuras if/else ramificadas por tipo.",
+      "rationale": "Evita violar el principio Abierto/Cerrado (OCP) cada vez que se anade un nuevo tipo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques if-elif-else que comprueben el atributo 'type' de un objeto."
+      },
+      "bad_example": "if emp.type == 'HOURLY': pay_hourly()",
+      "good_example": "emp.calculate_pay()",
+      "fix_strategy": [
+        "Implementar el patron Factory y usar herencia/protocolos"
+      ],
+      "tags": [
+        "polymorphism",
+        "ocp",
+        "srp"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 299,
+          "rule_code": "G23"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-039",
+      "language": "python",
+      "category": "concurrency",
+      "severity": "high",
+      "title": "Separar el codigo de concurrencia",
+      "description": "El codigo relacionado con hilos/asincronia debe estar separado del resto del codigo.",
+      "rationale": "La concurrencia tiene su propio ciclo de vida y desafios de depuracion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Logica de dominio mezclada con bloqueos (locks) o colas de tareas."
+      },
+      "bad_example": "Un servicio de base de datos que tambien gestiona hilos de ejecucion.",
+      "good_example": "Clases POPO (Plain Old Python Objects) llamadas por un gestor de concurrencia.",
+      "fix_strategy": [
+        "Seguir el SRP para la concurrencia"
+      ],
+      "tags": [
+        "concurrency",
+        "srp"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 13: Concurrency",
+          "page": 181,
+          "rule_code": "CC-13"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-040",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Evitar prefijos de miembros",
+      "description": "No uses prefijos como 'm_' para variables de clase.",
+      "rationale": "En lenguajes modernos y con IDEs actuales, los prefijos son ruido visual innecesario.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar variables como 'm_name' o 'f_title'."
+      },
+      "bad_example": "self.m_description = '...'",
+      "good_example": "self.description = '...'",
+      "fix_strategy": [
+        "Eliminar el prefijo redundante"
+      ],
+      "tags": [
+        "naming",
+        "cleanliness"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 24,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-041",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Densidad vertical",
+      "description": "Lineas de codigo estrechamente relacionadas deben aparecer verticalmente juntas.",
+      "rationale": "La cercania fisica implica asociacion logica.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Comentarios inutiles separando variables de instancia."
+      },
+      "bad_example": "self.name = n\n# el id\nself.id = i",
+      "good_example": "self.name = n\nself.id = i",
+      "fix_strategy": [
+        "Eliminar comentarios o lineas en blanco que rompan grupos de atributos relacionados"
+      ],
+      "tags": [
+        "formatting",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 79,
+          "rule_code": "CC-05"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-042",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Entender el algoritmo",
+      "description": "No consideres una tarea terminada hasta que entiendas perfectamente por que el codigo funciona.",
+      "rationale": "Pasar los tests por ensayo y error no garantiza la correccion logica del sistema.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones llenas de parches y 'ifs' de ultimo minuto para casos especiales no previstos."
+      },
+      "bad_example": "Codigo que funciona solo tras anadir un '+1' aleatorio.",
+      "good_example": "Refactorizar hasta que la solucion sea tan simple que su correccion sea obvia.",
+      "fix_strategy": [
+        "Reescribir la funcion desde cero una vez encontrada la solucion real"
+      ],
+      "tags": [
+        "logic",
+        "professionalism"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 297,
+          "rule_code": "G21"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-043",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar nombres ambiguos entre conceptos similares",
+      "description": "Los nombres deben ser precisos y no significar cosas distintas en contextos similares.",
+      "rationale": "Previene errores al llamar a funciones que parecen iguales pero no lo son.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Pares como 'get_active_account' vs 'get_active_account_info'."
+      },
+      "bad_example": "data = get_user()  # data es ambiguo",
+      "good_example": "user_profile = get_user()",
+      "fix_strategy": [
+        "Anadir contexto o precision al nombre"
+      ],
+      "tags": [
+        "naming",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 20,
+          "rule_code": "N4"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-044",
+      "language": "python",
+      "category": "tests",
+      "severity": "low",
+      "title": "Un solo concepto por prueba",
+      "description": "Cada funcion de prueba debe llegar a una unica conclusion clara.",
+      "rationale": "Facilita la identificacion rapida de que fallo exactamente.",
+      "detection": {
+        "type": "threshold",
+        "metric": "assert_count_per_test",
+        "operator": "<=",
+        "value": 1,
+        "notes": "Contar sentencias assert en metodos de test."
+      },
+      "bad_example": "def test_all(): assert a; assert b; assert c",
+      "good_example": "def test_name(): assert a\ndef test_id(): assert b",
+      "fix_strategy": [
+        "Dividir el test en multiples pruebas conceptuales"
+      ],
+      "tags": [
+        "unit-tests",
+        "cleanliness"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 9: Unit Tests",
+          "page": 130,
+          "rule_code": "CC-09"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-045",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Configuracion en niveles altos",
+      "description": "Mantén los datos configurables en niveles de abstraccion altos.",
+      "rationale": "Facilita el cambio de parametros del sistema sin bucear en funciones de bajo nivel.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Constantes como puertos o URLs de API en medio de funciones de procesamiento."
+      },
+      "bad_example": "def call_api(): url = 'https://api.v1'...",
+      "good_example": "class Config:\n    API_URL = '...'",
+      "fix_strategy": [
+        "Pasar configuraciones como argumentos a las funciones de bajo nivel"
+      ],
+      "tags": [
+        "general",
+        "maintenance"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 306,
+          "rule_code": "G35"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-046",
+      "language": "python",
+      "category": "general",
+      "severity": "high",
+      "title": "Inversion de Dependencias (DIP)",
+      "description": "Las clases deben depender de abstracciones, no de detalles concretos.",
+      "rationale": "Permite intercambiar implementaciones (mocks para tests) y desacopla el sistema.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Instanciacion manual de servicios pesados dentro del constructor de una clase."
+      },
+      "bad_example": "def __init__(self): self.db = PostgresDB()",
+      "good_example": "def __init__(self, db_interface): self.db = db_interface",
+      "fix_strategy": [
+        "Usar inyeccion de dependencias en el constructor"
+      ],
+      "tags": [
+        "solid",
+        "dip",
+        "architecture"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 10: Classes",
+          "page": 150,
+          "rule_code": "CC-10"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-047",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Encapsular condiciones de borde",
+      "description": "No dejes calculos de indices o limites esparcidos; dales un nombre.",
+      "rationale": "Evita errores de off-by-one y mejora la legibilidad.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Presencia frecuente de '+ 1' o '- 1' en condicionales."
+      },
+      "bad_example": "if level + 1 < tags.length: pass",
+      "good_example": "next_level = level + 1\nif next_level < tags.length: pass",
+      "fix_strategy": [
+        "Extraer el calculo a una variable descriptiva"
+      ],
+      "tags": [
+        "logic",
+        "boundary-conditions"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 304,
+          "rule_code": "G33"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-048",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Formato de equipo",
+      "description": "Sigue las reglas del equipo, no las personales.",
+      "rationale": "La consistencia en todo el proyecto es mas importante que el estilo individual de cada programador.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Archivos en el mismo proyecto con diferentes estilos de indentacion o llaves."
+      },
+      "bad_example": "Usar tabs en un proyecto que usa espacios.",
+      "good_example": "Configurar el linter (Ruff/Flake8) para todo el equipo.",
+      "fix_strategy": [
+        "Acordar un estandar y usar herramientas automaticas (Black/Ruff)"
+      ],
+      "tags": [
+        "formatting",
+        "teamwork"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 90,
+          "rule_code": "CC-05"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-049",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "No ser arbitrario en la estructura",
+      "description": "Ten una razon para la forma en que estructuras el codigo.",
+      "rationale": "Si la estructura parece aleatoria, otros se sentiran con derecho a cambiarla caprichosamente.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Clases publicas anidadas sin necesidad o funciones en modulos incorrectos."
+      },
+      "bad_example": "Una funcion de red dentro de un modulo de utilidades de strings.",
+      "good_example": "Modulos bien definidos por responsabilidad.",
+      "fix_strategy": [
+        "Mover el codigo al lugar donde un lector lo esperaria encontrar"
+      ],
+      "tags": [
+        "structure",
+        "logic"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 303,
+          "rule_code": "G32"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-050",
+      "language": "python",
+      "category": "general",
+      "severity": "high",
+      "title": "La honestidad en las pequenas cosas",
+      "description": "Presta atencion a cada detalle del codigo.",
+      "rationale": "La calidad es el resultado de un millon de actos desinteresados de cuidado.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Indicios de descuido: indentacion inconsistente, variables mal nombradas, tests ignorados."
+      },
+      "bad_example": "Ignorar un bug menor porque 'no es importante'.",
+      "good_example": "Corregir cada detalle, por pequeno que sea, antes del check-in.",
+      "fix_strategy": [
+        "Cultivar el orgullo por la artesania del software"
+      ],
+      "tags": [
+        "professionalism",
+        "ethics"
+      ],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Foreword",
+          "page": 47,
+          "rule_code": "CC-00"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-051",
+      "language": "python",
+      "category": "formatting",
+      "severity": "medium",
+      "title": "Indentacion de 4 espacios",
+      "description": "Usar exactamente 4 espacios por nivel de indentacion. No usar tabuladores.",
+      "rationale": "Mantiene la consistencia visual a traves de diferentes editores y plataformas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar caracteres '\\t' o niveles de indentacion distintos de 4."
+      },
+      "bad_example": "def func():\n  print('2 spaces')",
+      "good_example": "def func():\n    print('4 spaces')",
+      "fix_strategy": [
+        "Configurar el linter o editor para convertir tabs en 4 espacios"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-052",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "Preferir EAFP sobre LBYL para estado remoto",
+      "description": "Usar try-except al interactuar con archivos, redes o bases de datos en lugar de pre-validar con condicionales.",
+      "rationale": "Evita condiciones de carrera (TOCTOU) y es mas eficiente en runtimes modernos.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar 'os.path.exists' seguido de 'open' u otras pre-validaciones de recursos remotos."
+      },
+      "bad_example": "if os.path.exists(f): open(f)",
+      "good_example": "try: open(f)\nexcept FileNotFoundError: pass",
+      "fix_strategy": [
+        "Envolver la operacion en un bloque try-except especifico"
+      ],
+      "tags": [
+        "error-handling",
+        "eafp"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-lbyl-vs-eafp/",
+          "title": "LBYL vs EAFP: Preventing or Handling Errors in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-053",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de clausulas de guardia",
+      "description": "Colocar salidas tempranas al inicio de la funcion para estados invalidos.",
+      "rationale": "Elimina el anidamiento innecesario ('piramide del destino') y mantiene el camino principal plano.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar bloques 'if' profundamente anidados donde la logica principal esta al final."
+      },
+      "bad_example": "def save(item):\n    if item:\n        if item.valid:\n            # logica...",
+      "good_example": "def save(item):\n    if not item or not item.valid: return\n    # logica...",
+      "fix_strategy": [
+        "Invertir condiciones para salir temprano"
+      ],
+      "tags": [
+        "logic",
+        "readability",
+        "guard-clauses"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-054",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "snake_case para funciones y variables",
+      "description": "Nombres en minusculas separados por guiones bajos.",
+      "rationale": "Es el estandar oficial de PEP 8 para maximizar la legibilidad.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar camelCase en variables o funciones Python."
+      },
+      "bad_example": "def calculateTotal(): pass",
+      "good_example": "def calculate_total(): pass",
+      "fix_strategy": [
+        "Convertir a snake_case"
+      ],
+      "tags": [
+        "naming",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-055",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "PascalCase para clases",
+      "description": "Cada palabra comienza con mayuscula, sin guiones bajos.",
+      "rationale": "Distingue claramente los planos de clase de los objetos e instancias.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar clases en minusculas o con guiones bajos."
+      },
+      "bad_example": "class user_manager: pass",
+      "good_example": "class UserManager: pass",
+      "fix_strategy": [
+        "Convertir a CapWords / PascalCase"
+      ],
+      "tags": [
+        "naming",
+        "classes"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-056",
+      "language": "python",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Docstrings en modo imperativo",
+      "description": "La primera linea del docstring debe ser un comando directo terminado en punto.",
+      "rationale": "Sigue la convencion de PEP 257 para brevedad y claridad en herramientas de ayuda.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar docstrings descriptivos como 'Returns...' en lugar de 'Return...'."
+      },
+      "bad_example": "\"\"\"Returns the sum of x and y.\"\"\"",
+      "good_example": "\"\"\"Return the sum of x and y.\"\"\"",
+      "fix_strategy": [
+        "Reescribir en infinitivo/imperativo"
+      ],
+      "tags": [
+        "documentation",
+        "pep257"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/how-to-write-docstrings-in-python/",
+          "title": "How to Write Docstrings in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-057",
+      "language": "python",
+      "category": "general",
+      "severity": "high",
+      "title": "Explicito es mejor que implicito (Zen)",
+      "description": "Evitar comportamientos magicos u ocultos; declarar intenciones claramente.",
+      "rationale": "Principio fundamental del Zen de Python (PEP 20) para reducir la carga cognitiva.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar 'from module import *' o manipulaciones de globales."
+      },
+      "bad_example": "from math import *",
+      "good_example": "import math",
+      "fix_strategy": [
+        "Usar importaciones especificas o el modulo como espacio de nombres"
+      ],
+      "tags": [
+        "zen",
+        "philosophy"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://peps.python.org/pep-0020/",
+          "title": "PEP 20 - The Zen of Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-058",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Limite de 79 caracteres por linea",
+      "description": "Restringir la longitud de linea para evitar scroll horizontal.",
+      "rationale": "Permite tener multiples archivos abiertos lado a lado y mejora la legibilidad.",
+      "detection": {
+        "type": "threshold",
+        "metric": "line_length",
+        "operator": "<=",
+        "value": 79,
+        "notes": "Contar caracteres por linea."
+      },
+      "bad_example": "print('Una cadena extremadamente larga que supera los ochenta caracteres y dificulta la lectura')",
+      "good_example": "print(\n    'Una cadena larga dividida...'\n)",
+      "fix_strategy": [
+        "Usar continuacion implicita en parentesis o barras invertidas"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-059",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir tipos precisos sobre Any",
+      "description": "Usar list[str] o TypedDict en lugar de Any al anotar tipos.",
+      "rationale": "Any desactiva el chequeo de tipos estatico, ocultando bugs potenciales.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar anotaciones ': Any'."
+      },
+      "bad_example": "def process(data: Any): pass",
+      "good_example": "def process(data: dict[str, int]): pass",
+      "fix_strategy": [
+        "Definir el esquema de datos esperado"
+      ],
+      "tags": [
+        "typing",
+        "safety"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/ref/best-practices/type-checking/",
+          "title": "type checking | Python Best Practices"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-060",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Dos lineas en blanco entre funciones de nivel superior",
+      "description": "Separar definiciones de clases y funciones globales con exactamente dos lineas en blanco.",
+      "rationale": "Facilita la distincion visual entre los bloques de construccion principales del modulo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar una sola linea de separacion entre funciones o clases de nivel superior."
+      },
+      "bad_example": "def a(): pass\ndef b(): pass",
+      "good_example": "def a(): pass\n\n\ndef b(): pass",
+      "fix_strategy": [
+        "Insertar dos lineas en blanco entre definiciones de nivel superior"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-061",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacio alrededor de operadores binarios",
+      "description": "Poner exactamente un espacio a ambos lados de '=', '==', '+', etc.",
+      "rationale": "Mejora la legibilidad de las expresiones al separar visualmente los operandos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'a=b' o 'a+b' sin espacios."
+      },
+      "bad_example": "x=y+1",
+      "good_example": "x = y + 1",
+      "fix_strategy": [
+        "Insertar espacios alrededor de operadores binarios"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-062",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Atributos no publicos con guion bajo",
+      "description": "Prefijar con '_' los atributos o metodos que son detalles de implementacion interna.",
+      "rationale": "Actua como una advertencia visual de que el atributo no forma parte de la API publica.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar atributos de implementacion interna sin prefijo '_'."
+      },
+      "bad_example": "self.internal_cache = {}",
+      "good_example": "self._internal_cache = {}",
+      "fix_strategy": [
+        "Renombrar con prefijo '_'"
+      ],
+      "tags": [
+        "naming",
+        "encapsulation"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-063",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de Context Managers para recursos",
+      "description": "Usar la sentencia 'with' al abrir archivos o bloqueos.",
+      "rationale": "Garantiza la liberacion automatica de recursos incluso si ocurren errores.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar 'f = open()' sin su correspondiente 'f.close()' o bloque 'with'."
+      },
+      "bad_example": "f = open('test.txt'); data = f.read(); f.close()",
+      "good_example": "with open('test.txt') as f: data = f.read()",
+      "fix_strategy": [
+        "Envolver en bloque 'with'"
+      ],
+      "tags": [
+        "idiomatic",
+        "resource-management"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-064",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Sustituir if-elif largos por diccionarios",
+      "description": "Mapear claves a funciones o valores en lugar de cadenas de condicionales.",
+      "rationale": "Mejora la extensibilidad y desacopla la logica de enrutamiento de los datos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Cadenas if-elif de mas de 5 ramas que comprueban el mismo valor."
+      },
+      "bad_example": "if action == 'add': add()\nelif action == 'sub': sub()",
+      "good_example": "ACTIONS = {'add': add, 'sub': sub}\nACTIONS[action]()",
+      "fix_strategy": [
+        "Crear un diccionario de mapeo accion->funcion"
+      ],
+      "tags": [
+        "logic",
+        "refactoring"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-065",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin espacio antes de parentesis de llamada",
+      "description": "No debe haber espacio entre el nombre de la funcion y '('.",
+      "rationale": "Evita confusion visual con tuplas o agrupaciones de expresiones.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'func ()' con espacio antes del parentesis."
+      },
+      "bad_example": "print ('Hello')",
+      "good_example": "print('Hello')",
+      "fix_strategy": [
+        "Eliminar el espacio entre el nombre y el parentesis"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-066",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir generadores para secuencias largas",
+      "description": "Usar 'yield' o expresiones generadoras en lugar de listas masivas en memoria.",
+      "rationale": "Ahorra memoria drasticamente al procesar elementos uno a uno.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar retornos de listas creadas mediante bucles for sobre rangos grandes."
+      },
+      "bad_example": "return [i for i in range(1000000)]",
+      "good_example": "return (i for i in range(1000000))",
+      "fix_strategy": [
+        "Convertir comprension de lista [] a expresion generadora ()"
+      ],
+      "tags": [
+        "idiomatic",
+        "performance"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-067",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Evitar nombres de variable O, l, I",
+      "description": "Nunca usar las letras minuscula 'l', mayuscula 'O' o mayuscula 'I' solas como nombres.",
+      "rationale": "Se confunden facilmente con los numeros 1 y 0 en muchas fuentes.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Variables llamadas exactamente l, O o I."
+      },
+      "bad_example": "l = 1",
+      "good_example": "length = 1",
+      "fix_strategy": [
+        "Sustituir por nombre descriptivo"
+      ],
+      "tags": [
+        "naming",
+        "safety"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-068",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de la verdad de secuencias vacias",
+      "description": "Usar 'if not list' en lugar de 'if len(list) == 0'.",
+      "rationale": "Python evalua colecciones vacias como falsas; es mas conciso e idiomatico.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar comparaciones de len() con 0."
+      },
+      "bad_example": "if len(my_list) == 0:",
+      "good_example": "if not my_list:",
+      "fix_strategy": [
+        "Eliminar len() y la comparacion con 0"
+      ],
+      "tags": [
+        "idiomatic",
+        "logic"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-069",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Nombres de modulos cortos en snake_case",
+      "description": "Los archivos .py deben tener nombres cortos, en minusculas y usar guiones bajos si mejora la claridad.",
+      "rationale": "Facilita la importacion y mantiene consistencia con los paquetes de la libreria estandar.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar archivos con CamelCase o nombres excesivamente largos."
+      },
+      "bad_example": "DataProcessorModule.py",
+      "good_example": "data_processor.py",
+      "fix_strategy": [
+        "Renombrar archivo a minusculas con guiones bajos"
+      ],
+      "tags": [
+        "naming",
+        "structure"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-070",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Linea en blanco entre metodos de clase",
+      "description": "Separar cada metodo dentro de una clase con una sola linea en blanco.",
+      "rationale": "Reduce la densidad visual sin hacer que el archivo parezca demasiado disperso.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar metodos pegados o con multiples lineas entre ellos."
+      },
+      "bad_example": "class A:\n    def a(self): pass\n    def b(self): pass",
+      "good_example": "class A:\n    def a(self): pass\n\n    def b(self): pass",
+      "fix_strategy": [
+        "Anadir una linea en blanco entre metodos de clase"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-071",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de f-strings para formateo de cadenas",
+      "description": "Preferir f'...' sobre '%' o '.format()'.",
+      "rationale": "Es mas rapido, conciso y legible que los metodos de formateo antiguos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar el uso de '%' o '.format()' para interpolacion de strings."
+      },
+      "bad_example": "'Hello %s' % name",
+      "good_example": "f'Hello {name}'",
+      "fix_strategy": [
+        "Convertir a f-string"
+      ],
+      "tags": [
+        "idiomatic",
+        "strings"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-072",
+      "language": "python",
+      "category": "documentation",
+      "severity": "medium",
+      "title": "Docstrings para modulos publicos",
+      "description": "Todo archivo de libreria publica debe comenzar con un docstring.",
+      "rationale": "Proporciona una vision general necesaria para los usuarios sin leer el codigo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar archivos sin un bloque de triples comillas al inicio."
+      },
+      "bad_example": "import sys\n# (resto del codigo sin docstring)",
+      "good_example": "\"\"\"Module to handle auth.\"\"\"\nimport sys",
+      "fix_strategy": [
+        "Anadir resumen del modulo al inicio del archivo"
+      ],
+      "tags": [
+        "documentation",
+        "api"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/how-to-write-docstrings-in-python/",
+          "title": "How to Write Docstrings in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-073",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Un espacio tras la almohadilla del comentario",
+      "description": "Debe haber exactamente un espacio entre '#' y el texto del comentario.",
+      "rationale": "Estandariza la visualizacion de notas explicativas segun PEP 8.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar '#texto' (sin espacio) o '#  texto' (doble espacio)."
+      },
+      "bad_example": "#esto es una nota",
+      "good_example": "# Esto es una nota",
+      "fix_strategy": [
+        "Insertar exactamente un espacio tras '#'"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-074",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Cerrar brackets alineados con el inicio de la construccion",
+      "description": "El parentesis/corchete de cierre debe estar bajo el primer caracter de la linea que abre la construccion.",
+      "rationale": "Clarifica visualmente donde termina el bloque o la declaracion multilinea.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar cierres con indentacion arbitraria o inconsistente."
+      },
+      "bad_example": "my_list = [\n    1, 2, 3\n    ]",
+      "good_example": "my_list = [\n    1, 2, 3\n]",
+      "fix_strategy": [
+        "Alinear verticalmente el cierre con el inicio de la linea que abre"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-075",
+      "language": "python",
+      "category": "general",
+      "severity": "low",
+      "title": "Preferir 'is not' sobre 'not ... is'",
+      "description": "Escribir 'if x is not None' en lugar de 'if not x is None'.",
+      "rationale": "Es mas legible y suena mas natural al leerlo en voz alta.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar patrones 'not .* is None'."
+      },
+      "bad_example": "if not x is None:",
+      "good_example": "if x is not None:",
+      "fix_strategy": [
+        "Invertir el orden de los operadores"
+      ],
+      "tags": [
+        "logic",
+        "idiomatic"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-076",
+      "language": "python",
+      "category": "general",
+      "severity": "low",
+      "title": "No comparar booleanos con == True",
+      "description": "Usar 'if condition' en lugar de 'if condition == True'.",
+      "rationale": "El valor booleano ya es una condicion logica; la comparacion es redundante.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar '== True' o '== False' en condicionales."
+      },
+      "bad_example": "if is_ready == True:",
+      "good_example": "if is_ready:",
+      "fix_strategy": [
+        "Eliminar la comparacion explicita con True/False"
+      ],
+      "tags": [
+        "logic",
+        "clean-code"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-077",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Verbos para nombres de funciones standalone",
+      "description": "Los nombres de funciones autonomas deben comenzar con una accion.",
+      "rationale": "Las funciones representan comportamientos; un verbo hace explicita la accion que realizan.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones de modulo nombradas solo con sustantivos (no metodos de clase)."
+      },
+      "bad_example": "def report(): pass",
+      "good_example": "def generate_report(): pass",
+      "fix_strategy": [
+        "Anadir un verbo de accion al inicio del nombre"
+      ],
+      "tags": [
+        "naming",
+        "functions"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-078",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espaciado correcto alrededor de comas",
+      "description": "La coma debe ir pegada al elemento anterior y seguida de exactamente un espacio.",
+      "rationale": "Mantiene la coherencia visual con la puntuacion gramatical estandar.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'a ,b' (espacio antes), 'a,b' (sin espacio despues) o 'a , b'."
+      },
+      "bad_example": "foo(1 ,2)\nitems = [1 , 2]",
+      "good_example": "foo(1, 2)\nitems = [1, 2]",
+      "fix_strategy": [
+        "Eliminar espacio previo a la coma; anadir espacio posterior"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-079",
+      "language": "python",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Uso de @property para encapsular atributos",
+      "description": "Usar el decorador @property en lugar de getters/setters manuales.",
+      "rationale": "Mantiene la API limpia (acceso a atributos) pero permite validacion interna sin romper clientes.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar metodos 'get_value' y 'set_value' para atributos privados."
+      },
+      "bad_example": "def get_price(self): return self._price",
+      "good_example": "@property\ndef price(self): return self._price",
+      "fix_strategy": [
+        "Convertir a decorador @property"
+      ],
+      "tags": [
+        "classes",
+        "encapsulation"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-080",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "Capturar excepciones especificas, no la base Exception",
+      "description": "Nunca capturar la clase base 'Exception' si se puede evitar.",
+      "rationale": "Evita enmascarar errores inesperados como KeyboardInterrupt o fallos de sistema.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'except Exception:' o 'except Exception as e:' sin relanzar."
+      },
+      "bad_example": "try: process()\nexcept Exception: pass",
+      "good_example": "try: process()\nexcept ValueError as e: logger.error(e)",
+      "fix_strategy": [
+        "Identificar y capturar el tipo de error exacto"
+      ],
+      "tags": [
+        "error-handling",
+        "safety"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-lbyl-vs-eafp/",
+          "title": "LBYL vs EAFP: Preventing or Handling Errors in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-081",
+      "language": "python",
+      "category": "general",
+      "severity": "low",
+      "title": "Preferir .startswith() y .endswith() al rebanado",
+      "description": "Usar 'x.startswith(\"a\")' o 'x.endswith(\".jpg\")' en lugar de comparaciones con slices.",
+      "rationale": "Mas claro, menos propenso a errores de indice y maneja strings vacios de forma segura.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar comparaciones con rebanado de string como x[:3] == 'Mr.' o x[-4:] == '.png'."
+      },
+      "bad_example": "if name[:3] == 'Mr.':\nif f[-4:] == '.png':",
+      "good_example": "if name.startswith('Mr.'):\nif f.endswith('.png'):",
+      "fix_strategy": [
+        "Cambiar a .startswith() o .endswith() segun corresponda"
+      ],
+      "tags": [
+        "logic",
+        "idiomatic"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-082",
+      "language": "python",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Constantes en UPPER_SNAKE_CASE",
+      "description": "Las variables globales fijas deben ir en mayusculas con guiones bajos.",
+      "rationale": "Identifica visualmente configuraciones inmutables frente a variables de estado.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar constantes globales en minusculas."
+      },
+      "bad_example": "max_retry = 5",
+      "good_example": "MAX_RETRY = 5",
+      "fix_strategy": [
+        "Convertir nombre a UPPER_SNAKE_CASE"
+      ],
+      "tags": [
+        "naming",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-083",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin espacios dentro de parentesis de argumentos",
+      "description": "No debe haber espacios inmediatamente dentro de '(' o ')'.",
+      "rationale": "Mantiene el bloque de argumentos compacto y coherente con PEP 8.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'func( arg )' con espacios internos."
+      },
+      "bad_example": "print( 'Hi' )",
+      "good_example": "print('Hi')",
+      "fix_strategy": [
+        "Eliminar espacios internos en los parentesis"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-084",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "LBYL para estado local predecible",
+      "description": "Usar condicionales previos para validar estado interno que no puede cambiar (como claves de diccionarios locales).",
+      "rationale": "Evita el coste de levantar una excepcion para logica condicional basica y predecible.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar try-except KeyError en diccionarios locales pequenos."
+      },
+      "bad_example": "try: x = local_dict['k']\nexcept KeyError: x = 0",
+      "good_example": "x = local_dict.get('k', 0)",
+      "fix_strategy": [
+        "Sustituir por comprobacion 'in', .get() o valor por defecto"
+      ],
+      "tags": [
+        "logic",
+        "performance"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-lbyl-vs-eafp/",
+          "title": "LBYL vs EAFP: Preventing or Handling Errors in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-085",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Zen: Lo simple es mejor que lo complejo",
+      "description": "Priorizar soluciones directas sobre arquitecturas sobre-ingeniadas.",
+      "rationale": "Facilita el mantenimiento a largo plazo por otros desarrolladores.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar uso excesivo de metaclases o patrones de diseno para tareas triviales."
+      },
+      "bad_example": "Usar una clase Abstract Factory para generar un string.",
+      "good_example": "Usar una funcion simple.",
+      "fix_strategy": [
+        "Simplificar el algoritmo al minimo necesario"
+      ],
+      "tags": [
+        "zen",
+        "philosophy"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://peps.python.org/pep-0020/",
+          "title": "PEP 20 - The Zen of Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-086",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar TypeAlias para tipos complejos",
+      "description": "Definir alias para firmas de tipos largas o anidadas.",
+      "rationale": "Reduce la verbosidad de las anotaciones y da significado semantico.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar firmas repetidas como 'dict[str, list[tuple[int, int]]]'."
+      },
+      "bad_example": "def get(data: dict[str, list[int]]): pass",
+      "good_example": "UserScores: TypeAlias = dict[str, list[int]]\ndef get(data: UserScores): pass",
+      "fix_strategy": [
+        "Declarar TypeAlias en el nivel del modulo"
+      ],
+      "tags": [
+        "typing",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/ref/best-practices/type-checking/",
+          "title": "type checking | Python Best Practices"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-087",
+      "language": "python",
+      "category": "naming",
+      "severity": "low",
+      "title": "Evitar nombre de clase en sus propios atributos",
+      "description": "No incluir el nombre de la clase en sus propios atributos de instancia.",
+      "rationale": "El contexto ya esta implicito por el nombre de la clase.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar patrones como 'Person.person_name' o 'User.user_id'."
+      },
+      "bad_example": "class Person:\n    self.person_name = ''",
+      "good_example": "class Person:\n    self.name = ''",
+      "fix_strategy": [
+        "Eliminar el prefijo redundante del nombre del atributo"
+      ],
+      "tags": [
+        "naming",
+        "clean-code"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-088",
+      "language": "python",
+      "category": "formatting",
+      "severity": "medium",
+      "title": "Imports al inicio del archivo",
+      "description": "Las sentencias import deben ir siempre en las primeras lineas del modulo.",
+      "rationale": "Permite identificar rapidamente las dependencias del modulo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar imports dentro de funciones o en medio del archivo."
+      },
+      "bad_example": "def main(): import os",
+      "good_example": "import os\ndef main(): pass",
+      "fix_strategy": [
+        "Subir las importaciones al top-level del modulo"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-089",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar Ruff para linting y formateo",
+      "description": "Adoptar Ruff como herramienta unica de calidad de codigo Python.",
+      "rationale": "Es 10x-100x mas rapido que herramientas legacy y consolida reglas de multiples linters.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar presencia de ruff en el pipeline de CI o en pyproject.toml."
+      },
+      "bad_example": "Mezclar Flake8, Black e isort manualmente.",
+      "good_example": "Ejecutar 'ruff format' y 'ruff check' desde CI.",
+      "fix_strategy": [
+        "Migrar configuraciones a ruff en pyproject.toml"
+      ],
+      "tags": [
+        "tooling",
+        "performance"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://pydevtools.com/handbook/explanation/ruff-complete-guide/",
+          "title": "Ruff: A Complete Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-090",
+      "language": "python",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Comillas de cierre de docstring multilinea en linea independiente",
+      "description": "Las comillas triples de cierre deben ir solas en la ultima linea.",
+      "rationale": "Mantiene la estructura del bloque de texto limpia y alineada segun PEP 257.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar cierre de comillas pegado al ultimo texto del docstring."
+      },
+      "bad_example": "\"\"\"Multi\nline\"\"\"",
+      "good_example": "\"\"\"Multi\nline\n\"\"\"",
+      "fix_strategy": [
+        "Mover las comillas de cierre a una nueva linea"
+      ],
+      "tags": [
+        "documentation",
+        "pep257"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/how-to-write-docstrings-in-python/",
+          "title": "How to Write Docstrings in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-091",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de 'is' solo para Singletons",
+      "description": "Usar 'is' unicamente con None, True o False. Usar '==' para valores.",
+      "rationale": "'is' compara identidad de memoria, no igualdad de valor, lo que causa bugs sutiles.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'if x is 5' o 'if x is string_value'."
+      },
+      "bad_example": "if status is 'ACTIVE':",
+      "good_example": "if status == 'ACTIVE':",
+      "fix_strategy": [
+        "Cambiar 'is' por '==' para comparaciones de valor"
+      ],
+      "tags": [
+        "logic",
+        "safety"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-092",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Operador binario al inicio de la linea de continuacion",
+      "description": "Al romper lineas largas, el operador debe quedar al inicio de la nueva linea.",
+      "rationale": "Facilita la lectura matematica vertical, alineando los operadores.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar operadores binarios al final de la linea en expresiones multilínea."
+      },
+      "bad_example": "total = (a +\n         b)",
+      "good_example": "total = (a\n         + b)",
+      "fix_strategy": [
+        "Mover el operador a la linea siguiente"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-093",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir 'is None' para argumentos opcionales",
+      "description": "Validar explicitamente contra None en lugar de usar la verdad del objeto.",
+      "rationale": "Evita errores cuando se pasan valores falsos validos como 0 o [].",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'if not arg' cuando None es el valor por defecto del parametro."
+      },
+      "bad_example": "def add(val=None):\n    if not val: val = []",
+      "good_example": "def add(val=None):\n    if val is None: val = []",
+      "fix_strategy": [
+        "Cambiar 'if not arg' por 'if arg is None'"
+      ],
+      "tags": [
+        "logic",
+        "idiomatic"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-094",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin espacio alrededor del = en parametros por defecto",
+      "description": "No usar espacios alrededor de '=' en argumentos de funciones con valor por defecto.",
+      "rationale": "Diferencia visualmente la asignacion de parametros de la asignacion de variables.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'def func(a = 1)' con espacios alrededor del =."
+      },
+      "bad_example": "def connect(port = 80):",
+      "good_example": "def connect(port=80):",
+      "fix_strategy": [
+        "Eliminar espacios alrededor del = en parametros por defecto"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-095",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Zen: Lo plano es mejor que lo anidado",
+      "description": "Reducir la profundidad de indentacion mediante refactorizacion.",
+      "rationale": "El codigo plano es mas facil de seguir mentalmente.",
+      "detection": {
+        "type": "threshold",
+        "metric": "nesting_depth",
+        "operator": "<=",
+        "value": 3,
+        "notes": "Contar niveles de indentacion; maximo recomendado 3."
+      },
+      "bad_example": "if a:\n    if b:\n        if c: # logica...",
+      "good_example": "if not a: return\nif not b: return\n# logica...",
+      "fix_strategy": [
+        "Usar retornos tempranos para aplanar el anidamiento"
+      ],
+      "tags": [
+        "zen",
+        "philosophy"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://peps.python.org/pep-0020/",
+          "title": "PEP 20 - The Zen of Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-096",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Agrupar imports por origen",
+      "description": "Orden: 1. Libreria estandar, 2. Terceros, 3. Locales. Separados por una linea en blanco.",
+      "rationale": "Estandariza la organizacion de dependencias segun PEP 8.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar imports de libreria estandar mezclados con librerias instaladas."
+      },
+      "bad_example": "import my_local\nimport os",
+      "good_example": "import os\n\nimport my_local",
+      "fix_strategy": [
+        "Reordenar y anadir linea en blanco entre grupos de imports"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-097",
+      "language": "python",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "Try-Except-Else para precision de captura",
+      "description": "Poner en 'try' solo la linea que puede fallar; el resto de la logica en 'else'.",
+      "rationale": "Evita capturar accidentalmente errores en lineas donde no se esperan.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Bloques 'try' con muchas lineas de codigo mezclando la operacion riesgosa con logica posterior."
+      },
+      "bad_example": "try:\n    data = load()\n    process(data)\nexcept Error: pass",
+      "good_example": "try: data = load()\nexcept Error: pass\nelse: process(data)",
+      "fix_strategy": [
+        "Mover logica secundaria al bloque else del try"
+      ],
+      "tags": [
+        "error-handling",
+        "safety"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-lbyl-vs-eafp/",
+          "title": "LBYL vs EAFP: Preventing or Handling Errors in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-098",
+      "language": "python",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Clases pequenas: menos de 200 lineas",
+      "description": "Intentar que las clases no superen las 200 lineas de codigo.",
+      "rationale": "Clases grandes suelen indicar acumulacion de responsabilidades no relacionadas.",
+      "detection": {
+        "type": "threshold",
+        "metric": "lines_per_class",
+        "operator": "<",
+        "value": 200,
+        "notes": "Contar lineas totales de la definicion de clase."
+      },
+      "bad_example": "class GiantHandler: # 500 lineas de logica mezclada",
+      "good_example": "class AuthHandler: # 80 lineas cohesivas",
+      "fix_strategy": [
+        "Dividir en multiples clases cohesivas con responsabilidad unica"
+      ],
+      "tags": [
+        "classes",
+        "srp",
+        "size"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-099",
+      "language": "python",
+      "category": "general",
+      "severity": "low",
+      "title": "Zen: Lo disperso es mejor que lo denso",
+      "description": "Anadir espacios y lineas en blanco para dejar respirar al codigo.",
+      "rationale": "Mejora la velocidad de escaneo visual del desarrollador.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Bloques de codigo sin ninguna linea en blanco o espacios alrededor de operadores."
+      },
+      "bad_example": "a=1;b=2;c=a+b;print(c)",
+      "good_example": "a = 1\nb = 2\nc = a + b\n\nprint(c)",
+      "fix_strategy": [
+        "Anadir aire visual con espacios y lineas en blanco"
+      ],
+      "tags": [
+        "zen",
+        "readability"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://peps.python.org/pep-0020/",
+          "title": "PEP 20 - The Zen of Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-100",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Encapsular logica de tipos en Duck Typing",
+      "description": "No usar isinstance() para decidir logica; confiar en el comportamiento del objeto (EAFP).",
+      "rationale": "Vincular el codigo a tipos especificos rompe la flexibilidad y el polimorfismo de Python.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar multiples bloques 'if isinstance' que alteran el flujo de la logica."
+      },
+      "bad_example": "if isinstance(x, list): x.append(1)",
+      "good_example": "try: x.append(1)\nexcept AttributeError: pass",
+      "fix_strategy": [
+        "Llamar al metodo directamente y manejar el error si no existe"
+      ],
+      "tags": [
+        "idiomatic",
+        "duck-typing"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-lbyl-vs-eafp/",
+          "title": "LBYL vs EAFP: Preventing or Handling Errors in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-101",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Modelar datos con TypedDict o Dataclasses",
+      "description": "Evitar diccionarios planos dict[str, Any] para estructuras conocidas.",
+      "rationale": "Permite al linter validar claves y tipos, reduciendo errores en tiempo de ejecucion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Uso intensivo de diccionarios de configuracion sin esquema definido."
+      },
+      "bad_example": "user: dict = {'name': 'A', 'id': 1}",
+      "good_example": "class User(TypedDict): name: str; id: int",
+      "fix_strategy": [
+        "Definir estructura con TypedDict o @dataclass"
+      ],
+      "tags": [
+        "typing",
+        "safety"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/ref/best-practices/type-checking/",
+          "title": "type checking | Python Best Practices"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-102",
+      "language": "python",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin punto y coma al final de linea",
+      "description": "No usar ';' para terminar sentencias en Python.",
+      "rationale": "Es innecesario en Python y denota herencia de otros lenguajes; ensucia visualmente.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar ';' al final de lineas."
+      },
+      "bad_example": "x = 1;",
+      "good_example": "x = 1",
+      "fix_strategy": [
+        "Eliminar el punto y coma"
+      ],
+      "tags": [
+        "formatting",
+        "pep8"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-pep8/",
+          "title": "How to Write Beautiful Python Code With PEP 8"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-103",
+      "language": "python",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Separar resumen de descripcion en docstrings multilinea",
+      "description": "Debe haber una linea en blanco despues de la primera linea de resumen.",
+      "rationale": "Mejora la legibilidad en herramientas que extraen solo el resumen.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Docstring multilinea sin espacio en blanco tras la primera frase."
+      },
+      "bad_example": "\"\"\"Summary. Detailed description.\"\"\"",
+      "good_example": "\"\"\"Summary.\n\nDetailed description.\"\"\"",
+      "fix_strategy": [
+        "Anadir linea en blanco entre resumen y descripcion extendida"
+      ],
+      "tags": [
+        "documentation",
+        "pep257"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/how-to-write-docstrings-in-python/",
+          "title": "How to Write Docstrings in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-104",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar .get() para valores opcionales en dict",
+      "description": "Evitar try-except KeyError cuando solo se busca un valor por defecto.",
+      "rationale": "Es mas conciso y expresa la intencionalidad de opcionalidad de forma directa.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques try-except KeyError que asignan un default en except."
+      },
+      "bad_example": "try: x = d['k']\nexcept KeyError: x = None",
+      "good_example": "x = d.get('k')",
+      "fix_strategy": [
+        "Usar .get(key) o .get(key, default)"
+      ],
+      "tags": [
+        "idiomatic",
+        "logic"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://realpython.com/python-lbyl-vs-eafp/",
+          "title": "LBYL vs EAFP: Preventing or Handling Errors in Python"
+        }
+      ]
+    },
+    {
+      "id": "CC-PY-105",
+      "language": "python",
+      "category": "general",
+      "severity": "medium",
+      "title": "Separacion de Comando y Consulta (CQS) Python",
+      "description": "Una funcion debe realizar una accion o devolver un dato, pero no ambos.",
+      "rationale": "Reduce efectos secundarios inesperados y facilita el razonamiento logico.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones que modifican estado global y retornan el valor modificado."
+      },
+      "bad_example": "def set_name(n): self.name = n; return n",
+      "good_example": "def set_name(n): self.name = n",
+      "fix_strategy": [
+        "Dividir en dos funciones independientes: accion y consulta"
+      ],
+      "tags": [
+        "logic",
+        "clean-code"
+      ],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://testdriven.io/blog/clean-code-python/",
+          "title": "Clean Code in Python | TestDriven.io"
+        }
+      ]
+    }
+  ]
+}

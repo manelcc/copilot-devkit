@@ -1,0 +1,2994 @@
+{
+  "catalog": "clean-code-swift-rules",
+  "version": "2.0.0",
+  "schema": "clean-code-rule-v1",
+  "language": "swift",
+  "rule_count": 115,
+  "rules": [
+    {
+      "id": "CC-SW-001",
+      "language": "swift",
+      "category": "classes",
+      "severity": "high",
+      "title": "Struct/Class con una sola responsabilidad (SRP)",
+      "description": "Una clase o struct debe tener una y solo una razon para cambiar. El tamano se mide por responsabilidades, no por lineas.",
+      "rationale": "Tipos con multiples responsabilidades son dificiles de entender, probar y mantener. El acoplamiento aumenta drasticamente.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si no puedes describir el tipo sin usar 'y', 'o' o 'pero', probablemente tiene demasiadas responsabilidades."
+      },
+      "bad_example": "struct UserManager { func login() {}; func saveToCache() {}; func formatUI() {} }",
+      "good_example": "struct AuthService { func login() {} }; struct UserCache { func save() {} }",
+      "fix_strategy": [
+        "Identificar responsabilidades mediante descripciones breves",
+        "Extraer comportamientos no relacionados a nuevos tipos (SRP)"
+      ],
+      "tags": ["srp", "classes", "cohesion"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 10: Classes",
+          "page": 136,
+          "rule_code": "CC-10"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-002",
+      "language": "swift",
+      "category": "functions",
+      "severity": "high",
+      "title": "Funciones deben hacer una sola cosa",
+      "description": "Las funciones solo deben realizar los pasos que se encuentran un nivel por debajo de su nombre.",
+      "rationale": "Las funciones que hacen una sola cosa son mas faciles de nombrar, probar y reutilizar.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si puedes extraer otra funcion con un nombre que no sea una simple repeticion, la funcion original hacia mas de una cosa."
+      },
+      "bad_example": "func handleSetup() { checkPermissions(); loadData(); updateUI() }",
+      "good_example": "func checkPermissions() {}; func loadData() {}; func updateUI() {}",
+      "fix_strategy": [
+        "Extraer metodos para cada nivel de abstraccion",
+        "Eliminar secciones logicas dentro de una misma funcion"
+      ],
+      "tags": ["functions", "abstraction", "granularity"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 35,
+          "rule_code": "G30"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-003",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Nombres que revelan la intencion",
+      "description": "El nombre de una variable, funcion o clase debe responder por que existe, que hace y como se usa.",
+      "rationale": "Eleccion de buenos nombres ahorra tiempo de lectura y reduce la necesidad de comentarios.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar variables de una sola letra o nombres genericos como 'data' o 'info'."
+      },
+      "bad_example": "var d: Int // dias transcurridos",
+      "good_example": "var daysSinceCreation: Int",
+      "fix_strategy": [
+        "Renombrar usando terminos del dominio del problema",
+        "Evitar nombres que requieran comentarios explicativos"
+      ],
+      "tags": ["naming", "readability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 18,
+          "rule_code": "N1"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-004",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Eliminar duplicacion (DRY)",
+      "description": "Cada vez que se ve duplicacion en el codigo, representa una oportunidad perdida de abstraccion.",
+      "rationale": "La duplicacion aumenta el riesgo de errores y hace que los cambios sean costosos al tener que replicarlos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques de codigo similares o estructuras switch/if repetitivas basadas en los mismos tipos."
+      },
+      "bad_example": "Logica de validacion de email repetida en LoginView y ProfileView.",
+      "good_example": "Extension de String con metodo isValidEmail() o un validador dedicado.",
+      "fix_strategy": [
+        "Extraer funciones comunes",
+        "Usar protocolos o genericos para logica compartida"
+      ],
+      "tags": ["dry", "abstraction", "duplication"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 48,
+          "rule_code": "G5"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-005",
+      "language": "swift",
+      "category": "comments",
+      "severity": "medium",
+      "title": "No comentar codigo malo, reescribirlo",
+      "description": "Los comentarios no compensan el codigo deficiente. Si el codigo es confuso, limpialo en lugar de explicarlo.",
+      "rationale": "El codigo es la unica fuente de verdad; los comentarios tienden a mentir con el tiempo porque no se mantienen.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar funciones con bloques de comentarios explicando su logica interna."
+      },
+      "bad_example": "// Verifica si el usuario es VIP y tiene saldo\nif u.status == 1 && u.bal > 0",
+      "good_example": "if user.isEligibleForPurchase",
+      "fix_strategy": [
+        "Refactorizar la logica en funciones o variables computadas con nombres claros",
+        "Eliminar el comentario tras la refactorizacion"
+      ],
+      "tags": ["comments", "refactoring"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 4: Comments",
+          "page": 55,
+          "rule_code": "C4"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-006",
+      "language": "swift",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Evitar argumentos de bandera (Flags)",
+      "description": "Pasar un booleano a una funcion declara que la funcion hace mas de una cosa.",
+      "rationale": "Complica la firma y obliga al lector a recordar que significa el booleano en cada llamada.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Funciones que reciben 'Bool' para alternar comportamientos internos."
+      },
+      "bad_example": "func render(isPremium: Bool)",
+      "good_example": "func renderPremiumView(); func renderStandardView()",
+      "fix_strategy": [
+        "Dividir la funcion en funciones especializadas",
+        "Usar Enums descriptivos si la division no es posible"
+      ],
+      "tags": ["functions", "clean-code"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 41,
+          "rule_code": "F3"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-007",
+      "language": "swift",
+      "category": "classes",
+      "severity": "high",
+      "title": "Ley de Demeter",
+      "description": "Un modulo no debe conocer los entresijos de los objetos que manipula. Evitar 'naufragios de tren'.",
+      "rationale": "Reduce el acoplamiento entre clases lejanas, facilitando cambios estructurales.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar cadenas largas de llamadas como 'a.b.c.doSomething()'."
+      },
+      "bad_example": "let path = ctxt.options.scratchDir.absolutePath",
+      "good_example": "let path = ctxt.createScratchFileStream(fileName)",
+      "fix_strategy": [
+        "Aplicar 'Dime, no preguntes' (Tell, Don't Ask)",
+        "Ocultar la estructura interna delegando la accion al objeto dueno"
+      ],
+      "tags": ["coupling", "demeter", "classes", "encapsulation"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 6: Objects and Data Structures",
+          "page": 97,
+          "rule_code": "G36"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-008",
+      "language": "swift",
+      "category": "functions",
+      "severity": "low",
+      "title": "Funciones pequenas",
+      "description": "Las funciones deben ser muy pequenas. Rara vez deben superar las 20 lineas.",
+      "rationale": "Las funciones pequenas son transparentes y cuentan una historia clara paso a paso.",
+      "detection": {
+        "type": "threshold",
+        "metric": "function_length_lines",
+        "operator": "<=",
+        "value": 20,
+        "notes": "Contar lineas de codigo. El anidamiento no debe superar uno o dos niveles."
+      },
+      "bad_example": "Una funcion de 50 lineas con multiples bucles e ifs anidados.",
+      "good_example": "Funciones de 2 a 4 lineas que delegan detalles a otras funciones.",
+      "fix_strategy": [
+        "Extraer bloques internos a nuevas funciones descriptivas",
+        "Reducir niveles de sangria mediante retornos tempranos (guard)"
+      ],
+      "tags": ["functions", "size", "refactoring"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 34,
+          "rule_code": "G34"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-009",
+      "language": "swift",
+      "category": "tests",
+      "severity": "high",
+      "title": "Las Tres Leyes de TDD",
+      "description": "No escribir codigo de produccion sin una prueba que falle. No escribir mas prueba de la necesaria. No escribir mas codigo de produccion del necesario.",
+      "rationale": "Asegura cobertura total, reduce el miedo al cambio y mejora el diseno (testability).",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar si existe codigo de produccion sin su correspondiente prueba unitaria."
+      },
+      "bad_example": "Programar toda la funcionalidad y luego intentar anadir pruebas al final.",
+      "good_example": "Ciclos rapidos de 30 segundos entre la prueba y la implementacion.",
+      "fix_strategy": [
+        "Adoptar el ciclo Rojo-Verde-Refactor",
+        "Integrar las pruebas en el flujo de trabajo diario"
+      ],
+      "tags": ["tdd", "unit-tests", "quality"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 9: Unit Tests",
+          "page": 122,
+          "rule_code": "T1"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-010",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Reemplazar numeros magicos por constantes",
+      "description": "No usar literales numericos directamente en la logica. Ocultarlos tras constantes con nombre.",
+      "rationale": "Las constantes dan contexto y facilitan cambios globales (ej. cambiar una tasa de impuesto).",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar numeros como 86400 o 55 en medio del codigo."
+      },
+      "bad_example": "let pay = hours * 8.0",
+      "good_example": "let pay = hours * WORK_HOURS_PER_DAY",
+      "fix_strategy": [
+        "Crear constantes estaticas o enums",
+        "Usar nombres que expliquen el origen del valor"
+      ],
+      "tags": ["magic-numbers", "naming"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 300,
+          "rule_code": "G25"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-011",
+      "language": "swift",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Numero ideal de argumentos",
+      "description": "Lo ideal es cero argumentos. Luego uno o dos. Tres debe evitarse.",
+      "rationale": "Los argumentos dificultan la comprension y complican las pruebas unitarias drasticamente.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Contar parametros en la firma de las funciones."
+      },
+      "bad_example": "func makeCircle(x: Double, y: Double, radius: Double)",
+      "good_example": "func makeCircle(center: Point, radius: Double)",
+      "fix_strategy": [
+        "Agrupar argumentos relacionados en objetos o structs",
+        "Convertir la funcion en un metodo del objeto que pasa como argumento"
+      ],
+      "tags": ["functions", "refactoring"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 40,
+          "rule_code": "F1"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-012",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Preferir polimorfismo a Switch",
+      "description": "Para selecciones basadas en tipos, usa polimorfismo. Solo debe haber un switch para crear los objetos.",
+      "rationale": "Evita violar SRP y OCP al agregar nuevos tipos al sistema.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques switch que comprueben el tipo de un objeto para decidir comportamiento."
+      },
+      "bad_example": "switch user.type { case .admin: ... case .guest: ... }",
+      "good_example": "Protocolo User con implementacion especifica para Admin y Guest.",
+      "fix_strategy": [
+        "Mover el switch a una factoria",
+        "Implementar la logica variable mediante protocolos y extensiones"
+      ],
+      "tags": ["polymorphism", "ocp", "srp"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 299,
+          "rule_code": "G23"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-013",
+      "language": "swift",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Funciones con un solo nivel de abstraccion",
+      "description": "Todas las declaraciones de una funcion deben estar en el mismo nivel de abstraccion.",
+      "rationale": "Mezclar niveles confunde al lector sobre que es esencial y que es un detalle tecnico.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar llamadas de alto nivel mezcladas con manipulaciones de bajo nivel (ej. concatenar strings)."
+      },
+      "bad_example": "func render() { buildHeader(); print(\"\"); }",
+      "good_example": "func render() { buildHeader(); buildBody(); }",
+      "fix_strategy": [
+        "Extraer detalles de implementacion a funciones de nivel inferior",
+        "Seguir la 'Regla de Paso Descendente' (Stepdown Rule)"
+      ],
+      "tags": ["abstraction", "readability", "granularity"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 36,
+          "rule_code": "G34"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-014",
+      "language": "swift",
+      "category": "tests",
+      "severity": "medium",
+      "title": "Reglas F.I.R.S.T. para pruebas",
+      "description": "Las pruebas deben ser Rapidas (Fast), Independientes, Repetibles, Autovalidables (Self-Validating) y Oportunas (Timely).",
+      "rationale": "Sin estas reglas, las pruebas se vuelven una carga que los desarrolladores terminan ignorando.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar tiempos de ejecucion largos o dependencias entre tests."
+      },
+      "bad_example": "Pruebas que requieren conexion a red o que deben correr en un orden especifico.",
+      "good_example": "Pruebas unitarias puras que corren en milisegundos.",
+      "fix_strategy": [
+        "Eliminar dependencias externas mediante Mocks",
+        "Asegurar que cada prueba configure su propio estado inicial"
+      ],
+      "tags": ["unit-tests", "first", "quality"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 9: Unit Tests",
+          "page": 132,
+          "rule_code": "T9"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-015",
+      "language": "swift",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "Preferir throws a codigos de retorno",
+      "description": "El uso de codigos de error ensucia el flujo de control del llamador.",
+      "rationale": "Permite separar la logica de negocio de la gestion de errores, manteniendo el 'happy path' legible.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques 'if error != nil' constantes tras cada llamada."
+      },
+      "bad_example": "if deletePage(page) == .ok { ... }",
+      "good_example": "do { try deletePage(page) } catch { ... }",
+      "fix_strategy": [
+        "Lanzar excepciones (Error protocol)",
+        "Extraer los cuerpos de los bloques try/catch a funciones propias"
+      ],
+      "tags": ["exceptions", "error-handling"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 7: Error Handling",
+          "page": 104,
+          "rule_code": "G17"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-016",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Distancia vertical minima",
+      "description": "Los conceptos estrechamente relacionados deben mantenerse verticalmente cerca unos de otros.",
+      "rationale": "Evita que el lector tenga que desplazarse arriba y abajo para entender interacciones.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Variables declaradas lejos de su uso o funciones llamadas definidas al final del archivo."
+      },
+      "bad_example": "Variable declarada al inicio de una clase de 300 lineas y usada solo al final.",
+      "good_example": "Variable local justo encima de su primer uso.",
+      "fix_strategy": [
+        "Mover declaraciones cerca de su uso",
+        "Colocar funciones llamadas justo debajo de quien las llama"
+      ],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 80,
+          "rule_code": "G10"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-017",
+      "language": "swift",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Cohesion alta en clases",
+      "description": "Las clases deben tener un numero pequeno de variables de instancia manipuladas por sus metodos.",
+      "rationale": "Una clase donde cada variable es usada por cada metodo es maximamente cohesiva y logica.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar metodos que solo usen un subconjunto de las variables de la clase."
+      },
+      "bad_example": "Una clase con 10 variables donde 5 metodos solo usan 2.",
+      "good_example": "Dividir en dos clases mas pequenas y cohesivas.",
+      "fix_strategy": [
+        "Separar variables y metodos en nuevas clases cuando la cohesion baje",
+        "Evitar promover variables locales a campos de clase innecesariamente"
+      ],
+      "tags": ["cohesion", "classes", "refactoring"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 10: Classes",
+          "page": 140,
+          "rule_code": "G8"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-018",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "No ignorar fallos (No silenciar errores)",
+      "description": "Los fallos esporadicos no deben ignorarse. Deben tratarse como problemas reales.",
+      "rationale": "Ignorar un error dificil de repetir solo pospone un defecto grave que aparecera en produccion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar bloques catch vacios o comentarios tipo 'esto nunca pasa'."
+      },
+      "bad_example": "catch { // No hacer nada }",
+      "good_example": "catch { logger.error(error); throw error }",
+      "fix_strategy": [
+        "Investigar la causa raiz",
+        "Asegurar que los errores se propaguen o se registren adecuadamente"
+      ],
+      "tags": ["concurrency", "professionalism", "testing"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 13: Concurrency",
+          "page": 187,
+          "rule_code": "G3"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-019",
+      "language": "swift",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "No devolver Nil (Uso de Optionals)",
+      "description": "Evita devolver nil para indicar errores o colecciones vacias.",
+      "rationale": "Obliga al llamador a llenar el codigo de comprobaciones 'if let'.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Uso excesivo de '?' en retornos donde se podria usar el patron Special Case."
+      },
+      "bad_example": "func getEmployees() -> [Employee]? { return nil }",
+      "good_example": "func getEmployees() -> [Employee] { return [] }",
+      "fix_strategy": [
+        "Devolver colecciones vacias en lugar de nil",
+        "Lanzar errores descriptivos si la ausencia de dato es un fallo"
+      ],
+      "tags": ["error-handling", "optional", "swift-style"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 7: Error Handling",
+          "page": 110,
+          "rule_code": "G26"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-020",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar variables explicativas",
+      "description": "Dividir calculos complejos en valores intermedios con nombres significativos.",
+      "rationale": "Hace que el codigo se explique por si mismo sin necesidad de comentarios.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar expresiones booleanas o matematicas largas en una sola linea."
+      },
+      "bad_example": "if (u.age > 65 && (u.flags & 1 != 0))",
+      "good_example": "let isEligibleForBenefits = (age > 65 && isHourlyEmployee); if isEligibleForBenefits",
+      "fix_strategy": [
+        "Extraer partes de una expresion a constantes locales",
+        "Dividir formulas en pasos logicos"
+      ],
+      "tags": ["readability", "refactoring"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 296,
+          "rule_code": "G19"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-021",
+      "language": "swift",
+      "category": "comments",
+      "severity": "low",
+      "title": "Eliminar codigo comentado",
+      "description": "El codigo comentado debe borrarse de inmediato. No debe permanecer en el sistema.",
+      "rationale": "Distrae al lector y genera dudas sobre su relevancia. Git ya guarda el historial.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Grandes bloques de codigo dentro de '//'."
+      },
+      "bad_example": "// let x = oldFunction() \n // print(x)",
+      "good_example": "Borrar el codigo sin miedo.",
+      "fix_strategy": [
+        "Borrar el codigo",
+        "Confiar en el sistema de control de versiones"
+      ],
+      "tags": ["comments", "clutter"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 4: Comments",
+          "page": 68,
+          "rule_code": "C5"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-022",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Regla del Boy Scout",
+      "description": "Deja el codigo un poco mas limpio de como lo encontraste.",
+      "rationale": "Previene la degradacion gradual del software (code rot) mediante mejoras constantes.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Observar si la calidad del codigo mejora tras cada commit."
+      },
+      "bad_example": "Anadir una funcionalidad ignorando el desorden circundante.",
+      "good_example": "Al anadir un metodo, renombrar una variable confusa cercana.",
+      "fix_strategy": ["Realizar pequenas refactorizaciones constantes en cada tarea"],
+      "tags": ["professionalism", "clean-code"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 1: Clean Code",
+          "page": 14,
+          "rule_code": "CC-01"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-023",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Usar nomenclatura estandar",
+      "description": "Usa nombres basados en convenciones existentes o patrones de diseno conocidos.",
+      "rationale": "Facilita la comunicacion entre desarrolladores al usar un lenguaje comun.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Clases que implementan un Decorador pero no incluyen el termino en su nombre."
+      },
+      "bad_example": "class AutoHangup { ... }",
+      "good_example": "class AutoHangupModemDecorator { ... }",
+      "fix_strategy": [
+        "Renombrar clases para reflejar el patron que implementan",
+        "Seguir convenciones de Apple (ej. delegates, datasource)"
+      ],
+      "tags": ["naming", "patterns"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 311,
+          "rule_code": "N3"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-024",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Encapsular condicionales",
+      "description": "La logica booleana debe extraerse a funciones que expliquen la intencion.",
+      "rationale": "Los condicionales complejos son dificiles de leer en el contexto de un 'if'.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Bloques 'if' con multiples operadores logicos (&&, ||)."
+      },
+      "bad_example": "if timer.hasExpired && !timer.isRecurrent",
+      "good_example": "if shouldBeDeleted(timer)",
+      "fix_strategy": ["Extraer la logica a una funcion privada o propiedad de extension"],
+      "tags": ["readability", "functions"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 301,
+          "rule_code": "G28"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-025",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Elegir nombres al nivel de abstraccion correcto",
+      "description": "No elegir nombres que comuniquen la implementacion.",
+      "rationale": "Los nombres deben reflejar el nivel de abstraccion de la clase o funcion actual.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar protocolos que mencionen detalles tecnicos especificos en lugar de capacidades."
+      },
+      "bad_example": "protocol DatabaseConnection { func dial(phoneNumber: String) }",
+      "good_example": "protocol Connection { func connect(locator: String) }",
+      "fix_strategy": ["Renombrar basandose en la intencion general, no en el detalle tecnico"],
+      "tags": ["naming", "abstraction"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 311,
+          "rule_code": "N2"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-026",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Hacer explicitas las dependencias logicas",
+      "description": "Un modulo no debe hacer suposiciones sobre el modulo del que depende.",
+      "rationale": "Las dependencias logicas ocultas causan errores cuando el modulo externo cambia.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar constantes declaradas en un modulo que realmente pertenecen al otro."
+      },
+      "bad_example": "HourlyReporter usa una constante PAGE_SIZE definida internamente que deberia manejar el Formatter.",
+      "good_example": "HourlyReporter pregunta al Formatter por su tamano de pagina maximo.",
+      "fix_strategy": ["Exponer la informacion necesaria a traves de la API del colaborador"],
+      "tags": ["coupling", "general"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 298,
+          "rule_code": "G22"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-027",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Seguir la Metafora del Periodico",
+      "description": "El archivo debe leerse de arriba abajo, de lo general a lo detallado.",
+      "rationale": "Permite al lector captar la esencia rapidamente sin perderse en detalles de bajo nivel.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones privadas mezcladas aleatoriamente con publicas."
+      },
+      "bad_example": "Funciones de utilidad al principio del archivo.",
+      "good_example": "Logica principal arriba, detalles de implementacion al final.",
+      "fix_strategy": ["Reordenar miembros del archivo"],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 77,
+          "rule_code": "CC-05"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-028",
+      "language": "swift",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Command Query Separation",
+      "description": "Las funciones deben hacer algo o responder algo, pero no ambos.",
+      "rationale": "Evita confusiones sobre si una funcion esta cambiando el estado o solo consultandolo.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar funciones que retornan un booleano tras realizar una accion de cambio."
+      },
+      "bad_example": "if set(\"username\", \"bob\") { ... } // Check o accion?",
+      "good_example": "if attributeExists(\"username\") { setAttribute(\"username\", \"bob\") }",
+      "fix_strategy": ["Separar la consulta de la accion"],
+      "tags": ["functions", "logic"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 45,
+          "rule_code": "CC-03"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-029",
+      "language": "swift",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "Extraer bloques try/catch",
+      "description": "El procesamiento de errores es 'una cosa'. Las funciones que manejan errores no deben hacer nada mas.",
+      "rationale": "Mantiene la estructura del codigo limpia y separa la logica principal del manejo de fallos.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar funciones con bloques do-catch extensos mezclados con logica de negocio."
+      },
+      "bad_example": "func delete() { do { try action(); log() } catch { handle() } }",
+      "good_example": "func delete() { tryToActions() }; func tryToActions() { do { ... } }",
+      "fix_strategy": ["Extraer el cuerpo del bloque try a una funcion propia"],
+      "tags": ["error-handling", "abstraction"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 46,
+          "rule_code": "CC-03"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-030",
+      "language": "swift",
+      "category": "concurrency",
+      "severity": "high",
+      "title": "SRP en Concurrencia",
+      "description": "El codigo relacionado con la concurrencia debe estar separado del resto del codigo.",
+      "rationale": "La concurrencia tiene su propio ciclo de vida y desafios; mezclarla dificulta la depuracion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar si hay logica de hilos directamente en los servicios de dominio."
+      },
+      "bad_example": "Un ViewModel que gestiona colas de despacho y logica de red simultaneamente.",
+      "good_example": "Usar un Scheduler o proveedor de hilos independiente.",
+      "fix_strategy": ["Mover la gestion de hilos a una capa de infraestructura"],
+      "tags": ["concurrency", "srp"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 13: Concurrency",
+          "page": 181,
+          "rule_code": "CC-13"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-031",
+      "language": "swift",
+      "category": "naming",
+      "severity": "low",
+      "title": "Usar nombres pronunciables",
+      "description": "Si no puedes pronunciar un nombre, no puedes discutirlo sin parecer un idiota.",
+      "rationale": "La programacion es una actividad social; los nombres deben ser claros en una conversacion.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Nombres con abreviaturas extranas como 'genymdhms'."
+      },
+      "bad_example": "var modymdhms: Date",
+      "good_example": "var modificationTimestamp: Date",
+      "fix_strategy": ["Sustituir abreviaturas tecnicas por palabras completas"],
+      "tags": ["naming", "social"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 21,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-032",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Usar nombres buscables",
+      "description": "Los nombres de una sola letra y constantes numericas son dificiles de localizar.",
+      "rationale": "Facilita la busqueda global en el proyecto.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Variables 'e', 't' o numeros magicos en el codigo."
+      },
+      "bad_example": "if x == 7 { ... }",
+      "good_example": "if days == DAYS_IN_WEEK { ... }",
+      "fix_strategy": ["Convertir literales en constantes con nombres largos para ambitos amplios"],
+      "tags": ["naming", "searchability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 22,
+          "rule_code": "N5"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-033",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar el mapeo mental",
+      "description": "Los lectores no deberian tener que traducir mentalmente tus nombres.",
+      "rationale": "La claridad es reina; los programadores profesionales escriben codigo que otros entienden.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Uso de 'r' para 'url' solo porque el autor sabe el contexto."
+      },
+      "bad_example": "for i in 0..<j { ... } // Que es j?",
+      "good_example": "for index in 0..<numberOfItems { ... }",
+      "fix_strategy": ["Ser explicito en el nombre de las variables de bucle y temporales"],
+      "tags": ["naming", "readability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 25,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-034",
+      "language": "swift",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Argumentos de salida",
+      "description": "Evitar el uso de argumentos de salida. Si una funcion debe cambiar el estado, que sea el de su objeto.",
+      "rationale": "Los argumentos de salida son contraintuitivos en lenguajes modernos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Uso de 'inout' en Swift para devolver resultados."
+      },
+      "bad_example": "func appendFooter(to report: inout String)",
+      "good_example": "report.appendFooter()",
+      "fix_strategy": ["Convertir la funcion en un metodo del objeto que se desea modificar"],
+      "tags": ["functions", "swift-style"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 45,
+          "rule_code": "F2"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-035",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Elegir un nombre descriptivo para funciones",
+      "description": "El nombre debe decir que hace la funcion sin tener que ver el cuerpo.",
+      "rationale": "Reduce la carga cognitiva y permite navegar por el sistema con confianza.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Nombres vagos como 'process', 'calculate' o 'add' sin contexto."
+      },
+      "bad_example": "func add(_ val: Int)",
+      "good_example": "func daysSince(_ date: Date)",
+      "fix_strategy": ["Usar verbos y sustantivos que reflejen el contrato de la funcion"],
+      "tags": ["naming", "functions"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 297,
+          "rule_code": "G20"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-036",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Apertura vertical entre conceptos",
+      "description": "Usar lineas en blanco para separar pensamientos completos.",
+      "rationale": "Cada linea en blanco es una senal visual que identifica un nuevo concepto separado.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Funciones o bloques de codigo pegados sin espacio vertical."
+      },
+      "bad_example": "package x; import y; public class z { ... }",
+      "good_example": "package x;\n\nimport y;\n\npublic class z { ... }",
+      "fix_strategy": ["Insertar lineas en blanco entre imports, propiedades y funciones"],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 78,
+          "rule_code": "CC-05"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-037",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar nombres ambiguos",
+      "description": "Los nombres deben ser precisos. Evitar nombres que signifiquen cosas distintas en contextos similares.",
+      "rationale": "Previene errores al llamar a funciones incorrectas que parecen iguales.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Pares como 'getActiveAccount' vs 'getActiveAccounts' vs 'getActiveAccountInfo'."
+      },
+      "bad_example": "var data: Data // En una clase que maneja perfiles de usuario",
+      "good_example": "var userProfile: Data",
+      "fix_strategy": ["Anadir contexto o precision al nombre"],
+      "tags": ["naming", "readability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 20,
+          "rule_code": "N4"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-038",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Estructura sobre convencion",
+      "description": "Reforzar decisiones de diseno con la estructura del codigo, no solo con convenciones de nombres.",
+      "rationale": "Los compiladores obligan a cumplir la estructura; las convenciones se olvidan.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Uso de switches manuales en lugar de protocolos obligatorios."
+      },
+      "bad_example": "Confiar en que todos llamen a 'setup()' antes de usar un objeto.",
+      "good_example": "Inyectar dependencias en el inicializador del objeto.",
+      "fix_strategy": ["Usar tipos y patrones que fuercen el comportamiento deseado"],
+      "tags": ["design", "architecture"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 301,
+          "rule_code": "G27"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-039",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Declaracion de variables cerca de su uso",
+      "description": "Las variables locales deben aparecer justo antes de ser utilizadas.",
+      "rationale": "Reduce la carga de memoria del lector al no tener que recordar variables definidas 50 lineas arriba.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Declaraciones masivas al inicio de funciones largas."
+      },
+      "bad_example": "func long() { let a = 1; ... (40 lineas) ... print(a) }",
+      "good_example": "func long() { ... (40 lineas) ... let a = 1; print(a) }",
+      "fix_strategy": ["Mover la declaracion justo encima de la primera inicializacion o uso"],
+      "tags": ["formatting", "scope"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 80,
+          "rule_code": "G10"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-040",
+      "language": "swift",
+      "category": "naming",
+      "severity": "low",
+      "title": "Una palabra por concepto",
+      "description": "Elegir una palabra para un concepto abstracto y mantenerse fiel a ella.",
+      "rationale": "Evita confusiones (ej. cual es la diferencia entre fetch, retrieve y get?).",
+      "detection": {
+        "type": "semantic",
+        "notes": "Diferentes clases usando verbos distintos para la misma accion (ej. User.get vs Product.fetch)."
+      },
+      "bad_example": "User.fetch(), Account.retrieve(), Customer.get()",
+      "good_example": "User.get(), Account.get(), Customer.get()",
+      "fix_strategy": ["Estandarizar el lexico del proyecto"],
+      "tags": ["naming", "consistency"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 2: Meaningful Names",
+          "page": 26,
+          "rule_code": "CC-02"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-041",
+      "language": "swift",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "Manejo de errores es 'una cosa'",
+      "description": "Una funcion que maneja errores no debe hacer nada mas.",
+      "rationale": "El manejo de excepciones es un flujo de control distinto que no debe enturbiar el algoritmo principal.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones con codigo tras el bloque 'catch'."
+      },
+      "bad_example": "func save() { do { try action() } catch { ... }; cleanup() }",
+      "good_example": "El bloque catch es el final de la funcion; cleanup() esta dentro del bloque try o catch.",
+      "fix_strategy": ["Asegurar que no hay nada tras los bloques catch/finally"],
+      "tags": ["error-handling", "srp"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 3: Functions",
+          "page": 47,
+          "rule_code": "CC-03"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-042",
+      "language": "swift",
+      "category": "tests",
+      "severity": "low",
+      "title": "Un solo Assert por prueba",
+      "description": "Idealmente, cada funcion de prueba debe tener una unica sentencia assert.",
+      "rationale": "Las pruebas llegan a conclusiones rapidas y claras; si fallan, sabes exactamente que fallo.",
+      "detection": {
+        "type": "threshold",
+        "metric": "asserts_per_test",
+        "operator": "<=",
+        "value": 1,
+        "notes": "Contar asserts en funciones unitarias."
+      },
+      "bad_example": "Un test que valida el nombre, el ID, la fecha y el estado en un solo paso.",
+      "good_example": "Tests separados para cada concepto logico (aunque tengan multiples asserts fisicos).",
+      "fix_strategy": ["Dividir el test en multiples pruebas conceptuales"],
+      "tags": ["unit-tests", "cleanliness"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 9: Unit Tests",
+          "page": 130,
+          "rule_code": "CC-09"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-043",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Afinidad conceptual",
+      "description": "Trocear el codigo para que las partes relacionadas esten juntas.",
+      "rationale": "La afinidad puede basarse en dependencia directa o en similitud de operacion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones que validan estados similares separadas por cientos de lineas."
+      },
+      "bad_example": "assertTrue() y assertFalse() en extremos opuestos de un archivo.",
+      "good_example": "Mantener variaciones de la misma tarea basica en bloques contiguos.",
+      "fix_strategy": ["Reagrupar metodos por afinidad conceptual"],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 5: Formatting",
+          "page": 84,
+          "rule_code": "CC-05"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-044",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar condicionales negativos",
+      "description": "Los positivos son mas faciles de entender que los negativos.",
+      "rationale": "Reducen la carga cognitiva de 'negar una negacion'.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'if !condition' donde el nombre ya implica negacion."
+      },
+      "bad_example": "if !buffer.shouldNotCompact",
+      "good_example": "if buffer.shouldCompact",
+      "fix_strategy": ["Invertir la logica para usar expresiones positivas"],
+      "tags": ["logic", "clean-code"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 302,
+          "rule_code": "G29"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-045",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Hacer explicito el acoplamiento temporal",
+      "description": "Si el orden de las llamadas importa, la estructura debe forzarlo.",
+      "rationale": "Evita errores de estado inconsistente al llamar funciones fuera de orden.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones que deben llamarse secuencialmente sin que sus argumentos lo reflejen."
+      },
+      "bad_example": "saturate(); reticulate(); dive(); // Sin conexion fisica",
+      "good_example": "let grad = saturate(); let splines = reticulate(grad); dive(splines)",
+      "fix_strategy": ["Crear una 'brigada de cubos' donde cada funcion requiere el resultado de la anterior"],
+      "tags": ["coupling", "logic"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 302,
+          "rule_code": "G31"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-046",
+      "language": "swift",
+      "category": "naming",
+      "severity": "low",
+      "title": "Usar nombres largos para ambitos largos",
+      "description": "La longitud de un nombre debe ser proporcional a su alcance (scope).",
+      "rationale": "En ambitos pequenos, nombres cortos (ej. i) son aceptables. En ambitos grandes, se necesita precision.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar variables de una letra que viajan por multiples funciones."
+      },
+      "bad_example": "var x = 10; // Usada en 5 metodos de la clase",
+      "good_example": "var maxRetryCount = 10",
+      "fix_strategy": ["Renombrar variables globales o de instancia con nombres muy precisos"],
+      "tags": ["naming", "scope"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 312,
+          "rule_code": "N5"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-047",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Ser preciso",
+      "description": "No tomar decisiones perezosas. Definir exactamente como manejar nulos, concurrencia o errores.",
+      "rationale": "Las ambiguedades e imprecisiones son el origen de la mayoria de los bugs.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Uso de Double para dinero o ignorar bloqueos de concurrencia."
+      },
+      "bad_example": "Asumir que el primer resultado de una base de datos es el unico.",
+      "good_example": "Validar unicidad o manejar el caso de multiples resultados.",
+      "fix_strategy": ["Cerrar cada decision de codigo con una validacion precisa"],
+      "tags": ["logic", "professionalism"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 301,
+          "rule_code": "G26"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-048",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Entender el Algoritmo",
+      "description": "No consideres que has terminado hasta que entiendas perfectamente por que el codigo funciona.",
+      "rationale": "Pasar los tests no es suficiente si el exito es accidental o basado en parches.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Funciones llenas de 'if' y parches anadidos por ensayo y error."
+      },
+      "bad_example": "Codigo que funciona tras anadir un 'if' extra que no puedes explicar.",
+      "good_example": "Refactorizar hasta que la solucion sea tan simple que su correccion sea obvia.",
+      "fix_strategy": ["Reescribir la funcion desde cero una vez que se ha descubierto la solucion"],
+      "tags": ["logic", "craftsmanship"],
+      "references": [
+        {
+          "type": "book",
+          "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+          "author": "Robert C. Martin",
+          "chapter": "Chapter 17: Smells and Heuristics",
+          "page": 297,
+          "rule_code": "G21"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-049",
+      "language": "swift",
+      "category": "naming",
+      "severity": "high",
+      "title": "Claridad en el punto de uso",
+      "description": "El objetivo principal al disenar una API debe ser la claridad en el lugar donde se llama al codigo, no solo donde se declara.",
+      "rationale": "El codigo se lee mucho mas de lo que se escribe; priorizar la legibilidad en el uso reduce errores de interpretacion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Evaluar si al leer una llamada a la funcion el proposito es evidente sin mirar la declaracion."
+      },
+      "bad_example": "func move(x: Int, y: Int)",
+      "good_example": "func move(toX x: Int, y: Int)",
+      "fix_strategy": ["Anadir etiquetas de argumentos que aclaren el rol de los parametros"],
+      "tags": ["naming", "readability", "api-design"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-050",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Omitir palabras innecesarias",
+      "description": "Cada palabra en un nombre debe aportar informacion relevante. Evitar terminos que repitan informacion de tipo conocida.",
+      "rationale": "La redundancia oscurece el proposito real del nombre y ensucia el punto de uso.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar nombres que incluyan el tipo de dato, como 'Element' o 'String'."
+      },
+      "bad_example": "allViews.removeElement(cancelButton)",
+      "good_example": "allViews.remove(cancelButton)",
+      "fix_strategy": ["Eliminar sufijos de tipo si el contexto es claro"],
+      "tags": ["naming", "conciseness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-051",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Nombres basados en roles, no en tipos",
+      "description": "Las variables y parametros deben nombrarse segun su funcion conceptual, no por su restriccion de tipo.",
+      "rationale": "El rol describe la intencion del negocio, mientras que el tipo es un detalle de implementacion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar si el nombre del parametro coincide exactamente con el nombre de su clase o protocolo."
+      },
+      "bad_example": "func restock(from widgetFactory: WidgetFactory)",
+      "good_example": "func restock(from supplier: WidgetFactory)",
+      "fix_strategy": ["Renombrar basandose en el rol que cumple el objeto en ese contexto"],
+      "tags": ["naming", "abstraction"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-052",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Variables @State obligatoriamente privadas",
+      "description": "Todas las propiedades anotadas con @State deben declararse como private.",
+      "rationale": "Evita que se expongan en el inicializador sintetico de la estructura, lo cual entraria en conflicto con la gestion de memoria de SwiftUI.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar @State sin el modificador 'private'."
+      },
+      "bad_example": "@State var isPlaying = false",
+      "good_example": "@State private var isPlaying = false",
+      "fix_strategy": ["Anadir el modificador 'private' a la declaracion"],
+      "tags": ["swiftui", "state-management", "encapsulation"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://developer.apple.com/documentation/swiftui/state",
+          "title": "Apple Developer: State"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-053",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Indentacion rigurosa de 2 espacios",
+      "description": "Se debe usar exactamente 2 espacios para la indentacion de niveles de codigo.",
+      "rationale": "Mantiene la consistencia visual y evita el desplazamiento horizontal excesivo en pantallas pequenas o revisiones de codigo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar el uso de tabs o indentaciones de 4 espacios."
+      },
+      "bad_example": "if true {\n    print(\"Hello\")\n}",
+      "good_example": "if true {\n  print(\"Hello\")\n}",
+      "fix_strategy": ["Configurar el linter o IDE para usar 2 espacios"],
+      "tags": ["formatting", "consistency"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-054",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Preferir macro @Observable sobre ObservableObject",
+      "description": "En proyectos para iOS 17+, se debe usar la macro @Observable en lugar del protocolo ObservableObject.",
+      "rationale": "@Observable ofrece un seguimiento dinamico a nivel de propiedad, reduciendo redibujados innecesarios hasta en un 66%.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar clases que aun implementan ObservableObject y usan @Published."
+      },
+      "bad_example": "class User: ObservableObject { @Published var name = \"\" }",
+      "good_example": "@Observable class User { var name = \"\" }",
+      "fix_strategy": ["Migrar a la macro @Observable y eliminar @Published"],
+      "tags": ["swiftui", "performance", "modern-swift"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://developer.apple.com/documentation/SwiftUI/Managing-model-data-in-your-app",
+          "title": "Apple: Managing Model Data"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-055",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Naming de Booleans como aserciones",
+      "description": "Las propiedades booleanas deben leerse como afirmaciones sobre el receptor, usando prefijos como 'is', 'has', 'can' o 'should'.",
+      "rationale": "Clarifica que la variable es una condicion logica y mejora la fluidez gramatical.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar variables booleanas que sean solo sustantivos o verbos simples."
+      },
+      "bad_example": "var spaceSuit: Bool",
+      "good_example": "var hasSpacesuit: Bool",
+      "fix_strategy": ["Anteponer un verbo auxiliar que convierta el nombre en una pregunta/asertivo"],
+      "tags": ["naming", "boolean"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-056",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Omitir self innecesario",
+      "description": "Se prohibe el uso de 'self' excepto cuando sea obligatorio para desambiguar en inicializadores o requerido por clausuras @escaping.",
+      "rationale": "Reduce el ruido visual y hace que el codigo sea mas conciso sin perder claridad.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'self.' delante de propiedades donde no hay colision con parametros locales."
+      },
+      "bad_example": "self.name = name",
+      "good_example": "name = newName",
+      "fix_strategy": ["Eliminar 'self.' si el compilador lo permite"],
+      "tags": ["style", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-057",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Comas finales en listas multilinea",
+      "description": "Toda coleccion, parametro o llamada que se distribuya en multiples lineas debe incluir una coma tras el ultimo elemento.",
+      "rationale": "Optimiza los historiales de Git al evitar diffs innecesarios cuando se anaden nuevos elementos al final.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Revisar el ultimo elemento de arreglos o diccionarios multilinea."
+      },
+      "bad_example": "let colors = [\n  \"red\",\n  \"blue\"\n]",
+      "good_example": "let colors = [\n  \"red\",\n  \"blue\",\n]",
+      "fix_strategy": ["Anadir una coma al final de la ultima linea de la lista"],
+      "tags": ["formatting", "git", "maintainability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-058",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar prefijos de Objective-C",
+      "description": "No se deben usar prefijos de clase (como 'NS' o 'RW') ya que Swift tiene un sistema nativo de namespaces por modulos.",
+      "rationale": "Swift resuelve colisiones mediante el nombre del modulo, haciendo los prefijos redundantes y anticuados.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar nombres de clases que empiecen con 2 o 3 letras mayusculas seguidas de CamelCase."
+      },
+      "bad_example": "class RWUserManager",
+      "good_example": "class UserManager",
+      "fix_strategy": ["Eliminar el prefijo de la declaracion de clase"],
+      "tags": ["naming", "legacy-code"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-059",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Sintaxis abreviada de Unwrapping",
+      "description": "Utilizar la sintaxis abreviada 'if let property' en lugar de 'if let property = property'.",
+      "rationale": "Reduce el codigo repetitivo (boilerplate) manteniendo la misma seguridad de tipos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar desreferenciacion de opcionales donde el nombre de la variable local es identico a la original."
+      },
+      "bad_example": "if let user = user { ... }",
+      "good_example": "if let user { ... }",
+      "fix_strategy": ["Eliminar la asignacion explicita si los nombres coinciden"],
+      "tags": ["logic", "modern-swift"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift/releases",
+          "title": "Airbnb Swift Style Guide Releases"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-060",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Inicializacion de vistas barata",
+      "description": "El constructor (init) de una vista de SwiftUI debe ser extremadamente rapido y no contener efectos secundarios.",
+      "rationale": "Las vistas se instancian constantemente; realizar I/O o logica pesada en el init degrada severamente el rendimiento.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar llamadas a base de datos, red o calculos pesados en el bloque 'init'."
+      },
+      "bad_example": "init() { self.data = fetchDataFromNetwork() }",
+      "good_example": "var body: some View { ... }.task { self.data = await fetchData() }",
+      "fix_strategy": ["Mover la carga de datos al modificador .task o .onAppear"],
+      "tags": ["swiftui", "performance"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://wwdcnotes.com/documentation/wwdcnotes/wwdc20-10040-data-essentials-in-swiftui/",
+          "title": "WWDC Notes: Data Essentials"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-061",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Tratamiento de acronimos",
+      "description": "Los acronimos deben ser uniformemente mayusculas (ID, URL) o minusculas segun la convencion de CamelCase.",
+      "rationale": "Mantiene la coherencia visual. Si el acronimo inicia un nombre lowerCamelCase, debe ir en minusculas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar mezclas como 'uRL' o 'Id'."
+      },
+      "bad_example": "let uRL: URL",
+      "good_example": "let userID: String",
+      "fix_strategy": ["Corregir la capitalizacion del acronimo para que coincida con el resto del identificador"],
+      "tags": ["naming", "conventions"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-062",
+      "language": "swift",
+      "category": "concurrency",
+      "severity": "high",
+      "title": "Evitar @unchecked Sendable",
+      "description": "Se debe restringir al maximo el uso de @unchecked Sendable para tipos concurrentes.",
+      "rationale": "Esta anotacion suprime las advertencias del compilador sin garantizar seguridad real de hilos, facilitando condiciones de carrera.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar la palabra clave '@unchecked Sendable' en el codigo."
+      },
+      "bad_example": "struct UnsafeData: @unchecked Sendable { var value: Int }",
+      "good_example": "actor SafeData { var value: Int }",
+      "fix_strategy": ["Usar tipos inmutables, actores o @MainActor para cumplir Sendable de forma verificada"],
+      "tags": ["concurrency", "safety", "swift6"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift/releases",
+          "title": "Airbnb Swift Style Guide Releases"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-063",
+      "language": "swift",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Omitir Void en retornos de funciones",
+      "description": "No incluir explicitamente '-> Void' en las declaraciones de funciones que no devuelven nada.",
+      "rationale": "Swift asume el retorno de tipo vacio por defecto; omitirlo reduce el ruido sintactico.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar '-> Void' al final de la firma de un metodo."
+      },
+      "bad_example": "func logMessage(_ msg: String) -> Void",
+      "good_example": "func logMessage(_ msg: String)",
+      "fix_strategy": ["Eliminar la flecha y la palabra Void del final de la firma"],
+      "tags": ["functions", "conciseness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-064",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Separacion de sentencias por linea",
+      "description": "Solo se permite una sentencia por linea de codigo. No usar punto y coma para separar sentencias.",
+      "rationale": "Facilita la depuracion paso a paso y mejora la legibilidad estructural.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar el caracter ';' usado para separar sentencias en la misma linea."
+      },
+      "bad_example": "print(\"A\"); print(\"B\")",
+      "good_example": "print(\"A\")\nprint(\"B\")",
+      "fix_strategy": ["Dividir las sentencias en lineas independientes y eliminar el punto y coma"],
+      "tags": ["formatting", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-065",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Nombres de funciones de eventos en pasado",
+      "description": "Las funciones que manejan eventos deben nombrarse como oraciones en pasado (did/will).",
+      "rationale": "Sigue la convencion de Cocoa y describe con precision el estado del sistema en relacion al evento.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar nombres como 'handleTap' en lugar de 'didTap'."
+      },
+      "bad_example": "func handleSelection()",
+      "good_example": "func didSelectUser()",
+      "fix_strategy": ["Renombrar usando verbos que indiquen tiempo"],
+      "tags": ["naming", "events"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-066",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Eliminar logs de consola en produccion",
+      "description": "Se prohibe el uso de print(), debugPrint() o dump() en codigo de produccion.",
+      "rationale": "Estas funciones pueden filtrar informacion personal (PII) y degradar el rendimiento al no ser filtrables por subsistemas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar llamadas directas a 'print' fuera de entornos de debug."
+      },
+      "bad_example": "print(\"User login: \\(userId)\")",
+      "good_example": "os_log(.info, \"User login successful\")",
+      "fix_strategy": ["Usar frameworks dedicados como os_log o swift-log"],
+      "tags": ["logging", "security", "production"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-067",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de guard para salidas tempranas",
+      "description": "Preferir 'guard' para validar precondiciones al inicio de un bloque en lugar de anidar logica principal.",
+      "rationale": "Mantiene el 'happy path' alineado a la izquierda y reduce la complejidad cognitiva (piramide de la muerte).",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar bloques 'if' donde el bloque principal esta profundamente indentado."
+      },
+      "bad_example": "if let user { if user.isActive { // 20 lineas } }",
+      "good_example": "guard let user, user.isActive else { return } // 20 lineas",
+      "fix_strategy": ["Invertir la condicion y usar guard para retornar temprano"],
+      "tags": ["logic", "readability", "flow-control"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-068",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir inmutabilidad (let sobre var)",
+      "description": "Definir por defecto todo con 'let' y cambiar a 'var' solo si el compilador lo requiere por necesidad de mutacion.",
+      "rationale": "Las variables inmutables facilitan el razonamiento sobre el estado y reducen errores en entornos concurrentes.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar variables declaradas con 'var' que nunca son reasignadas."
+      },
+      "bad_example": "var total = items.count",
+      "good_example": "let total = items.count",
+      "fix_strategy": ["Sustituir 'var' por 'let' donde sea posible"],
+      "tags": ["immutability", "idiomatic"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-069",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Metodos de fabrica con make",
+      "description": "Los nombres de los metodos que crean y devuelven un nuevo objeto deben comenzar con el prefijo 'make'.",
+      "rationale": "Establece una expectativa clara de que la funcion tiene un coste de creacion y devuelve una nueva instancia.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar metodos de creacion llamados 'create' o 'new'."
+      },
+      "bad_example": "func createIterator() -> Iterator",
+      "good_example": "func makeIterator() -> Iterator",
+      "fix_strategy": ["Renombrar la funcion usando el prefijo 'make'"],
+      "tags": ["naming", "factory", "conventions"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-070",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Limite de columna a 100 caracteres",
+      "description": "Las lineas de codigo deben mantenerse dentro de un limite de 100 caracteres.",
+      "rationale": "Facilita la lectura en pantallas divididas y evita el cansancio ocular por lineas excesivamente largas.",
+      "detection": {
+        "type": "threshold",
+        "metric": "line_length_chars",
+        "operator": "<=",
+        "value": 100,
+        "notes": "Contar caracteres por linea de codigo."
+      },
+      "bad_example": "let longString = \"Esta es una cadena extremadamente larga que definitivamente va a superar el limite de cien caracteres.\"",
+      "good_example": "let longString = \"\"\"\n  Esta es una cadena...\n  \"\"\"",
+      "fix_strategy": ["Aplicar saltos de linea (line-wrapping) manuales o automaticos"],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-071",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Uso de task para diferir inicializacion",
+      "description": "Posponer llamadas de red u objetos pesados utilizando el modificador asincrono .task en lugar de cargarlos en el init.",
+      "rationale": "Cancela automaticamente el trabajo si la vista se retira y evita bloqueos del hilo principal durante la instanciacion.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar @State cargados mediante funciones sincronas en el cuerpo de la vista."
+      },
+      "bad_example": "@State private var data = fetchDataSync()",
+      "good_example": ".task { self.data = await fetchData() }",
+      "fix_strategy": ["Refactorizar la carga de datos a un metodo asincrono llamado desde .task"],
+      "tags": ["swiftui", "concurrency", "performance"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://wwdcnotes.com/documentation/wwdcnotes/wwdc20-10040-data-essentials-in-swiftui/",
+          "title": "WWDC Notes: Data Essentials"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-072",
+      "language": "swift",
+      "category": "naming",
+      "severity": "low",
+      "title": "Afinidad de pares Mutantes/No-Mutantes",
+      "description": "Nombrar pares de metodos de forma consistente: el mutante usa el imperativo y el no-mutante usa sufijos '-ed' o '-ing'.",
+      "rationale": "Permite al desarrollador intuir si una operacion modifica la instancia actual o devuelve una nueva.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Comparar nombres de metodos como 'sort()' vs 'sorted()'."
+      },
+      "bad_example": "x.sort(); z = x.sortCopy()",
+      "good_example": "x.sort(); z = x.sorted()",
+      "fix_strategy": ["Renombrar la variante no-mutante aplicando la regla gramatical de participio"],
+      "tags": ["naming", "mutability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-073",
+      "language": "swift",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Resumen de documentacion directo",
+      "description": "El primer parrafo de la documentacion debe ser una frase fragmentada que termine en punto.",
+      "rationale": "Xcode utiliza este fragmento en los indices de ayuda rapida; debe ser conciso y directo.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar que la descripcion no empiece por 'Este metodo sirve para...'."
+      },
+      "bad_example": "/// Este metodo sirve para validar el email.",
+      "good_example": "/// Valida el formato del email.",
+      "fix_strategy": ["Reescribir el inicio del comentario de forma imperativa o nominal"],
+      "tags": ["documentation", "javadoc"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-074",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Preferir #fileID a #filePath",
+      "description": "En entornos de produccion, se debe usar estrictamente #fileID en lugar de #filePath.",
+      "rationale": "#filePath expone la estructura de directorios local del desarrollador en el binario final y aumenta su tamano.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar el literal '#filePath' en el codigo fuente."
+      },
+      "bad_example": "print(\"Error en: \\(#filePath)\")",
+      "good_example": "print(\"Error en: \\(#fileID)\")",
+      "fix_strategy": ["Sustituir #filePath por #fileID"],
+      "tags": ["security", "production", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-075",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar el verbo get",
+      "description": "No usar 'get' como prefijo para metodos que devuelven un valor directamente.",
+      "rationale": "En Swift se prefiere usar la forma sustantiva del objeto. 'get' se reserva para retornos indirectos (parametros inout).",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar metodos con nombres como 'getUserName()'."
+      },
+      "bad_example": "func getUserName() -> String",
+      "good_example": "func userName() -> String",
+      "fix_strategy": ["Eliminar el prefijo 'get' y dejar el nombre del recurso"],
+      "tags": ["naming", "legacy-code"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-076",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacio tras los dos puntos",
+      "description": "Colocar siempre un espacio despues de los dos puntos de tipo o etiqueta, y ninguno antes.",
+      "rationale": "Estandariza la legibilidad de las declaraciones y parametros.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'x:Int' o 'x : Int'."
+      },
+      "bad_example": "let name :String",
+      "good_example": "let name: String",
+      "fix_strategy": ["Corregir el espaciado alrededor de ':'"],
+      "tags": ["formatting", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-077",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Check nil en lugar de binding vacio",
+      "description": "Si no se necesita el valor del opcional, usar '!= nil' en lugar de un 'if let _'.",
+      "rationale": "Es mas explicito sobre la intencion del programador de solo verificar existencia.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'if let _ = ...'."
+      },
+      "bad_example": "if let _ = user { ... }",
+      "good_example": "if user != nil { ... }",
+      "fix_strategy": ["Sustituir el binding ignorado por una comparacion contra nil"],
+      "tags": ["logic", "clean-code"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-078",
+      "language": "swift",
+      "category": "architecture",
+      "severity": "high",
+      "title": "Inversion de Dependencias (Constructor DI)",
+      "description": "Las dependencias deben inyectarse a traves del inicializador en lugar de crearse internamente.",
+      "rationale": "Permite la testabilidad mediante el uso de mocks y reduce el acoplamiento rigido.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar inicializaciones manuales de servicios dentro de una clase."
+      },
+      "bad_example": "class Service { let db = Database() }",
+      "good_example": "class Service { let db: Database; init(db: Database) { ... } }",
+      "fix_strategy": ["Mover la creacion del objeto fuera y pasarlo al init"],
+      "tags": ["architecture", "di", "solid"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://oneuptime.com/blog/post/2026-02-02-swift-dependency-injection/view",
+          "title": "Dependency Injection in Swift"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-079",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Protocolos de capacidad terminados en -able",
+      "description": "Los protocolos que describen una habilidad deben terminar en -able, -ible o -ing.",
+      "rationale": "Diferencia claramente los protocolos que definen una capacidad de aquellos que definen lo que un objeto es.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar protocolos como 'DataProtocol' que otorgan una habilidad."
+      },
+      "bad_example": "protocol UserAction",
+      "good_example": "protocol Actionable",
+      "fix_strategy": ["Renombrar el protocolo usando un adjetivo descriptivo"],
+      "tags": ["naming", "protocols"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-080",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin espacios en literales de coleccion",
+      "description": "No debe haber espacios inmediatamente dentro de los corchetes de arreglos o diccionarios.",
+      "rationale": "Mantiene la densidad visual compacta en las estructuras de datos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar '[ 1, 2 ]'."
+      },
+      "bad_example": "let x = [ 1, 2 ]",
+      "good_example": "let x = [1, 2]",
+      "fix_strategy": ["Eliminar espacios internos"],
+      "tags": ["formatting", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-081",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir shorthands de tipos estandar",
+      "description": "Usar [Type] en lugar de Array<Type> y Wrapped? en lugar de Optional<Wrapped>.",
+      "rationale": "Es el estandar idiomatico de Swift que mejora drasticamente la brevedad y legibilidad.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar declaraciones de genericos de la libreria estandar."
+      },
+      "bad_example": "var list: Array<Int>",
+      "good_example": "var list: [Int]",
+      "fix_strategy": ["Sustituir por la sintaxis de azucar sintactico"],
+      "tags": ["style", "idiomatic"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-082",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Omitir @ViewBuilder innecesario",
+      "description": "No anadir @ViewBuilder a propiedades 'body' o funciones que devuelven una unica expresion.",
+      "rationale": "Swift lo aplica automaticamente en 'body'. Anadirlo explicitamente es redundante.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar @ViewBuilder en la declaracion de 'var body'."
+      },
+      "bad_example": "@ViewBuilder var body: some View { Text(\"Hi\") }",
+      "good_example": "var body: some View { Text(\"Hi\") }",
+      "fix_strategy": ["Eliminar la anotacion redundante"],
+      "tags": ["swiftui", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift/releases",
+          "title": "Airbnb Swift Style Guide Releases"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-083",
+      "language": "swift",
+      "category": "functions",
+      "severity": "low",
+      "title": "Parametros no usados como guiones bajos",
+      "description": "Si un parametro de funcion o clausura no se utiliza, debe nombrarse como '_'.",
+      "rationale": "Explicita la intencion de ignorar el valor y evita advertencias de compilador sobre variables no usadas.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar nombres de variables en la firma que nunca aparecen en el cuerpo."
+      },
+      "bad_example": "list.map { index, value in return value }",
+      "good_example": "list.map { _, value in return value }",
+      "fix_strategy": ["Sustituir el nombre por '_'"],
+      "tags": ["functions", "closures", "clean-code"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-084",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacio alrededor de la flecha de retorno",
+      "description": "Colocar siempre un espacio a ambos lados de '->'.",
+      "rationale": "Mejora la diferenciacion visual entre la firma y el tipo de retorno.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar '()->String'."
+      },
+      "bad_example": "func a()->Int",
+      "good_example": "func a() -> Int",
+      "fix_strategy": ["Anadir espacios alrededor de '->'"],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-085",
+      "language": "swift",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "No usar excepciones para control de flujo",
+      "description": "No lanzar errores para situaciones de negocio esperadas que puedan manejarse con opcionales.",
+      "rationale": "Lanzar errores tiene un coste de rendimiento; los errores deben reservarse para fallos excepcionales.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar throws en funciones de busqueda simple."
+      },
+      "bad_example": "func findUser(id: String) throws -> User",
+      "good_example": "func findUser(id: String) -> User?",
+      "fix_strategy": ["Cambiar a retorno opcional si la ausencia es un resultado valido"],
+      "tags": ["error-handling", "logic"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-086",
+      "language": "swift",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Default classes to final",
+      "description": "Las clases deben marcarse como 'final' a menos que esten disenadas explicitamente para la herencia.",
+      "rationale": "La composicion es preferible a la herencia; marcar como final permite optimizaciones de compilador y clarifica la intencion de diseno.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar clases que no son heredadas pero carecen del modificador 'final'."
+      },
+      "bad_example": "class UserManager { ... }",
+      "good_example": "final class UserManager { ... }",
+      "fix_strategy": ["Anadir el modificador 'final' a la declaracion de clase"],
+      "tags": ["classes", "performance", "design"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-087",
+      "language": "swift",
+      "category": "naming",
+      "severity": "low",
+      "title": "US English Spelling",
+      "description": "Utilizar siempre la ortografia del ingles estadounidense para coincidir con las APIs de Apple.",
+      "rationale": "Mantiene la coherencia gramatical con el sistema operativo y librerias estandar.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar palabras como 'colour' o 'centre'."
+      },
+      "bad_example": "let backgroundColour: Color",
+      "good_example": "let backgroundColor: Color",
+      "fix_strategy": ["Corregir la ortografia al estandar US"],
+      "tags": ["naming", "consistency"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-088",
+      "language": "swift",
+      "category": "general",
+      "severity": "low",
+      "title": "Omitir else EmptyView innecesario",
+      "description": "En view builders, no anadir una rama else que devuelva EmptyView().",
+      "rationale": "Un 'if' sin 'else' implicitamente no produce contenido cuando es falso; el codigo explicito anade ruido.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'else { EmptyView() }'."
+      },
+      "bad_example": "if show { ViewA() } else { EmptyView() }",
+      "good_example": "if show { ViewA() }",
+      "fix_strategy": ["Eliminar la rama else redundante"],
+      "tags": ["swiftui", "conciseness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift/releases",
+          "title": "Airbnb Swift Style Guide Releases"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-089",
+      "language": "swift",
+      "category": "concurrency",
+      "severity": "medium",
+      "title": "Enlace de referencias debiles abreviado",
+      "description": "Utilizar 'guard let self else { return }' para consolidar referencias [weak self].",
+      "rationale": "Elimina alias obsoletos como 'strongSelf' y utiliza la capacidad del lenguaje para sombrear variables de forma segura.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'guard let strongSelf = self'."
+      },
+      "bad_example": "guard let strongSelf = self else { return }",
+      "good_example": "guard let self else { return }",
+      "fix_strategy": ["Simplificar el enlace a la sintaxis nativa de sombreado"],
+      "tags": ["logic", "concurrency", "closures"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-090",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin espacios en parentesis de argumentos",
+      "description": "No debe haber espacios despues del parentesis de apertura ni antes del de cierre en llamadas a funciones.",
+      "rationale": "Mantiene la cohesion visual del bloque de argumentos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'func( arg )'."
+      },
+      "bad_example": "print( \"Hello\" )",
+      "good_example": "print(\"Hello\")",
+      "fix_strategy": ["Eliminar espacios internos"],
+      "tags": ["formatting", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-091",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Caseless Enums como Namespaces",
+      "description": "Utilizar enumeraciones sin casos para agrupar constantes o funciones relacionadas.",
+      "rationale": "A diferencia de las structs, las enumeraciones sin casos no pueden instanciarse, lo que las hace namespaces puros perfectos.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar structs de utilidad que solo tienen miembros estaticos."
+      },
+      "bad_example": "struct AppConstants { static let version = \"1.0\" }",
+      "good_example": "enum AppConstants { static let version = \"1.0\" }",
+      "fix_strategy": ["Cambiar 'struct' por 'enum' y eliminar inicializadores si los hay"],
+      "tags": ["style", "design-patterns", "architecture"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-092",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Literal Long con L mayuscula",
+      "description": "Usar siempre la 'L' mayuscula para literales de tipo long para evitar confusion con el numero 1.",
+      "rationale": "Mejora la legibilidad y evita errores tipograficos visuales.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar literales con sufijo 'l' minuscula."
+      },
+      "bad_example": "let count = 3000l",
+      "good_example": "let count = 3000L",
+      "fix_strategy": ["Cambiar a 'L' mayuscula"],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-093",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "MARK para conformidades de protocolo",
+      "description": "Cada extension que implemente un protocolo debe estar precedida por un comentario MARK.",
+      "rationale": "Facilita la navegacion del archivo mediante el selector de metodos de Xcode.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar extensiones sin el comentario '// MARK: - ProtocolName'."
+      },
+      "bad_example": "extension User: Equatable { ... }",
+      "good_example": "// MARK: - Equatable\nextension User: Equatable { ... }",
+      "fix_strategy": ["Insertar el comentario MARK correspondiente"],
+      "tags": ["formatting", "documentation"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-094",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Cuerpo de vista body como funcion pura",
+      "description": "La propiedad body debe limitarse a describir la UI y estar libre de efectos secundarios.",
+      "rationale": "Cualquier logica de cambio de estado o I/O dentro de body causara bucles infinitos de renderizado.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar asignaciones a variables @State o llamadas a red dentro de body."
+      },
+      "bad_example": "var body: some View { self.count += 1; return Text(\"...\") }",
+      "good_example": "var body: some View { Text(\"...\").onAppear { self.count += 1 } }",
+      "fix_strategy": ["Mover la logica a modificadores de eventos como .onAppear o .task"],
+      "tags": ["swiftui", "performance"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://wwdcnotes.com/documentation/wwdcnotes/wwdc20-10040-data-essentials-in-swiftui/",
+          "title": "WWDC Notes: Data Essentials"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-095",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Compensar informacion de tipos debil",
+      "description": "Anteponer un sustantivo explicativo a parametros de tipos genericos como Any, String o Int.",
+      "rationale": "Evita llamadas ambiguas donde el proposito del dato no es claro en el punto de uso.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar parametros como 'func add(_ value: Int)' sin contexto semantico."
+      },
+      "bad_example": "grid.add(self, for: graphics)",
+      "good_example": "grid.addObserver(self, forKeyPath: graphics)",
+      "fix_strategy": ["Renombrar la etiqueta del parametro para incluir contexto semantico"],
+      "tags": ["naming", "readability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-096",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Braces estilo K&R",
+      "description": "La llave de apertura debe ir en la misma linea que la sentencia, y la de cierre en una linea nueva.",
+      "rationale": "Es el estandar predominante en la comunidad Swift que equilibra densidad y claridad.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar llaves de apertura en lineas nuevas."
+      },
+      "bad_example": "if condition\n{\n}",
+      "good_example": "if condition {\n}",
+      "fix_strategy": ["Mover la llave al final de la linea anterior"],
+      "tags": ["formatting", "braces"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-097",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "AnyObject sobre class en protocolos",
+      "description": "Usar la restriccion 'AnyObject' en lugar de 'class' para definir protocolos que solo pueden ser adoptados por clases.",
+      "rationale": "La palabra clave 'class' ha sido formalmente desfasada en favor de 'AnyObject' en las versiones modernas del lenguaje.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'protocol MyProtocol: class'."
+      },
+      "bad_example": "protocol Delegate: class",
+      "good_example": "protocol Delegate: AnyObject",
+      "fix_strategy": ["Sustituir 'class' por 'AnyObject'"],
+      "tags": ["style", "modern-swift"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-098",
+      "language": "swift",
+      "category": "architecture",
+      "severity": "medium",
+      "title": "Inyectar servicios via @MainActor en Swift 6",
+      "description": "Utilizar envoltorios de propiedad aislados al hilo principal para inyectar dependencias en entornos Swift 6.",
+      "rationale": "Garantiza la seguridad de hilos sin generar sobrecarga sintactica ni advertencias de concurrencia.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Identificar singletons globales accedidos sin aislamiento de actor."
+      },
+      "bad_example": "let service = Service.shared",
+      "good_example": "@Inject var service: Service",
+      "fix_strategy": ["Implementar un sistema de DI estatico basado en @MainActor"],
+      "tags": ["concurrency", "di", "swift6"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://medium.com/@darrenthiores/automatic-dependency-injection-di-in-swift-6-to-make-your-code-clean-4e0160c049ce",
+          "title": "Clean DI in Swift 6"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-099",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Un solo parametro por linea en firmas largas",
+      "description": "Si la firma de una funcion supera los 100 caracteres, colocar cada parametro en una linea independiente.",
+      "rationale": "Mejora la legibilidad de funciones con muchos argumentos y facilita ver los valores por defecto.",
+      "detection": {
+        "type": "threshold",
+        "metric": "signature_length_chars",
+        "operator": ">",
+        "value": 100,
+        "notes": "Contar caracteres en la linea de la firma."
+      },
+      "bad_example": "func complex(a: Int, b: String, c: Double, d: Bool, e: [String])",
+      "good_example": "func complex(\n  a: Int,\n  b: String\n)",
+      "fix_strategy": ["Aplicar saltos de linea tras cada coma de parametro"],
+      "tags": ["formatting", "readability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-100",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar sufijos genericos como Controller",
+      "description": "No utilizar el sufijo 'Controller' en nombres de clases que no sean View Controllers de UIKit.",
+      "rationale": "Es un termino sobrecargado que no aporta informacion real sobre la responsabilidad de la clase.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar clases que terminen en Controller pero no hereden de UIViewController."
+      },
+      "bad_example": "class DataController",
+      "good_example": "class DataManager",
+      "fix_strategy": ["Renombrar segun el rol especifico (Manager, Store, Provider)"],
+      "tags": ["naming", "readability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-101",
+      "language": "swift",
+      "category": "general",
+      "severity": "high",
+      "title": "Prohibido el uso de Force Unwrapping",
+      "description": "Evitar el uso del operador '!' para desempaquetar opcionales en codigo de produccion.",
+      "rationale": "El force unwrapping provoca crashes inmediatos si el valor es nil. Usar optional binding o valores por defecto.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar '!' al final de identificadores (excluyendo tests)."
+      },
+      "bad_example": "let name = user!.name",
+      "good_example": "let name = user?.name ?? \"Guest\"",
+      "fix_strategy": ["Usar 'if let', 'guard let' o el operador nil-coalescing '??'"],
+      "tags": ["safety", "null-safety"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-102",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Orden jerarquico de miembros",
+      "description": "Los miembros de una clase deben seguir el orden: Lifecycle, Public, Internal, Private.",
+      "rationale": "Establece una estructura predecible que permite al lector encontrar rapidamente los puntos de entrada.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar si hay metodos privados declarados encima de los publicos."
+      },
+      "bad_example": "class A { private func x(); public func y() }",
+      "good_example": "class A { public func y(); private func x() }",
+      "fix_strategy": ["Reorganizar los metodos segun su nivel de acceso"],
+      "tags": ["formatting", "structure"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-103",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir @Entry para EnvironmentValues",
+      "description": "Utilizar la macro @Entry para definir nuevas propiedades en EnvironmentValues.",
+      "rationale": "Las implementaciones manuales de claves de entorno son verbosas y consideradas un patron legado tras la introduccion de @Entry.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar extensiones de EnvironmentValues con implementaciones manuales de getter/setter."
+      },
+      "bad_example": "extension EnvironmentValues { var myVal: String { ... } }",
+      "good_example": "extension EnvironmentValues { @Entry var myVal = \"\" }",
+      "fix_strategy": ["Sustituir la logica manual por la macro @Entry"],
+      "tags": ["swiftui", "modern-swift"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift/releases",
+          "title": "Airbnb Swift Style Guide Releases"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-104",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin saltos de linea al inicio de bloques",
+      "description": "No debe haber lineas en blanco inmediatamente despues de una llave de apertura.",
+      "rationale": "Mantiene el codigo compacto y evita el scroll vertical innecesario.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar llaves de apertura seguidas de linea en blanco."
+      },
+      "bad_example": "if true {\n\n  print(\"Hi\")\n}",
+      "good_example": "if true {\n  print(\"Hi\")\n}",
+      "fix_strategy": ["Eliminar la linea en blanco inicial del bloque"],
+      "tags": ["formatting", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-105",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Nombres explicitos en lambdas anidadas",
+      "description": "Usar '$0' (shorthand) solo en clausuras de una sola linea; usar nombres explicitos si hay anidamiento.",
+      "rationale": "Previene confusiones sobre a que objeto se refiere el parametro cuando hay multiples contextos.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar $0 dentro de otra clausura que tambien use $0."
+      },
+      "bad_example": "outer.map { $0.inner.filter { $0.active } }",
+      "good_example": "outer.map { item in item.inner.filter { $0.active } }",
+      "fix_strategy": ["Nombrar los parametros de las clausuras externas"],
+      "tags": ["closures", "readability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-106",
+      "language": "swift",
+      "category": "architecture",
+      "severity": "low",
+      "title": "Una sola clase superior por archivo",
+      "description": "Cada archivo .swift debe contener preferiblemente una unica clase o estructura principal.",
+      "rationale": "Facilita la localizacion de archivos mediante el sistema de archivos y el buscador del IDE.",
+      "detection": {
+        "type": "threshold",
+        "metric": "top_level_types_per_file",
+        "operator": "<=",
+        "value": 1,
+        "notes": "Contar declaraciones de tipos de alto nivel en un archivo."
+      },
+      "bad_example": "// En User.swift\nclass User { }\nclass Role { }",
+      "good_example": "Mover 'Role' a Role.swift",
+      "fix_strategy": ["Extraer tipos secundarios a sus propios archivos"],
+      "tags": ["structure", "maintainability"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-107",
+      "language": "swift",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Tratamiento de terminos especializados",
+      "description": "Utilizar terminos tecnicos solo si son de uso comun en el dominio; de lo contrario, preferir palabras simples.",
+      "rationale": "No confundir a principiantes ni sorprender a expertos con significados inventados.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Evaluar si se usa un termino tecnico donde bastaria una palabra comun."
+      },
+      "bad_example": "func updateEpidermis()",
+      "good_example": "func updateSkin()",
+      "fix_strategy": ["Sustituir el termino tecnico por uno comun si el significado es identico"],
+      "tags": ["naming", "domain-driven"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-108",
+      "language": "swift",
+      "category": "naming",
+      "severity": "low",
+      "title": "Sufijo Protocol solo para evitar colisiones",
+      "description": "No anadir el sufijo 'Protocol' al nombre de un protocolo a menos que sea necesario para diferenciarlo de un rol.",
+      "rationale": "El nombre debe centrarse en lo que el objeto es o hace, no en su naturaleza sintactica.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar 'protocol UserProtocol'."
+      },
+      "bad_example": "protocol UserProtocol",
+      "good_example": "protocol User",
+      "fix_strategy": ["Eliminar el sufijo 'Protocol'"],
+      "tags": ["naming", "protocols"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/",
+          "title": "Swift API Design Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-109",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar AnyView en favor de Group o @ViewBuilder",
+      "description": "No utilizar AnyView para borrar tipos a menos que sea estrictamente necesario por dinamismo extremo.",
+      "rationale": "AnyView destruye la identidad estructural de la vista y anula optimizaciones de renderizado de SwiftUI.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar retornos de tipo AnyView."
+      },
+      "bad_example": "return AnyView(Text(\"Hi\"))",
+      "good_example": "@ViewBuilder var body: some View { Text(\"Hi\") }",
+      "fix_strategy": ["Usar @ViewBuilder, Group o genericos para mantener los tipos concretos"],
+      "tags": ["swiftui", "performance", "types"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://wwdcnotes.com/documentation/wwdcnotes/wwdc19-226-data-flow-through-swiftui/",
+          "title": "WWDC Notes: Data Flow"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-110",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacio despues de control de flujo",
+      "description": "Colocar un espacio entre palabras clave como 'if' o 'while' y el parentesis o condicion siguiente.",
+      "rationale": "Mantiene la coherencia visual con otras estructuras de control del lenguaje.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'if(condition)'."
+      },
+      "bad_example": "if(x > 0)",
+      "good_example": "if x > 0",
+      "fix_strategy": ["Insertar un espacio tras la palabra clave"],
+      "tags": ["formatting", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://google.github.io/swift/",
+          "title": "Google Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-111",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir for-in sobre forEach funcional",
+      "description": "Utilizar bucles for-in tradicionales en lugar de la funcion .forEach() de colecciones.",
+      "rationale": "for-in permite el uso de sentencias de control de flujo como break, continue y return, que no funcionan en .forEach().",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar llamadas a '.forEach' que contengan logica compleja."
+      },
+      "bad_example": "list.forEach { item in ... }",
+      "good_example": "for item in list { ... }",
+      "fix_strategy": ["Refactorizar a un bucle for-in"],
+      "tags": ["logic", "loops", "idiomatic"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift/releases",
+          "title": "Airbnb Swift Style Guide Releases"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-112",
+      "language": "swift",
+      "category": "naming",
+      "severity": "low",
+      "title": "Nombres de tipos genericos descriptivos",
+      "description": "Los parametros de tipo generico deben tener nombres UpperCamelCase descriptivos o ser letras simples (T, U, V).",
+      "rationale": "Clarifica la restriccion o el proposito del generico dentro de la logica de la clase.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar nombres en minuscula o con caracteres especiales."
+      },
+      "bad_example": "class Box<element>",
+      "good_example": "class Box<Element>",
+      "fix_strategy": ["Renombrar el parametro de tipo siguiendo el estandar"],
+      "tags": ["naming", "generics"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-113",
+      "language": "swift",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin punto y coma al final de linea",
+      "description": "Se prohibe el uso de punto y coma al terminar una sentencia en Swift.",
+      "rationale": "Swift no requiere delimitadores de linea; su uso es redundante y denota herencia de otros lenguajes.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar ';' al final de lineas de codigo."
+      },
+      "bad_example": "let x = 10;",
+      "good_example": "let x = 10",
+      "fix_strategy": ["Eliminar el caracter ';'"],
+      "tags": ["formatting", "cleanliness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/airbnb/swift",
+          "title": "Airbnb Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-114",
+      "language": "swift",
+      "category": "general",
+      "severity": "medium",
+      "title": "Compound Conditional Unwrapping",
+      "description": "Utilizar la version compuesta de 'if let' o 'guard' para multiples opcionales en lugar de anidarlos.",
+      "rationale": "Mantiene el flujo de codigo lineal y reduce la indentacion horizontal excesiva.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar 'if let a { if let b { ... } }'."
+      },
+      "bad_example": "if let a = a { if let b = b { ... } }",
+      "good_example": "if let a, let b { ... }",
+      "fix_strategy": ["Unificar los desenlaces de opcionales en una sola sentencia separada por comas"],
+      "tags": ["logic", "conciseness"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://github.com/kodecocodes/swift-style-guide",
+          "title": "Kodeco Swift Style Guide"
+        }
+      ]
+    },
+    {
+      "id": "CC-SW-115",
+      "language": "swift",
+      "category": "architecture",
+      "severity": "medium",
+      "title": "Extraer logica compleja a Interactors",
+      "description": "Las responsabilidades de negocio no deben estar en las vistas; extraerlas a objetos Interactor sin estado.",
+      "rationale": "Mantiene las vistas como descripciones graficas puras y facilita las pruebas unitarias de la logica.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar ViewModels o Vistas con logica de persistencia o red directa."
+      },
+      "bad_example": "Button(\"Save\") { CoreData.save(data) }",
+      "good_example": "Button(\"Save\") { interactor.saveData() }",
+      "fix_strategy": ["Crear una capa de Interactor y delegar las acciones de la vista"],
+      "tags": ["architecture", "clean-architecture", "swiftui"],
+      "references": [
+        {
+          "type": "web",
+          "url": "https://nalexn.github.io/clean-architecture-swiftui/",
+          "title": "Clean Architecture for SwiftUI"
+        }
+      ]
+    }
+  ]
+}

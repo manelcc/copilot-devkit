@@ -1,0 +1,1975 @@
+{
+  "catalog": "clean-code-java-rules",
+  "version": "1.0.0",
+  "schema": "clean-code-rule-v1",
+  "language": "java",
+  "rule_count": 83,
+  "rules": [
+    {
+      "id": "CC-JV-001",
+      "language": "java",
+      "category": "classes",
+      "severity": "high",
+      "title": "Clase con una sola responsabilidad",
+      "description": "Cada clase debe tener una unica razon para cambiar y evitar mezclar logica de dominios distintos.",
+      "rationale": "Aplicar SRP reduce acoplamiento, facilita pruebas y mejora mantenibilidad.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar clases con metodos publicos de mas de un caso de uso o con dependencias de dominios no cohesionados."
+      },
+      "bad_example": "Una clase maneja autenticacion, envio de emails y gestion de sesiones al mismo tiempo.",
+      "good_example": "Separar en AuthenticationService, UserEmailNotifier y SessionManager.",
+      "fix_strategy": [
+        "separar responsabilidades por caso de uso",
+        "extraer collaborators especificos",
+        "reducir API publica a operaciones cohesionadas"
+      ],
+      "tags": [
+        "clean-code",
+        "classes",
+        "srp",
+        "maintainability"
+      ],
+      "references": [
+        "CC-03"
+      ]
+    },
+    {
+      "id": "CC-JV-002",
+      "language": "java",
+      "category": "functions",
+      "severity": "high",
+      "title": "Funciones deben hacer una sola cosa",
+      "description": "Una funcion debe realizar pasos de un unico nivel de abstraccion.",
+      "rationale": "Funciones pequenas y enfocadas son mas faciles de probar y reutilizar.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Si puedes extraer otra funcion con nombre significativo, la original hacia mas de una cosa."
+      },
+      "bad_example": "Una funcion valida, hace setup y renderiza HTML.",
+      "good_example": "Dividir en includeSetupPages, renderPage e isTestPage.",
+      "fix_strategy": [
+        "Extraer metodos por nivel de abstraccion",
+        "Eliminar secciones heterogeneas"
+      ],
+      "tags": [
+        "functions",
+        "abstraction",
+        "refactoring"
+      ],
+      "references": [
+        "G30",
+        "F1"
+      ]
+    },
+    {
+      "id": "CC-JV-003",
+      "language": "java",
+      "category": "names",
+      "severity": "medium",
+      "title": "Nombres que revelan la intencion",
+      "description": "El nombre debe indicar por que existe, que hace y como se usa.",
+      "rationale": "Evita que el lector tenga que descifrar el codigo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar nombres de una letra o genericos como data/info fuera de ambitos minimos."
+      },
+      "bad_example": "int d;",
+      "good_example": "int elapsedTimeInDays;",
+      "fix_strategy": [
+        "Renombrar con lenguaje de dominio",
+        "Eliminar comentarios explicativos",
+        "Usar nombres pronunciables y buscables"
+      ],
+      "tags": [
+        "naming",
+        "readability",
+        "intent"
+      ],
+      "references": [
+        "N1",
+        "N4"
+      ]
+    },
+    {
+      "id": "CC-JV-004",
+      "language": "java",
+      "category": "general",
+      "severity": "high",
+      "title": "Eliminar duplicacion (DRY)",
+      "description": "La duplicacion indica una abstraccion pendiente.",
+      "rationale": "Duplicar logica aumenta errores al propagar cambios.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar bloques identicos, algoritmos muy similares o switches repetidos."
+      },
+      "bad_example": "Cuatro implementaciones casi identicas de setup/teardown.",
+      "good_example": "Metodo generico include(pageName, type).",
+      "fix_strategy": [
+        "Extraer metodos",
+        "Usar Template Method cuando aplique",
+        "Sustituir switch repetidos por polimorfismo"
+      ],
+      "tags": [
+        "dry",
+        "abstraction",
+        "duplication"
+      ],
+      "references": [
+        "G5"
+      ]
+    },
+    {
+      "id": "CC-JV-005",
+      "language": "java",
+      "category": "comments",
+      "severity": "medium",
+      "title": "Eliminar codigo comentado",
+      "description": "El codigo comentado debe eliminarse.",
+      "rationale": "Se pudre, distrae y genera deuda tecnica.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar bloques de codigo dentro de comentarios."
+      },
+      "bad_example": "// old code",
+      "good_example": "Borrar codigo y confiar en git para historico.",
+      "fix_strategy": [
+        "Borrar codigo comentado",
+        "Confiar en control de versiones"
+      ],
+      "tags": [
+        "comments",
+        "cleanliness",
+        "clutter"
+      ],
+      "references": [
+        "C5"
+      ]
+    },
+    {
+      "id": "CC-JV-006",
+      "language": "java",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Evitar argumentos de bandera (flags)",
+      "description": "Un booleano en firma suele indicar dos comportamientos.",
+      "rationale": "Complica lectura y mantenimiento de llamadas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Funciones con booleanos o enums usados para alternar comportamiento."
+      },
+      "bad_example": "render(true)",
+      "good_example": "renderForSuite() y renderForSingleTest().",
+      "fix_strategy": [
+        "Dividir en funciones especializadas",
+        "Aplicar polimorfismo para variaciones"
+      ],
+      "tags": [
+        "functions",
+        "refactoring",
+        "clarity"
+      ],
+      "references": [
+        "F3",
+        "G15"
+      ]
+    },
+    {
+      "id": "CC-JV-007",
+      "language": "java",
+      "category": "classes",
+      "severity": "high",
+      "title": "Ley de Demeter (Evitar naufragios de tren)",
+      "description": "Un metodo debe hablar con colaboradores directos, no con extra\u00f1os encadenados.",
+      "rationale": "Reduce acoplamiento y fragilidad ante cambios internos.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar cadenas como a.getB().getC().doSomething()."
+      },
+      "bad_example": "ctxt.getOptions().getScratchDir().getAbsolutePath();",
+      "good_example": "ctxt.createScratchFileStream(filename);",
+      "fix_strategy": [
+        "Tell, Don't Ask",
+        "Encapsular navegacion interna"
+      ],
+      "tags": [
+        "coupling",
+        "classes",
+        "demeter"
+      ],
+      "references": [
+        "G36"
+      ]
+    },
+    {
+      "id": "CC-JV-008",
+      "language": "java",
+      "category": "names",
+      "severity": "medium",
+      "title": "Evitar codificaciones (Notacion Hungara)",
+      "description": "No incluir tipo o ambito en el nombre.",
+      "rationale": "Aumenta carga cognitiva y dificulta cambios de tipo.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar prefijos m_, f_, str, i."
+      },
+      "bad_example": "private String m_dsc;",
+      "good_example": "String description;",
+      "fix_strategy": [
+        "Renombrar eliminando prefijos tecnicos",
+        "Confiar en IDE para tipo y ambito"
+      ],
+      "tags": [
+        "naming",
+        "clutter",
+        "java"
+      ],
+      "references": [
+        "N6"
+      ]
+    },
+    {
+      "id": "CC-JV-009",
+      "language": "java",
+      "category": "functions",
+      "severity": "low",
+      "title": "Funciones pequenas",
+      "description": "Las funciones deben ser pequenas y con poca anidacion.",
+      "rationale": "Mejora legibilidad y regla de paso descendente.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Contar lineas por funcion y profundidad de indentacion."
+      },
+      "bad_example": "Funcion de 100 lineas con bucles anidados.",
+      "good_example": "Jerarquia de funciones pequenas y claras.",
+      "fix_strategy": [
+        "Extraer bloques if/else/while",
+        "Reducir anidamiento"
+      ],
+      "tags": [
+        "functions",
+        "size",
+        "refactoring"
+      ],
+      "references": [
+        "G30",
+        "G34"
+      ]
+    },
+    {
+      "id": "CC-JV-010",
+      "language": "java",
+      "category": "tests",
+      "severity": "high",
+      "title": "Las Tres Leyes de TDD",
+      "description": "No escribir produccion sin test fallando y avanzar rojo-verde-refactor.",
+      "rationale": "Hace el codigo verificable y reduce miedo al cambio.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar codigo de produccion sin pruebas asociadas."
+      },
+      "bad_example": "Implementar feature completa y testear al final.",
+      "good_example": "Ciclo corto de test fallando y correccion minima.",
+      "fix_strategy": [
+        "Aplicar Rojo-Verde-Refactor",
+        "Integrar pruebas junto al codigo"
+      ],
+      "tags": [
+        "tdd",
+        "unit-tests",
+        "professionalism"
+      ],
+      "references": [
+        "T1",
+        "T9"
+      ]
+    },
+    {
+      "id": "CC-JV-011",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Reemplazar numeros magicos con constantes con nombre",
+      "description": "Evitar literales numericos sin contexto en logica.",
+      "rationale": "Reduce ambiguedad y errores.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar literales numericos fuera de casos triviales."
+      },
+      "bad_example": "double pay = hours * 8.0;",
+      "good_example": "double pay = hours * WORK_HOURS_PER_DAY;",
+      "fix_strategy": [
+        "Crear constantes static final o enums",
+        "Nombrar segun significado"
+      ],
+      "tags": [
+        "magic-numbers",
+        "naming",
+        "general"
+      ],
+      "references": [
+        "G25"
+      ]
+    },
+    {
+      "id": "CC-JV-012",
+      "language": "java",
+      "category": "functions",
+      "severity": "medium",
+      "title": "Numero ideal de argumentos",
+      "description": "Priorizar funciones con pocos argumentos.",
+      "rationale": "Muchos parametros complican comprension y pruebas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Contar parametros en firmas."
+      },
+      "bad_example": "makeCircle(double x, double y, double radius)",
+      "good_example": "makeCircle(Point center, double radius)",
+      "fix_strategy": [
+        "Agrupar parametros relacionados en objeto",
+        "Mover comportamiento al objeto argumento"
+      ],
+      "tags": [
+        "functions",
+        "clean-code",
+        "refactoring"
+      ],
+      "references": [
+        "F1"
+      ]
+    },
+    {
+      "id": "CC-JV-013",
+      "language": "java",
+      "category": "general",
+      "severity": "high",
+      "title": "Preferir polimorfismo a Switch/Case",
+      "description": "Evitar switches repetidos por tipo.",
+      "rationale": "Reduce violaciones de SRP/OCP y facilita extension.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar switch/if-else por tipo."
+      },
+      "bad_example": "calculatePay con switch por tipo de empleado.",
+      "good_example": "Factory + subtipos con comportamiento polimorfico.",
+      "fix_strategy": [
+        "Mover switch a fabrica",
+        "Implementar variaciones en subtipos"
+      ],
+      "tags": [
+        "polymorphism",
+        "switch",
+        "ocp",
+        "srp"
+      ],
+      "references": [
+        "G23"
+      ]
+    },
+    {
+      "id": "CC-JV-014",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Funciones con un solo nivel de abstraccion",
+      "description": "No mezclar alto nivel con detalles de bajo nivel en la misma funcion.",
+      "rationale": "Evita confusion y acumulacion de detalles.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar funciones que mezclen orquestacion y manipulacion de bajo nivel."
+      },
+      "bad_example": "Funcion de alto nivel que tambien formatea detalles tecnicos.",
+      "good_example": "Delegar detalles a metodos privados.",
+      "fix_strategy": [
+        "Extraer detalles a funciones inferiores",
+        "Aplicar stepdown rule"
+      ],
+      "tags": [
+        "abstraction",
+        "functions",
+        "readability"
+      ],
+      "references": [
+        "G34"
+      ]
+    },
+    {
+      "id": "CC-JV-015",
+      "language": "java",
+      "category": "tests",
+      "severity": "medium",
+      "title": "Reglas F.I.R.S.T. para pruebas",
+      "description": "Las pruebas deben ser Fast, Independent, Repeatable, Self-validating y Timely.",
+      "rationale": "Mejora feedback y confiabilidad de la suite.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Detectar lentitud, dependencia entre tests o validacion manual."
+      },
+      "bad_example": "Tests que dependen del entorno del autor.",
+      "good_example": "Tests reproducibles, independientes y con resultado claro.",
+      "fix_strategy": [
+        "Eliminar dependencias externas con mocks",
+        "Configurar estado por prueba",
+        "Escribir pruebas temprano"
+      ],
+      "tags": [
+        "unit-tests",
+        "first",
+        "quality"
+      ],
+      "references": [
+        "T9"
+      ]
+    },
+    {
+      "id": "CC-JV-016",
+      "language": "java",
+      "category": "comments",
+      "severity": "medium",
+      "title": "Evitar comentarios redundantes",
+      "description": "No comentar lo que el codigo ya expresa.",
+      "rationale": "Comentarios redundantes agregan ruido e imprecision.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar javadocs que repiten firma o comentarios triviales."
+      },
+      "bad_example": "i++; // incrementa i",
+      "good_example": "Eliminar comentario y mejorar nombres si hace falta.",
+      "fix_strategy": [
+        "Borrar comentario redundante",
+        "Refactorizar para claridad"
+      ],
+      "tags": [
+        "comments",
+        "clutter",
+        "redundancy"
+      ],
+      "references": [
+        "C3"
+      ]
+    },
+    {
+      "id": "CC-JV-017",
+      "language": "java",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "Preferir excepciones a codigos de retorno",
+      "description": "Separar flujo de negocio de gestion de errores.",
+      "rationale": "Mejora legibilidad del camino feliz.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar if(errorCode == ...) tras llamadas."
+      },
+      "bad_example": "if (deletePage(page) == E_OK) { ... } else { ... }",
+      "good_example": "try { deletePage(page); } catch (Exception e) { ... }",
+      "fix_strategy": [
+        "Lanzar excepciones descriptivas",
+        "Extraer bloques try/catch"
+      ],
+      "tags": [
+        "exceptions",
+        "error-handling",
+        "separation-of-concerns"
+      ],
+      "references": [
+        "G17"
+      ]
+    },
+    {
+      "id": "CC-JV-018",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Distancia vertical minima",
+      "description": "Mantener cerca los conceptos relacionados en el archivo.",
+      "rationale": "Reduce scroll y mejora comprension local.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar declaraciones lejos de su uso o metodos relacionados muy separados."
+      },
+      "bad_example": "Variables declaradas muy lejos de uso.",
+      "good_example": "Variables y metodos auxiliares cerca del llamador.",
+      "fix_strategy": [
+        "Mover declaraciones cerca de uso",
+        "Ordenar de alto nivel a detalle"
+      ],
+      "tags": [
+        "formatting",
+        "vertical-distance",
+        "readability"
+      ],
+      "references": [
+        "G10"
+      ]
+    },
+    {
+      "id": "CC-JV-019",
+      "language": "java",
+      "category": "names",
+      "severity": "medium",
+      "title": "Usar nombres buscables",
+      "description": "Evitar nombres opacos y literales sin significado.",
+      "rationale": "Mejora trazabilidad y analisis de impacto.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar nombres de una letra fuera de ambitos minimos y constantes en crudo."
+      },
+      "bad_example": "for (int j=0; j<7; j++)",
+      "good_example": "for (int studentIndex=0; studentIndex<MAX_CLASSES_PER_STUDENT; studentIndex++)",
+      "fix_strategy": [
+        "Renombrar con intencion",
+        "Extraer literales a constantes"
+      ],
+      "tags": [
+        "naming",
+        "readability",
+        "searchability"
+      ],
+      "references": [
+        "N4"
+      ]
+    },
+    {
+      "id": "CC-JV-020",
+      "language": "java",
+      "category": "classes",
+      "severity": "medium",
+      "title": "Cohesion alta",
+      "description": "Las clases deben tener un numero pequeno de variables de instancia. Cada metodo debe manipular una o mas de esas variables.",
+      "rationale": "Una clase donde las variables y metodos son codependientes es mas cohesiva y mas facil de mantener.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Buscar metodos que solo usen subconjuntos aislados de variables de instancia."
+      },
+      "bad_example": "Una clase con 10 variables donde grupos de metodos usan subconjuntos disjuntos.",
+      "good_example": "Dividir la clase en dos o mas clases pequenas y cohesionadas.",
+      "fix_strategy": [
+        "Promover variables locales a estado solo cuando sea necesario",
+        "Dividir la clase cuando la cohesion disminuya"
+      ],
+      "tags": [
+        "cohesion",
+        "classes",
+        "refactoring"
+      ],
+      "references": [
+        "G8"
+      ]
+    },
+    {
+      "id": "CC-JV-021",
+      "language": "java",
+      "category": "general",
+      "severity": "high",
+      "title": "No ignorar fallos del sistema",
+      "description": "Los fallos esporadicos no deben tratarse como one-off; deben investigarse como defectos reales.",
+      "rationale": "Ignorar fallos intermitentes suele ocultar problemas de concurrencia que emergen bajo carga.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Verificar si se descartan fallos de integracion/estres sin analisis de causa raiz."
+      },
+      "bad_example": "Asumir que un fallo no repetido es problema de entorno y cerrar incidente.",
+      "good_example": "Instrumentar, repetir pruebas de estres y aislar condicion de carrera.",
+      "fix_strategy": [
+        "No ignorar fallos esporadicos",
+        "Ejecutar pruebas en plataformas de despliegue",
+        "Usar instrumentacion para forzar y observar fallos de hilos"
+      ],
+      "tags": [
+        "concurrency",
+        "professionalism",
+        "testing"
+      ],
+      "references": [
+        "G3"
+      ]
+    },
+    {
+      "id": "CC-JV-022",
+      "language": "java",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "No devolver null",
+      "description": "Devolver null crea trabajo adicional para el llamador y favorece NullPointerException.",
+      "rationale": "Obliga a comprobaciones repetitivas y un olvido puede romper el flujo en ejecucion.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar metodos que usan null como retorno para ausencia de datos o errores."
+      },
+      "bad_example": "public List getEmployees() { if (...) return null; }",
+      "good_example": "return Collections.emptyList(); o lanzar una excepcion descriptiva.",
+      "fix_strategy": [
+        "Usar Special Case Object",
+        "Devolver colecciones vacias en lugar de null",
+        "Lanzar excepciones descriptivas"
+      ],
+      "tags": [
+        "error-handling",
+        "null",
+        "best-practices"
+      ],
+      "references": [
+        "G26"
+      ]
+    },
+    {
+      "id": "CC-JV-023",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar variables explicativas",
+      "description": "Dividir expresiones complejas en variables intermedias con nombre.",
+      "rationale": "Mejora comprension de calculos y condiciones complejas.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar expresiones booleanas o matematicas densas."
+      },
+      "bad_example": "if ((e.flags & HOURLY_FLAG) && (e.age > 65))",
+      "good_example": "boolean isEligibleForFullBenefits = ...",
+      "fix_strategy": [
+        "Extraer expresiones a variables con nombre",
+        "Simplificar condiciones en pasos"
+      ],
+      "tags": [
+        "readability",
+        "refactoring",
+        "clarity"
+      ],
+      "references": [
+        "G19"
+      ]
+    },
+    {
+      "id": "CC-JV-024",
+      "language": "java",
+      "category": "comments",
+      "severity": "high",
+      "title": "No comentar codigo malo, reescribirlo",
+      "description": "No usar comentarios como parche de codigo confuso.",
+      "rationale": "Codigo claro es superior a codigo complejo comentado.",
+      "detection": {
+        "type": "semantic",
+        "notes": "Detectar funciones con bloques largos de comentarios explicativos."
+      },
+      "bad_example": "Modulo desorganizado con notas extensas.",
+      "good_example": "Refactorizar hasta que la logica sea autoexplicativa.",
+      "fix_strategy": [
+        "Refactorizar antes de comentar",
+        "Encapsular logica confusa con nombres claros"
+      ],
+      "tags": [
+        "comments",
+        "refactoring",
+        "clean-code"
+      ],
+      "references": [
+        "C4"
+      ]
+    },
+    {
+      "id": "CC-JV-025",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Seguir convenciones estandar",
+      "description": "Aplicar estilo de codigo consistente a nivel de equipo.",
+      "rationale": "Reduce sorpresa y mejora lectura transversal.",
+      "detection": {
+        "type": "pattern",
+        "notes": "Buscar discrepancias de formato y naming entre archivos."
+      },
+      "bad_example": "Cada archivo con estilo distinto.",
+      "good_example": "Convenciones unificadas con formateador y revisiones.",
+      "fix_strategy": [
+        "Definir guia de estilo",
+        "Automatizar con formateador/linters",
+        "Aplicar en revisiones"
+      ],
+      "tags": [
+        "conventions",
+        "team",
+        "formatting"
+      ],
+      "references": [
+        "G24"
+      ]
+    },
+    {
+      "id": "CC-JV-026",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Nombres de paquetes en minusculas y sin guiones",
+      "description": "Los nombres de paquetes deben usar minusculas y digitos, sin guiones bajos ni camelCase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Renombrar el paquete a minusculas",
+        "Actualizar importaciones"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-027",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Clases nombradas como sustantivos",
+      "description": "Los nombres de clases deben ser sustantivos o frases nominales en UpperCamelCase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Renombrar con un sustantivo de dominio"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-028",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Metodos nombrados como verbos",
+      "description": "Los metodos deben nombrarse como verbos o frases verbales en lowerCamelCase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Renombrar con un verbo de accion"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-029",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Constantes en UPPER_SNAKE_CASE",
+      "description": "Las constantes static final deben escribirse en mayusculas con guiones bajos.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Convertir a UPPER_SNAKE_CASE"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-030",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Indentacion con espacios (no tabs)",
+      "description": "La indentacion debe usar espacios; evitar tabuladores para consistencia entre editores.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Configurar IDE para tabs->spaces"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-031",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Braces de estilo K&R",
+      "description": "La llave de apertura va al final de la linea anterior y la de cierre en su propia linea.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Alinear llaves con estilo K&R"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-032",
+      "language": "java",
+      "category": "formatting",
+      "severity": "medium",
+      "title": "Braces obligatorios en control",
+      "description": "if/for/while deben usar llaves incluso con una sola sentencia.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Encapsular sentencias unicas en bloque"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-033",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Acronimos tratados como palabras",
+      "description": "Acronimos de mas de dos letras deben tratarse como palabras en CamelCase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Renombrar acronimos en CamelCase"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-034",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "No usar importaciones wildcard",
+      "description": "Evitar import package.* y preferir importaciones explicitas por clase.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Sustituir wildcard por imports explicitos"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-035",
+      "language": "java",
+      "category": "general",
+      "severity": "high",
+      "title": "Uso obligatorio de @Override",
+      "description": "Aplicar @Override cuando se sobreescriben metodos de superclase o interfaz.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Anadir @Override donde corresponda"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-036",
+      "language": "java",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "No ignorar excepciones capturadas",
+      "description": "No dejar bloques catch vacios; registrar o relanzar la excepcion.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Anadir logging o relanzar excepcion"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-037",
+      "language": "java",
+      "category": "classes",
+      "severity": "low",
+      "title": "Una sola clase superior por archivo",
+      "description": "Cada archivo Java debe contener una sola clase o interfaz de nivel superior.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Extraer clases a archivos separados"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-038",
+      "language": "java",
+      "category": "naming",
+      "severity": "low",
+      "title": "Nombre de archivo coincide con clase",
+      "description": "El nombre del archivo debe coincidir con la clase superior y extension .java.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Renombrar archivo para coincidir con clase"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-039",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Orden jerarquico del archivo fuente",
+      "description": "Mantener orden: licencia, paquete, imports y clase, con separacion visual.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Reordenar secciones del archivo"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-040",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Agrupacion y orden de importaciones",
+      "description": "Separar imports estaticos de no estaticos y ordenar internamente por ASCII.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Reordenar bloques de importacion"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-041",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Limite de 100 columnas",
+      "description": "Mantener lineas en maximo 100 caracteres salvo excepciones justificadas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Aplicar line wrapping"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-042",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Indentacion de continuacion +4",
+      "description": "En line wrapping, las lineas continuadas deben indentar al menos +4 espacios.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Ajustar indentacion de continuacion"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-043",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Un solo enunciado por linea",
+      "description": "No colocar multiples sentencias en una misma linea.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Separar sentencias en lineas individuales"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-044",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Lineas en blanco entre miembros",
+      "description": "Insertar una linea en blanco entre campos, constructores, metodos y clases anidadas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Anadir separacion vertical entre miembros"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-045",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Espacios en operadores binarios",
+      "description": "Dejar espacios alrededor de operadores binarios y ternarios.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Insertar espacios alrededor de operadores"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-046",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Variables cerca de su uso",
+      "description": "Declarar variables locales cerca de su primera utilizacion para reducir alcance.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Mover declaracion junto al primer uso"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-047",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Corchetes de arrays en el tipo",
+      "description": "Preferir int[] numbers sobre int numbers[].",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Mover corchetes junto al tipo"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-048",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "No usar finalize",
+      "description": "Evitar sobrescribir finalize; usar AutoCloseable o try-with-resources.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Eliminar finalize e implementar cierre explicito"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-049",
+      "language": "java",
+      "category": "general",
+      "severity": "high",
+      "title": "Evitar Optional en campos o parametros",
+      "description": "Usar Optional solo como tipo de retorno, no en campos o parametros.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Sustituir Optional por tipo nullable/anotado"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-050",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir Records para datos inmutables",
+      "description": "En Java 16+, usar records para portadores de datos inmutables.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Refactorizar POJOs de solo datos a record"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-051",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Preferir flechas en switch",
+      "description": "En Java moderno, usar case -> para evitar fall-through accidental.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Migrar switch a sintaxis moderna"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-052",
+      "language": "java",
+      "category": "complexity",
+      "severity": "high",
+      "title": "Limite break/continue en bucles",
+      "description": "Evitar multiples break/continue por bucle para reducir complejidad cognitiva.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Extraer logica de bucle a metodo"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-053",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Clausulas de guardia frente a anidamiento",
+      "description": "Preferir retornos tempranos para dejar visible el camino feliz.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Invertir condicion y retornar temprano"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-054",
+      "language": "java",
+      "category": "complexity",
+      "severity": "medium",
+      "title": "Limite de parametros por metodo",
+      "description": "Evitar metodos con demasiados parametros; usar objeto de parametros o builder.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Aplicar Parameter Object"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-055",
+      "language": "java",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "PreparedStatements para SQL",
+      "description": "No construir SQL con concatenacion de entrada de usuario.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Usar PreparedStatement o ORM seguro"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-056",
+      "language": "java",
+      "category": "general",
+      "severity": "low",
+      "title": "Sufijo Test en clases de prueba",
+      "description": "Las clases de tests unitarios deben terminar con sufijo Test.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Renombrar clase de prueba con sufijo Test"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-057",
+      "language": "java",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "Try-with-resources para recursos",
+      "description": "Gestionar AutoCloseable con try-with-resources para evitar fugas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Refactorizar cierre manual a try-with-resources"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-058",
+      "language": "java",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Javadoc con resumen conciso",
+      "description": "El inicio de Javadoc debe resumir de forma corta y directa el elemento.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Reescribir resumen inicial de Javadoc"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-059",
+      "language": "java",
+      "category": "complexity",
+      "severity": "high",
+      "title": "Evitar recursion profunda",
+      "description": "Preferir enfoque iterativo cuando la recursion no esta acotada claramente.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Refactorizar recursion a bucles iterativos"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-060",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar nombres de una letra",
+      "description": "No usar variables de una sola letra salvo casos acotados de bucles.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Renombrar a identificadores descriptivos"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-061",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Orden estandar de modificadores",
+      "description": "Seguir el orden JLS de modificadores en clases y miembros.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Reordenar modificadores segun JLS"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-062",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Eliminar imports no usados",
+      "description": "Quitar importaciones no utilizadas para reducir ruido y confusion.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Optimizar imports en IDE"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-063",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Switch siempre con default",
+      "description": "Toda sentencia switch debe contemplar clausula default.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Anadir clausula default"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-064",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Miembros estaticos calificados por clase",
+      "description": "Referenciar miembros estaticos con el nombre de la clase, no con instancias.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Sustituir instancia.miembroEstatico por Clase.miembroEstatico"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-065",
+      "language": "java",
+      "category": "documentation",
+      "severity": "low",
+      "title": "No usar tags Javadoc vacios",
+      "description": "No dejar etiquetas @param/@return/@throws sin descripcion.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Completar o eliminar tags vacios"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-066",
+      "language": "java",
+      "category": "naming",
+      "severity": "medium",
+      "title": "Evitar prefijos tecnicos m_ o s_",
+      "description": "No usar prefijos tecnicos en nombres de variables o campos.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Eliminar prefijos tecnicos al renombrar"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-067",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Una variable por declaracion",
+      "description": "Evitar declarar multiples variables en una misma sentencia.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Separar declaraciones por linea"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-068",
+      "language": "java",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Usar {@code} en Javadoc para codigo",
+      "description": "Al mencionar codigo en Javadoc, envolverlo con {@code ...}.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Aplicar etiqueta {@code ...} en fragmentos de codigo"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-080",
+      "language": "java",
+      "category": "classes",
+      "severity": "low",
+      "title": "Variables de instancia privadas",
+      "description": "Los campos de clase deben ser privados salvo excepciones justificadas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Cambiar campos no constantes a private"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-081",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Comparar String con equals",
+      "description": "Comparar String con equals, no con operador ==.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Sustituir == por equals"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-082",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Usar interfaz sobre implementacion",
+      "description": "Declarar variables con tipos de interfaz y no con clases concretas.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Cambiar tipo declarado a interfaz"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-083",
+      "language": "java",
+      "category": "classes",
+      "severity": "low",
+      "title": "Orden logico de miembros de clase",
+      "description": "Organizar miembros por criterio coherente (funcionalidad o visibilidad).",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Reorganizar miembros por criterio estable"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-084",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Evitar System.out.println en produccion",
+      "description": "Usar framework de logging en lugar de salida estandar directa.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Sustituir println por logger"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-085",
+      "language": "java",
+      "category": "general",
+      "severity": "high",
+      "title": "No usar objetos genericos como cerrojos",
+      "description": "Evitar synchronized sobre objetos genericos; usar java.util.concurrent.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Migrar a ReentrantLock o utilidades concurrentes"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-086",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Eliminar TODO obsoletos",
+      "description": "Los TODO deben apuntar a ticket o resolverse para evitar deuda invisible.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Anadir referencia de ticket o resolver TODO"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-087",
+      "language": "java",
+      "category": "documentation",
+      "severity": "low",
+      "title": "Javadoc en miembros visibles",
+      "description": "Miembros public/protected deben incluir Javadoc util.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Anadir Javadoc en API visible"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-088",
+      "language": "java",
+      "category": "error-handling",
+      "severity": "high",
+      "title": "No capturar Throwable",
+      "description": "Capturar excepciones especificas o Exception, no Throwable.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Reemplazar catch(Throwable) por tipos concretos"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-089",
+      "language": "java",
+      "category": "formatting",
+      "severity": "low",
+      "title": "Sin salto tras arrow en lambda",
+      "description": "Evitar salto de linea inmediato tras -> salvo bloque con llaves.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Mover expresion lambda junto a la flecha"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-090",
+      "language": "java",
+      "category": "complexity",
+      "severity": "medium",
+      "title": "Evitar logica en constructores",
+      "description": "Constructores deben inicializar; mover logica compleja a factorias/servicios.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Extraer logica de constructor"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-092",
+      "language": "java",
+      "category": "error-handling",
+      "severity": "medium",
+      "title": "No usar excepciones para control de flujo",
+      "description": "Evitar excepciones para caminos esperados de negocio o iteracion.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Reemplazar flujo por condicionales/estados"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-098",
+      "language": "java",
+      "category": "general",
+      "severity": "low",
+      "title": "Llaves explicitas en bloques vacios multi-bloque",
+      "description": "En if/else o try/catch, mantener consistencia visual tambien en bloques vacios.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Expandir bloques vacios a llaves en lineas separadas"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-099",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "@Deprecated con since",
+      "description": "Al deprecar, incluir version/fecha con atributo since.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Anadir since en @Deprecated"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    },
+    {
+      "id": "CC-JV-100",
+      "language": "java",
+      "category": "general",
+      "severity": "medium",
+      "title": "Regla del Boy Scout",
+      "description": "Dejar el codigo un poco mas limpio tras cada cambio.",
+      "detection": {
+        "type": "manual-check",
+        "notes": "Normalized from user-provided Java rule text."
+      },
+      "fix_strategy": [
+        "Aplicar micro-refactorizaciones en cada tarea"
+      ],
+      "tags": [
+        "clean-code",
+        "java"
+      ],
+      "references": [
+        "user-provided"
+      ]
+    }
+  ]
+}
