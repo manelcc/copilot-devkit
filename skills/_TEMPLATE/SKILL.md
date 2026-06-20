@@ -107,7 +107,7 @@ This skill analyzes source code for quality issues, security vulnerabilities, an
 - [ ] Inputs specify required vs optional context with clear examples
 - [ ] Steps are numbered and actionable (not just descriptions)
 - [ ] Output artifacts are machine-readable and human-friendly
-- [ ] The skill can be validated with `./scripts/validate-skill.sh skills/[namespace]/[slug]`
+- [ ] The skill can be validated with `./scripts/devkit-validate-skill.sh skills/[namespace]/[slug]`
 
 ## Examples
 
@@ -164,7 +164,7 @@ performance y mantenibilidad. Dame un reporte y un plan de remediación prioriza
 
 4. Run validation:
    ```bash
-   ./scripts/validate-skill.sh skills/[namespace]/[skill_slug]
+   ./scripts/devkit-validate-skill.sh skills/[namespace]/[skill_slug]
    ```
 
 5. Commit and push:
