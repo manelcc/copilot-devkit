@@ -13,6 +13,12 @@ tools:
   - edit/editFiles
   - runCommands
 handoffs:
+  - target: "android-patterns"
+    when: "La tarea requiere decidir patrón de diseño, identificar patrón aplicado o detectar antipatrones Kotlin/Android"
+    context: "Objetivo funcional, fragmentos de código y restricciones de arquitectura/testabilidad"
+  - target: "android-quality"
+    when: "La tarea requiere auditoría de calidad Android con hallazgos priorizados por severidad"
+    context: "Scope de análisis y focus opcional"
   - target: "devkit-migrate-xml-to-compose"
     when: "La tarea implica migrar una pantalla XML/View legacy a Compose"
     context: "Archivo XML objetivo, Activity/Fragment asociado y restricciones de paridad visual"
