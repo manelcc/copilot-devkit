@@ -37,6 +37,8 @@ Route Android work to the correct execution path based on project subtype.
 2. If subtype is ambiguous, ask the user before changing code.
 3. Prioritize stack-specific skill first, then global skills for workflow, review, and MR.
 4. Keep changes scoped to Android folders only.
+5. Golden rule: for all feasible Android operations, prioritize CLI-executable flows over IDE-only manual steps.
+6. If local Android skills are insufficient for the requested scenario, consult `https://github.com/android/skills` and adapt the guidance to repository conventions.
 
 ## Output format
 - Detected subtype
