@@ -42,7 +42,12 @@ Apply these rules to Android Kotlin code targeting Jetpack Compose. Keep solutio
 - Use `skills/android/compose/devkit-jetpack-compose-patterns/` for idiomatic architecture and UI patterns.
 
 ## External Android Skills Integration
-- When local devkit skills do not cover an edge case, consult `https://github.com/android/skills` as a complementary source.
+- When local devkit skills do not fully cover the requested scenario, you must consult `https://github.com/android/skills`.
 - Prefer local devkit conventions first, then adapt external guidance to project naming, architecture, and testing rules.
 - If external guidance conflicts with repository standards, keep repository standards and document the trade-off in the change notes.
+
+## Golden Rule: Android CLI First
+- For any automatable Android task, prioritize an Android CLI executable path (build, test, lint, migration checks).
+- Do not depend on IDE-only manual workflows when an equivalent CLI workflow exists.
+- If guidance from external skills is not CLI-oriented, convert it to an Android CLI flow before execution.
 

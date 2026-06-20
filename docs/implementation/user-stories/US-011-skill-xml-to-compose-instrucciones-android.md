@@ -12,7 +12,7 @@
 |---|---|---|---|---|
 | RQ-001 | Acceso a `~/.claude/skills/migrate-xml-views-to-jetpack-compose/` | Necesario | Funcional | Disponible en entorno local |
 | RQ-002 | Conocimiento de stacks Android Compose actuales (Navigation 3, Hilt, Material3) | Necesario | Funcional | Para instrucciones.md |
-| RQ-003 | Acceso opcional a `https://github.com/android/skills` para ampliar cobertura | Necesario | Integración | Fuente externa para casos no cubiertos por skill local |
+| RQ-003 | Acceso operativo a `https://github.com/android/skills` cuando el caso lo requiera | Necesario | Integración | Uso obligatorio para cubrir gaps funcionales de la skill local |
 
 ## Criterios de Aceptación
 
@@ -24,7 +24,8 @@
 6. Las instrucciones incluyen reglas de: (1) Composables sin estado, (2) Navigation 3, (3) Hilt DI, (4) Coroutines + Flow, (5) Material3, (6) Testing con `composeTestRule`.
 7. Las instrucciones referencian `skills/android/compose/` para tareas específicas.
 8. Las instrucciones tienen menos de 250 líneas (reglas core, no exhaustivas).
-9. Las instrucciones documentan cuándo usar `https://github.com/android/skills` como fuente de apoyo para casos avanzados o gaps de la skill local.
+9. Las instrucciones documentan que se debe usar `https://github.com/android/skills` cuando la skill local no cubra un caso solicitado.
+10. Se define la regla de oro Android CLI: los agentes deben priorizar soluciones operables por CLI Android para todo lo que sea posible automatizar.
 
 ---
 
@@ -32,7 +33,7 @@
 
 **Path fuente**: `~/.claude/skills/migrate-xml-views-to-jetpack-compose/`
 
-**Fuente externa complementaria**: `https://github.com/android/skills`
+**Fuente externa oficial (uso condicional obligatorio)**: `https://github.com/android/skills`
 
 **Adaptaciones necesarias**:
 - Actualizar frontmatter `name` a `migrate-xml-to-compose`
@@ -79,7 +80,13 @@ EP-3 — Stack Android Compose
   1. Copiar `~/.claude/skills/migrate-xml-views-to-jetpack-compose/` a destino
   2. Actualizar frontmatter `name` a `migrate-xml-to-compose`
   3. Añadir sección en `references/` con link al origen de awesome-copilot
-  4. Ejecutar `validate-skill.sh`
+  4. Consultar `https://github.com/android/skills` cuando el caso requiera capacidades no cubiertas localmente
+  5. Ejecutar `validate-skill.sh`
+
+- **Regla de oro Android CLI**:
+  - Priorizar siempre flujos reproducibles por CLI Android para build, test, validación y migración cuando sea viable.
+  - Evitar soluciones dependientes solo de acciones manuales en UI si existe alternativa CLI equivalente.
+  - Si una guía externa propone un flujo no CLI y existe variante CLI, usar la variante CLI y documentar la decisión.
 
 - **Instrucciones Android Compose** — estructura del fichero:
   ```
@@ -104,6 +111,7 @@ EP-3 — Stack Android Compose
 - **HIGH**
   - [ ] Instrucciones cubren: Composables, Navigation 3, Hilt, Flow, Material3
   - [ ] Skill adaptada sin referencias a rutas de ~/.claude/
+  - [ ] Regla de oro Android CLI definida y aplicada en instrucciones/agentes
 - **MEDIUM**
   - [ ] Nota de origen de la skill en references/
 - **LOW**
@@ -122,7 +130,7 @@ EP-3 — Stack Android Compose
 - **Dependencias previas**: US-001, US-004 completadas
 - **Fuentes**:
   - `~/.claude/skills/migrate-xml-views-to-jetpack-compose/`
-    - `https://github.com/android/skills`
+  - `https://github.com/android/skills`
   - Documentación oficial Jetpack Compose
 - **Definition of Ready**:
   - [ ] US-001, US-004 completadas
