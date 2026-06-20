@@ -4,7 +4,7 @@
 # Pre-commit hook that validates all modified skill files
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-VALIDATE_SCRIPT="${REPO_ROOT}/scripts/validate-skill.sh"
+VALIDATE_SCRIPT="${REPO_ROOT}/scripts/devkit-validate-skill.sh"
 
 if [ ! -f "$VALIDATE_SCRIPT" ]; then
   echo "[ERROR] Validation script not found: ${VALIDATE_SCRIPT}"
@@ -16,13 +16,13 @@ MODIFIED_SKILLS=()
 
 # Find all modified files in skills/
 while IFS= read -r file; do
-  if [[ "$file" == skills/*/SKILL.md ]]; then
-    # Extract skill directory
-    skill_dir=$(echo "$file" | cut -d/ -f1-3)
+  if [[ "$file" == skills/*/SKILL.md || "$file" == skills/*/*/SKILL.md || "$file" == skills/*/*/*/SKILL.md ]]; then
+    # Extract skill directory (supports nested namespaces)
+    skill_dir=$(dirname "$file")
     MODIFIED_SKILLS+=("$skill_dir")
-  elif [[ "$file" == skills/*/references/overview.md ]]; then
+  elif [[ "$file" == skills/*/references/overview.md || "$file" == skills/*/*/references/overview.md || "$file" == skills/*/*/*/references/overview.md ]]; then
     # Extract skill directory
-    skill_dir=$(echo "$file" | sed 's|/references/.*||')
+    skill_dir=$(dirname "$(dirname "$file")")
     # Add only if not already in array
     if [[ ! " ${MODIFIED_SKILLS[@]} " =~ " ${skill_dir} " ]]; then
       MODIFIED_SKILLS+=("$skill_dir")

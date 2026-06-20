@@ -98,7 +98,7 @@ done
 # 4. VERIFY VALIDATE SCRIPT EXISTS
 # ─────────────────────────────────────────────────────────
 
-VALIDATE_SCRIPT="$REPO_ROOT/scripts/validate-skill.sh"
+VALIDATE_SCRIPT="$REPO_ROOT/scripts/devkit-validate-skill.sh"
 
 if [ ! -f "$VALIDATE_SCRIPT" ]; then
   log_error "Validation script not found: $VALIDATE_SCRIPT"
@@ -130,7 +130,7 @@ echo ""
 
 log_info "To test the hooks, try:"
 echo "   cd $REPO_ROOT"
-echo "   ./scripts/validate-skill.sh skills/_TEMPLATE"
+echo "   ./scripts/devkit-validate-skill.sh skills/_TEMPLATE"
 echo ""
 
 log_success "Ready to develop!"

@@ -137,16 +137,16 @@ Estructura esperada de la respuesta del agente:
 
 ```
 Detecto que esta tarea requiere análisis de patrones de diseño Kotlin.
-Delegando a `kotlin-expert-pattern` con el siguiente contexto:
+Delegando a `devkit-kotlin-expert-pattern` con el siguiente contexto:
 
 ---
-**Delegación a**: kotlin-expert-pattern
+**Delegación a**: devkit-kotlin-expert-pattern
 **Problema**: [Descripción del diseño a resolver]
 **Contexto adjunto**: [Código o descripción estructurada]
 **Pregunta específica**: [Lo que necesitas que analice]
 ---
 
-Espero el resultado de `kotlin-expert-pattern` para integrar su recomendación.
+Espero el resultado de `devkit-kotlin-expert-pattern` para integrar su recomendación.
 ```
 
 ---

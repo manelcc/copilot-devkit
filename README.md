@@ -28,7 +28,7 @@ En esta fase estamos consolidando la topologia inicial del proyecto para que cua
 │   ├── copilot-instructions.md
 │   └── agents/
 │       ├── project-orchestrator.agent.md
-│       └── feature-lifecycle.agent.md
+│       └── devkit-feature-lifecycle.agent.md
 ├── agents/
 ├── skills/
 ├── prompts/
