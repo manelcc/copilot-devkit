@@ -8,14 +8,14 @@
 
 ## Criterios de Aceptación
 
-1. La skill `skills/multiplatform/kmp/kmp-shared-module-patterns/` cubre: estructura `commonMain`/`androidMain`/`iosMain`, `expect`/`actual`, Ktor Client, SQLDelight, `kotlinx.coroutines`, shared ViewModels, interop iOS (`@ObjCName`, `@Throws`).
-2. El agente `agents/multiplatform/kmp/kmp-expert.agent.md` detecta si la tarea es en módulo shared, Android o iOS y delega correctamente.
-3. Los handoffs del agente referencian: `android-compose-expert`, `ios-swiftui-expert` (para tareas de UI específicas).
-4. El archivo `instructions/kmp.instructions.md` existe con `applyTo: "**/*.kt"` (scoped a módulos multiplatform).
-5. Las instrucciones incluyen reglas de: (1) `expect`/`actual` patterns, (2) convenciones de naming para APIs públicas multiplataforma, (3) restricciones de dependencies en `commonMain`.
-6. La skill pasa validación: `./scripts/validate-skill.sh skills/multiplatform/kmp/kmp-shared-module-patterns/` devuelve exit code 0.
-7. La skill tiene `references/overview.md` con diagrama Mermaid del módulo KMP típico.
-8. Ejecutar `devtools scaffold skill kmp-shared-module-patterns multiplatform/kmp` crea la estructura correcta.
+1. La skill `skills/multiplatform/kmp/kmp-shared-module-patterns/` cubre: estructura `commonMain`/`androidMain`/`iosMain`, `expect`/`actual`, Ktor Client, SQLDelight, `kotlinx.coroutines`, shared ViewModels, interop iOS (`@ObjCName`, `@Throws`). ✅
+2. El agente `agents/multiplatform/kmp/kmp-expert.agent.md` detecta si la tarea es en módulo shared, Android o iOS y delega correctamente. ✅
+3. Los handoffs del agente referencian: `android-compose-expert`, `ios-swiftui-expert` (para tareas de UI específicas). ✅
+4. El archivo `instructions/kmp.instructions.md` existe con `applyTo: "multiplatform/**/*.kt"` (scoped a módulos multiplatform). ✅
+5. Las instrucciones incluyen reglas de: (1) `expect`/`actual` patterns, (2) convenciones de naming para APIs públicas multiplataforma, (3) restricciones de dependencies en `commonMain`. ✅
+6. La skill pasa validación: `./scripts/validate-skill.sh skills/multiplatform/kmp/kmp-shared-module-patterns/` devuelve exit code 0. ✅
+7. La skill tiene `references/overview.md` con diagrama Mermaid del módulo KMP típico. ✅
+8. Ejecutar `devtools scaffold skill kmp-shared-module-patterns multiplatform/kmp` crea la estructura correcta. ⏳ (Out of scope: CLI enhancement)
 
 ---
 
