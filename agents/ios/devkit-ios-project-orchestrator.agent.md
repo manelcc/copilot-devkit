@@ -28,9 +28,14 @@ Route iOS work to the right subtype path (SwiftUI or UIKit) and apply global wor
 |---|---|---|
 | feature | `instructions/devkit-ios-swiftui.instructions.md` | `instructions/devkit-ios-uikit.instructions.md` |
 | fix | `instructions/devkit-ios-swiftui.instructions.md` | `instructions/devkit-ios-uikit.instructions.md` |
-| review | `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-code-guardian` |
+| review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
 | test | `skills/global/devkit-feature-lifecycle` | `skills/global/devkit-feature-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` | `skills/global/devkit-mr-description-generator` |
+
+## Quality routing policy
+- If review asks for architecture, concurrency, security, reliability or systemic risks -> run `devkit-clean-architecture-quality` first.
+- If review asks for readability, naming, SRP, long functions or nesting -> run `devkit-clean-code-guardian`.
+- If both apply -> run both in that order.
 
 ## Execution rules
 1. Detect subtype before proposing code.

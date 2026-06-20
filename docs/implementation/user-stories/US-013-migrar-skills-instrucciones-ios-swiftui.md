@@ -16,13 +16,13 @@
 ## Criterios de Aceptación
 
 1. Las skills genéricas de `bankinter-devtools/skills/ios/{bro,inx,nbo}/` están migradas a `skills/ios/swiftui/` (se eliminan prefijos de proyecto: `bro-`, `inx-`, `nbo-`).
-2. La skill `skills/ios/swiftui/swiftui-patterns/` cubre: `@State`, `@Binding`, `@ObservableObject`, NavigationStack, async/await con `task {}`, `List`, `LazyVStack`.
+2. La skill `skills/ios/swiftui/ios-patterns/` cubre, como subtipo SwiftUI: `@State`, `@Binding`, `@ObservableObject`, NavigationStack, async/await con `task {}`, `List`, `LazyVStack`.
 3. El agente `agents/ios/swiftui/ios-swiftui-expert.agent.md` detecta tipo de tarea iOS SwiftUI y delega a skills relevantes.
 4. El archivo `instructions/ios-swiftui.instructions.md` existe con `applyTo: "**/*.swift"`.
 5. Las instrucciones incluyen reglas de: (1) MVVM con `@Observable` o `ObservableObject`, (2) Async/await, Combine, (3) NavigationStack (no NavigationView), (4) Testing con XCTest.
 6. Ninguna skill migrada contiene referencias específicas al proyecto bankinter (verificable con `grep -r "bankinter" skills/ios/swiftui/` sin resultados o solo en comentarios de origen).
 7. Cada skill migrada pasa validación: `./scripts/validate-skill.sh skills/ios/swiftui/<skill-name>/` devuelve exit code 0.
-8. Ejecutar `ls -1 skills/ios/swiftui/` muestra al menos 3 skills (migradas + swiftui-patterns).
+8. Ejecutar `ls -1 skills/ios/swiftui/` muestra al menos 3 skills (migradas + ios-patterns unificada).
 
 ---
 
@@ -48,7 +48,7 @@
 | **Independiente** | ✅ | Depende de US-001, US-003, US-004 |
 | **Negociable** | ✅ | Número de skills migradas ajustable |
 | **Valiosa** | ✅ | Skills probadas en producción disponibles para cualquier proyecto iOS |
-| **Estimable** | ✅ | Migración + creación de swiftui-patterns + agente: 8-12 horas |
+| **Estimable** | ✅ | Migración + consolidación ios-patterns (con subtipo SwiftUI) + agente: 8-12 horas |
 | **Small** | ✅ | 8 CA, cubre migración + skill nueva + agente + instrucciones |
 | **Testeable** | ✅ | Todos los CA verificables con validador y grep |
 
@@ -75,14 +75,14 @@ EP-5 — Stack iOS
   1. `ls bankinter-devtools/skills/ios/` → listar skills disponibles
   2. Clasificar: genéricas (migrar) vs project-specific (descartar o crear variante genérica)
   3. Migrar genéricas a `skills/ios/swiftui/`
-  4. Crear `swiftui-patterns` desde template
+  4. Consolidar `ios-patterns` con sección SwiftUI explícita
   5. Crear agente desde template con handoffs
   6. Crear `instructions/ios-swiftui.instructions.md`
 
 ## 5. Checklist de calidad
 - **CRITICAL**
   - [ ] Skills genéricas de iOS migradas a `skills/ios/swiftui/`
-  - [ ] `swiftui-patterns` skill creada y pasa validate-skill.sh
+  - [ ] `ios-patterns` skill consolidada y pasa validate-skill.sh
   - [ ] `agents/ios/swiftui/ios-swiftui-expert.agent.md` existe
   - [ ] `instructions/ios-swiftui.instructions.md` existe con `applyTo: "**/*.swift"`
 - **HIGH**
@@ -95,8 +95,8 @@ EP-5 — Stack iOS
 
 ## 6. Casos de prueba
 - **Funcionales**:
-  - `ls skills/ios/swiftui/` → al menos 2 directorios (skills migradas + swiftui-patterns)
-  - `validate-skill.sh skills/ios/swiftui/swiftui-patterns/` → exit 0
+  - `ls skills/ios/swiftui/` → al menos 2 directorios (skills migradas + ios-patterns)
+  - `validate-skill.sh skills/ios/swiftui/ios-patterns/` → exit 0
   - `grep -ri "bankinter\|bro\|inx\|nbo" skills/ios/swiftui/` → sin resultados en contenido funcional
   - `instructions/ios-swiftui.instructions.md` tiene `applyTo: "**/*.swift"`
 - **Errores**: Skill específica de proyecto bankinter encontrada → se mueve a `skills/ios/swiftui/legacy/` con nota

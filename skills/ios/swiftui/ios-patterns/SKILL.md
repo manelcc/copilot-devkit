@@ -3,11 +3,14 @@ name: ios-patterns
 description: >
   Skill de patrones de diseño iOS/Swift para decidir patrón aplicable en una
   implementación, identificar el patrón existente en código y detectar
-  antipatrones con acciones de remediación.
+  antipatrones con acciones de remediación. Incluye SwiftUI como subtipo
+  operativo dentro de la misma skill.
 triggers:
   - "que patron aplica"
   - "identifica patron en este codigo swift"
   - "esto es antipatron swiftui"
+  - "swiftui state patterns"
+  - "navigationstack swiftui"
   - "plan de implementacion con patrones"
   - "review de patrones ios"
 non_triggers:
@@ -63,6 +66,7 @@ Aportar una metodología práctica para seleccionar patrones de diseño en Swift
 - Comportamiento: Observer, Strategy, State, Command, Mediator, Iterator, Chain of Responsibility.
 - Concurrencia: Actor model, Barrier, Read-Write Lock, Balking, async/await orchestration.
 - Swift-específicos: Identifier/Phantom Types, Property Wrappers, Result Builders, Opaque Types, Value Binding.
+- Subtipos SwiftUI (dentro de iOS patterns): ownership de estado (`@State`, `@Binding`, `@ObservableObject`/`@Observable`), navegación tipada con `NavigationStack`, lifecycle async con `.task {}`, estrategia de listas (`List` vs `LazyVStack`).
 
 ### Anti-pattern heuristics
 - Singleton abuse con estado global mutable.

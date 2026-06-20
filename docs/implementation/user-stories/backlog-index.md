@@ -117,6 +117,10 @@ Como desarrollador Android Compose, quiero skills de patrones Compose, Navigatio
 Como desarrollador iOS, quiero las skills de bankinter-devtools en `skills/ios/swiftui/` y las instrucciones Swift/SwiftUI, para implementar features iOS con calidad.
 Épica: EP-5 | Prioridad: Alta (P0) | Fichero: [US-013-migrar-skills-instrucciones-ios-swiftui.md](US-013-migrar-skills-instrucciones-ios-swiftui.md)
 
+#### US-013-PLUS — Importar patrones y quality skills Android, iOS (enrich) y Python
+Como desarrollador mobile/backend, quiero skills de patrones, quality skills, agentes y prompts para Android, iOS y Python desde el proyecto de referencia, para diagnosticar patrones y calidad en los tres stacks.
+Épica: EP-3/EP-5/EP-4 | Prioridad: P0 | Fichero: [US-013-PLUS-import-patterns-quality-android-ios-python.md](US-013-PLUS-import-patterns-quality-android-ios-python.md)
+
 ---
 
 ### Sprint 3 — KMP + CLI completo
@@ -135,7 +139,7 @@ Como contributor, quiero `devtools scaffold skill` y `devtools validate skill` c
 
 | US | Descripción | Épica |
 |---|---|---|
-| US-016 | Skills Android Compose avanzadas (Hilt, Testing) | EP-3 |
+| US-016 | Formulario para definir ciclo de vida de desarrollo y generar template | EP-8 |
 | US-017 | Skills e instrucciones iOS UIKit legacy | EP-5 |
 | US-018 | Skills Compose Multiplatform (CMP) | EP-6 |
 | US-019 | Skills backend Python FastAPI | EP-7 |

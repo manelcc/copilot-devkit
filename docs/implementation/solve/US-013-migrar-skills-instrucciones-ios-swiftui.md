@@ -3,7 +3,7 @@
 **Status**: ✅ **DONE**
 
 ## Resumen
-Se implementa el namespace iOS SwiftUI con 3 skills nuevas, 1 agente experto y 1 archivo de instrucciones SwiftUI.
+Se implementa el namespace iOS SwiftUI con 2 skills especializadas, 1 skill unificada de patrones iOS (incluyendo subtipo SwiftUI), 1 agente experto y 1 archivo de instrucciones SwiftUI.
 
 ## Evidencia de origen
 Se inspecciono el path fuente configurado para migracion:
@@ -19,14 +19,14 @@ Al no existir contenido migrable, se crea baseline funcional apoyado en document
 - XCTest
 
 ## Artefactos creados
-- skills/ios/swiftui/swiftui-patterns/
+- skills/ios/swiftui/ios-patterns/ (unificada, incluye subtipo SwiftUI)
 - skills/ios/swiftui/ios-swift-concurrency/
 - skills/ios/swiftui/swiftui-testing-xctest/
 - agents/ios/swiftui/ios-swiftui-expert.agent.md
 - instructions/ios-swiftui.instructions.md
 
 ## Validaciones ejecutadas
-- ./scripts/devkit-validate-skill.sh skills/ios/swiftui/swiftui-patterns
+- ./scripts/devkit-validate-skill.sh skills/ios/swiftui/ios-patterns
 - ./scripts/devkit-validate-skill.sh skills/ios/swiftui/ios-swift-concurrency
 - ./scripts/devkit-validate-skill.sh skills/ios/swiftui/swiftui-testing-xctest
 - grep -RIn "bankinter|bro|inx|nbo" skills/ios/swiftui/ (sin resultados)
