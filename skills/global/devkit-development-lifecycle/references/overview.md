@@ -15,8 +15,13 @@ flowchart TD
     A11b --> A12
     A11c --> A12[A.1.2 Generate Plan]
     A12 --> A13[A.1.3 Generate Test Cases + Smoke]
-    A13 --> B[B. Implementation]
-    B --> C[C. Generate Unit Tests]
+    A13 --> B0{B.0 User: Implementation mode?}
+    B0 -->|Automatic| B1[B.1 Agent implements all]
+    B0 -->|Manual| B2[B.2 Show checklist, wait]
+    B0 -->|Hybrid| B3[B.3 Step-by-step decision]
+    B1 --> C
+    B2 --> C
+    B3 --> C[C. Generate Unit Tests]
     C --> D1[D.1 Clean-Code Analysis]
     D1 --> D2[D.2 Architecture Analysis]
     D2 --> D3[D.3 Coverage Validation]
@@ -57,10 +62,11 @@ flowchart TD
 - **A.1.3**: Generate test cases and select smoke tests
 - **Output**: Planning artifacts in `docs/plan-implementation/`, `docs/test-cases/`, `docs/smoke-test/`
 
-### Phase B: Implementation
-- Implement according to plan
-- Follow expert recommendations
-- Adapt to existing code and patterns
+### Phase B: Implementation (User Decision)
+- **B.0**: Ask user: Automatic / Manual / Hybrid
+- **B.1 Automatic**: Agent implements all steps from plan
+- **B.2 Manual**: Show checklist, wait for user confirmation
+- **B.3 Hybrid**: Per-step decision — agent or user
 - **Output**: Code changes in project
 
 ### Phase C: Test Generation
@@ -155,8 +161,7 @@ project-consuming-skill/
 ## User Decision Points
 
 | Phase | Decision | Options |
-|-------|----------|---------|
-| F.2 | Execute E2E tests? | Yes, No |
+|-------|----------|---------|| B.0 | Implementation mode | Automatic, Manual, Hybrid || F.2 | Execute E2E tests? | Yes, No |
 | F.4 | E2E tests passed? | Confirmed, Failed |
 | G.1 | Execute smoke tests? | Yes, No |
 | G.3 | Smoke tests passed? | Confirmed, Failed |

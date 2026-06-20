@@ -82,13 +82,48 @@ Execute in parallel:
 ---
 
 ### Phase B: Implementation
-1. Implement according to plan from Phase A.1.2
+
+#### B.0 Ask User: Implementation Mode
+Before any code is written, ask the user how they want the implementation handled:
+
+```
+Plan de implementación listo.
+¿Cómo quieres gestionar la implementación?
+
+[A] Automático   — El agente implementa todo según el plan
+[B] Manual       — Tú implementas, el agente supervisa y valida
+[C] Híbrido      — Elige qué partes implementa el agente y cuáles tú
+```
+
+#### B.1 If Automatic
+1. Implement all steps from plan A.1.2 sequentially
 2. Follow expert recommendations:
    - Use selected design pattern
    - Respect architectural constraints
    - Apply code quality guidelines
 3. Adapt to existing code conventions
 4. Keep changes scoped to US requirements only
+5. Inform user when each step completes
+
+#### B.2 If Manual
+1. Show the implementation plan steps as a checklist
+2. Wait for user to confirm when implementation is done:
+   ```
+   Cuando hayas terminado la implementación, dime "listo" para
+   continuar con la generación de tests y quality gates.
+   ```
+3. On user confirmation, proceed to Phase C
+
+#### B.3 If Hybrid
+1. Show the implementation steps from plan A.1.2
+2. For each step, ask who implements it:
+   ```
+   Paso 1: [descripción del paso]
+   ¿Quién implementa este paso?
+   [Yo (agente)] [Tú (manual)] [Saltar]
+   ```
+3. Execute agent-assigned steps; wait for user confirmation on manual steps
+4. After all steps resolved, proceed to Phase C
 
 ---
 
