@@ -1,5 +1,8 @@
 # Solve — US-016 Agente orquestador del ciclo de desarrollo guiado con quality gates
 
+**Estado**: ✅ Completado  
+**Fecha de cierre**: 2025-01-24
+
 ## Resumen
 Se implementa el **agente orquestador completo del ciclo de desarrollo** que gestiona las 9 fases desde planificación hasta MR/PR, con consulta a agentes expertos, quality gates obligatorios, decisiones interactivas del usuario y persistencia de artefactos.
 
@@ -7,50 +10,62 @@ Se implementa el **agente orquestador completo del ciclo de desarrollo** que ges
 
 ### 1. Agente orquestador
 - **Ubicación**: `agents/global/devkit-development-lifecycle-orchestrator.agent.md`
+- **Responsabilidad**: Pre-checks y delegación a la skill ejecutable
+- **Handoffs**: `devkit-clean-architecture-quality`, `devkit-clean-code-guardian`, `Scrum Master`
+- **Skills**: `devkit-development-lifecycle`, `devkit-git-workflow`, `devkit-mr-description-generator`
+
+### 2. Skill ejecutable
+- **Ubicación**: `skills/global/devkit-development-lifecycle/SKILL.md`
+- **Triggers**: "ejecuta el ciclo completo", "implementa la US con ciclo guiado"
 - **Fases implementadas**:
   - **A**: Planificación y análisis previo (consulta expertos, genera plan + test cases)
   - **B**: Implementación según plan
-  - **C**: Generación de tests unitarios
-  - **D**: Quality gates obligatorios (clean-code, architecture, coverage ≥40%)
-  - **E**: Bucle de corrección si quality gates fallan
+  - **C**: Generación de tests unitarios (cobertura ≥40%)
+  - **D**: Quality gates obligatorios (clean-code, architecture, coverage)
+  - **E**: Bucle de corrección si quality gates fallan (máx 3 iteraciones)
   - **F**: Pruebas E2E opcionales (decisión usuario)
   - **G**: Smoke tests opcionales (decisión usuario)
   - **H**: Commits atómicos (decisión usuario)
   - **I**: Descripción MR/PR con trazabilidad
 
-### 2. Estructura de documentos
-- `docs/plan-implementation/`: Planes de implementación detallados
-- `docs/test-cases/`: Test cases con priorización de smoke tests
-- `docs/smoke-test/`: Suites de smoke test ejecutables
-- `docs/quality/`: Informes de clean-code y clean-architecture
+### 3. Documentación técnica
+- **Ubicación**: `skills/global/devkit-development-lifecycle/references/overview.md`
+- **Contenido**: Diagramas Mermaid del flujo completo, tablas de decisión, artifacts
 
-### 3. Templates de artefactos
-- `docs/plan-implementation/_TEMPLATE-implementation-plan.md`
-- `docs/test-cases/_TEMPLATE-test-cases.md`
-- `docs/smoke-test/_TEMPLATE-smoke-suite.md`
-- `docs/quality/_TEMPLATE-clean-code-report.md`
-- `docs/quality/_TEMPLATE-architecture-report.md`
+### 4. Estructura de documentos (templates de referencia en DevTools-AI)
+Los templates se usan como referencia; los documentos reales se generan en **proyecto consumidor**:
+- `docs/_TEMPLATE-implementation-plan.md`
+- `docs/_TEMPLATE-test-cases.md`
+- `docs/_TEMPLATE-smoke-suite.md`
+- `docs/_TEMPLATE-clean-code-report.md`
+- `docs/_TEMPLATE-architecture-report.md`
 
-### 4. Handoffs del agente
-- **A `devkit-clean-architecture-quality`**: Para análisis de arquitectura (Fase D.2)
-- **A `devkit-clean-code-guardian`**: Para análisis clean-code (Fase D.1)
-- **A `Scrum Master`**: Si scope de US no está claro
-
-### 5. Skills utilizadas
-- `devkit-git-workflow`: Para commits atómicos (Fase H)
-- `devkit-mr-description-generator`: Para descripción MR/PR (Fase I)
+### 5. Artefactos generados en proyecto consumidor
+```
+proyecto-consumidor/
+  docs/
+    plan-implementation/US-XXX-implementation-plan.md
+    test-cases/US-XXX-test-cases.md
+    smoke-test/US-XXX-smoke-suite.md
+    quality/US-XXX-clean-code-report.md
+    quality/US-XXX-architecture-report.md
+    mr/US-XXX-description.md
+```
 
 ## Cobertura de criterios de aceptación
-1. Plan de implementación consultando expertos: ✅ Fase A.1.1 y A.1.2
-2. Test cases y smoke tests propuestos: ✅ Fase A.1.3
-3. Implementación según plan: ✅ Fase B
-4. Quality gates obligatorios: ✅ Fase D (clean-code, architecture, coverage)
-5. Bucle de corrección si falla: ✅ Fase E vuelve a Fase A.1.1
-6. Pregunta por E2E con instrucciones adaptadas: ✅ Fase F
-7. Pregunta por smoke tests: ✅ Fase G
-8. Commits atómicos con confirmación: ✅ Fase H
-9. Descripción MR/PR con trazabilidad: ✅ Fase I
-10. Artefactos en estructura persistente: ✅ Todos en `docs/`
+
+| # | Criterio | Estado |
+|---|----------|--------|
+| CA1 | Consulta 3 expertos (arquitectura, patrones, calidad) | ✅ Fase A.1.1 |
+| CA2 | Genera plan de implementación detallado | ✅ Fase A.1.2 |
+| CA3 | Genera test cases y smoke tests | ✅ Fase A.1.3 |
+| CA4 | Ejecuta implementación y genera tests unitarios ≥40% | ✅ Fases B y C |
+| CA5 | Ejecuta quality gates obligatorios y persiste reportes | ✅ Fase D |
+| CA6 | Bucle de corrección si quality gates fallan (máx 3 iter.) | ✅ Fase E |
+| CA7 | Pregunta por E2E y smoke tests, genera instrucciones | ✅ Fases F y G |
+| CA8 | Prepara commits atómicos y pregunta si ejecutar | ✅ Fase H |
+| CA9 | Genera descripción MR/PR con trazabilidad | ✅ Fase I |
+| CA10 | Artefactos se generan en proyecto consumidor | ✅ Templates en DevTools-AI, docs en consumidor |
 
 ## Flujo de invocación
 
@@ -63,55 +78,108 @@ Usuario: "Implementa US-042"
 Orquestador de Stack (ej. devkit-backend-kotlin-project-orchestrator)
 ↓ (detecta que es implementación completa de US)
 ↓ handoff a devkit-development-lifecycle-orchestrator
+↓ pre-checks (US existe, stack detectado, expertos disponibles)
+↓ invoca skill devkit-development-lifecycle
 ↓
 Ciclo completo de 9 fases ejecutado
 ```
 
-### Ejemplo de ejecución
+### Ejemplo de ejecución completa
 ```
 User: "Ejecuta el ciclo completo para US-042"
-Agent: [Lee US-042]
-Agent: [Consulta arquitectura, patrones, calidad]
-Agent: "Plan de implementación generado en docs/plan-implementation/US-042-implementation-plan.md"
-Agent: "Test cases generados en docs/test-cases/US-042-test-cases.md"
-Agent: "Smoke tests propuestos: TC-001, TC-005"
-Agent: "¿Procedo con la implementación?"
+
+Agent (orchestrator): [Pre-checks: US-042 existe, stack: Backend Kotlin]
+Agent: Invocando skill devkit-development-lifecycle...
+
+Agent (skill): [Fase A] Leyendo US-042: "Add user authentication"
+Agent: [A.1.1] Consultando expertos...
+  → Arquitectura: Recomienda Clean Architecture con JWT en infra
+  → Patrones: Recomienda Strategy para múltiples métodos auth
+  → Calidad: Detecta deuda técnica en AuthController existente
+Agent: [A.1.2] Plan generado: docs/plan-implementation/US-042-implementation-plan.md
+Agent: [A.1.3] Test cases y smoke tests generados
+Agent: ¿Procedo con la implementación?
+
 User: "Sí"
-Agent: [Implementa según plan]
-Agent: [Genera tests unitarios]
-Agent: [Ejecuta quality gates]
-Agent: "✓ Clean-code: 8.5/10"
-Agent: "✓ Architecture: Compliant"
-Agent: "✓ Coverage: 52%"
-Agent: "Quality gates pasados. ¿Deseas ejecutar pruebas E2E?"
+
+Agent: [Fase B] Implementando según plan...
+Agent: [Fase C] Generando tests unitarios...
+Agent: [Fase D.1] Clean-code: ✓ Score 8.5, 0 critical issues
+Agent: [Fase D.2] Architecture: ✓ Compliant, 0 violations
+Agent: [Fase D.3] Coverage: ✓ 52%
+Agent: Quality gates pasados. ¿Deseas ejecutar pruebas E2E?
+
 User: "Sí"
-Agent: [Genera instrucciones E2E para Docker]
-Agent: "Instrucciones: docker compose up --build && curl http://localhost:8080/health"
-Agent: "¿Deseas ejecutar smoke tests?"
+
+Agent: [Fase F] Instrucciones E2E:
+  docker compose up --build
+  curl http://localhost:8080/auth/login
+Agent: Confirma que las pruebas E2E pasaron
+
+User: "Confirmado"
+
+Agent: ¿Deseas ejecutar smoke tests?
+
 User: "No"
-Agent: [Prepara commits atómicos]
-Agent: "Commits propuestos:"
-Agent: "1. feat: add User entity"
-Agent: "2. feat: implement CreateUser use case"
-Agent: "3. test: add unit tests for CreateUser"
-Agent: "¿Ejecutar estos commits?"
+
+Agent: [Fase H] Commits propuestos:
+  1. feat(domain): add User and AuthToken entities
+  2. feat(application): implement LoginUser use case with JWT
+  3. feat(infrastructure): add JWTAuthService implementation
+  4. test: add unit tests for LoginUser
+Agent: ¿Ejecutar estos commits?
+
 User: "Sí"
-Agent: [Ejecuta commits]
-Agent: [Genera descripción MR]
-Agent: "MR generada en docs/mr/US-042-description.md"
-Agent: "Ciclo completo. ¿Proceder con push y creación de MR?"
+
+Agent: [Fase H] 4 commits ejecutados
+Agent: [Fase I] MR description generada: docs/mr/US-042-description.md
+
+Agent (orchestrator): Ciclo completo. Branch lista para push.
+Agent: ¿Proceder con push y creación de MR?
+
+User: "Sí"
+
+Agent: [Ejecuta git push...]
+Agent: Abre GitLab/GitHub para crear MR con descripción
+```
+
+### Ejemplo con bucle de corrección
+```
+User: "Implementa US-085"
+
+Agent: [Fase A-C] ... implementación completada
+Agent: [Fase D.1] Clean-code: ✗ 3 critical issues detected
+  - Función login() tiene 45 líneas (máx: 30)
+  - Clase AuthService tiene 8 responsabilidades (SRP violation)
+  - Magic number 3600 en JWT expiration
+Agent: [Fase D] Quality gate FAILED. Entrando en bucle de corrección...
+
+Agent: [Fase E] Consultando expertos con reporte de fallos...
+  → Arquitectura: Separar AuthService en AuthValidator + TokenGenerator
+  → Patrones: Extraer método validate() de login()
+  → Calidad: Usar constante JWT_EXPIRATION_SECONDS
+Agent: [A.1.2] Plan ajustado (v2) generado
+
+Agent: [Fase B-C] Re-implementando con correcciones...
+Agent: [Fase D.1] Clean-code: ✓ Score 8.0, 0 critical issues
+Agent: [Fase D.2-D.3] ✓ Architecture compliant, ✓ Coverage 45%
+Agent: Quality gates pasados (intento 2/3). Continuando...
 ```
 
 ## Validación
-- Diagrama de flujo completo en US-016 con 9 fases y decisiones del usuario
-- Templates de artefactos disponibles en `docs/`
-- Handoffs a agentes expertos definidos
-- Skills de git y MR integradas
+- ✅ Skill ejecutable implementada con 9 fases completas
+- ✅ Agente orquestador conectado con handoffs y pre-checks
+- ✅ Templates de artefactos creados como referencia
+- ✅ Documentación técnica con diagramas Mermaid
+- ✅ Ejemplos de invocación con bucle de corrección
+- ✅ Artefactos se generan en proyecto consumidor
 
 ## Próximos pasos
-1. Integrar el handoff desde orquestadores de stack existentes:
+1. **Integrar handoff desde stack orchestrators**:
    - `devkit-backend-kotlin-project-orchestrator`
    - `devkit-android-project-orchestrator`
    - `devkit-ios-project-orchestrator`
-2. Validar con una US real end-to-end
-3. Ajustar templates de artefactos según feedback
+2. **Testing end-to-end** con US real en proyecto consumidor
+3. **Ajustar templates** según feedback de uso real
+4. **Documentar en README** de DevTools-AI cómo invocar el ciclo
+
