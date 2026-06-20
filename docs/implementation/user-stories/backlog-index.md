@@ -89,9 +89,9 @@ Como desarrollador de un proyecto consumidor, quiero `devtools sync` para import
 Como desarrollador backend Kotlin, quiero las 6 skills de mycardiochef en `skills/backend/kotlin-ktor/`, para usarlas en cualquier proyecto Ktor.
 Épica: EP-7 | Prioridad: Alta (P0) | Fichero: [US-007-migrar-skills-backend-kotlin-ktor.md](US-007-migrar-skills-backend-kotlin-ktor.md) | Solve: [US-007-migrar-skills-backend-kotlin-ktor.md](../solve/US-007-migrar-skills-backend-kotlin-ktor.md)
 
-#### US-008 — Migrar agentes e instrucciones backend Ktor
+#### US-008 — Migrar agentes e instrucciones backend Ktor ✅ DONE
 Como desarrollador backend Kotlin, quiero los agentes de mycardiochef en `agents/backend/kotlin-ktor/` y las instrucciones Ktor, para orquestar tareas desde cualquier proyecto.
-Épica: EP-7 | Prioridad: Alta (P0) | Fichero: [US-008-migrar-agentes-instrucciones-backend-ktor.md](US-008-migrar-agentes-instrucciones-backend-ktor.md)
+Épica: EP-7 | Prioridad: Alta (P0) | Fichero: [US-008-migrar-agentes-instrucciones-backend-ktor.md](US-008-migrar-agentes-instrucciones-backend-ktor.md) | Solve: [US-008-migrar-agentes-instrucciones-backend-ktor.md](../solve/US-008-migrar-agentes-instrucciones-backend-ktor.md)
 
 #### US-009 — Migrar skills globales (clean-code, git, MR)
 Como desarrollador en cualquier stack, quiero las skills de calidad y git en `skills/global/`, para seguir convenciones en todos los proyectos.
