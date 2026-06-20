@@ -1,9 +1,12 @@
 #!/bin/bash
 
 # setup.sh
-# Sets up the development environment and installs pre-commit hooks
+# Configura copilot-devkit en una máquina nueva — instala globales en ~/.copilot/ y CLI en PATH.
+# Ejecutar UNA SOLA VEZ desde el root del repo.
 
-set -e
+set -euo pipefail
+
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 # Color codes
 RED='\033[0;31m'
@@ -29,28 +32,127 @@ log_warning() {
   echo -e "${YELLOW}⚠${NC} $1"
 }
 
-# Get repository root
-REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-
 echo ""
 echo "════════════════════════════════════════════════════════"
-log_info "Setting up development environment"
+log_info "Setting up copilot-devkit globally"
 echo "════════════════════════════════════════════════════════"
 echo ""
 
 # ─────────────────────────────────────────────────────────
-# 1. VERIFY GIT REPOSITORY
+# 1. DETECT SHELL CONFIG
 # ─────────────────────────────────────────────────────────
 
-if [ ! -d "$REPO_ROOT/.git" ]; then
-  log_error "Not a git repository: $REPO_ROOT"
+if [[ -f "$HOME/.zshrc" ]]; then
+    SHELL_RC="$HOME/.zshrc"
+elif [[ -f "$HOME/.bashrc" ]]; then
+    SHELL_RC="$HOME/.bashrc"
+elif [[ -f "$HOME/.bash_profile" ]]; then
+    SHELL_RC="$HOME/.bash_profile"
+else
+    log_error "No se encontró ~/.zshrc ni ~/.bashrc"
+    echo "   Añade manualmente a tu shell rc:"
+    echo "   export COPILOT_DEVKIT_HOME=\"$REPO_ROOT\""
+    echo "   export PATH=\"\$COPILOT_DEVKIT_HOME/cli-tools:\$PATH\""
+    exit 1
+fi
+
+# ─────────────────────────────────────────────────────────
+# 2. ADD CLI TO PATH AND EXPORT COPILOT_DEVKIT_HOME
+# ─────────────────────────────────────────────────────────
+
+if grep -q "COPILOT_DEVKIT_HOME" "$SHELL_RC" 2>/dev/null; then
+    log_success "COPILOT_DEVKIT_HOME ya está en $SHELL_RC"
+else
+    echo "" >> "$SHELL_RC"
+    echo "# Copilot DevKit" >> "$SHELL_RC"
+    echo "export COPILOT_DEVKIT_HOME=\"$REPO_ROOT\"" >> "$SHELL_RC"
+    log_success "COPILOT_DEVKIT_HOME añadido a $SHELL_RC"
+fi
+
+# ─────────────────────────────────────────────────────────
+# 3. INSTALL PYTHON >= 3.11 VERIFICATION
+# ─────────────────────────────────────────────────────────
+
+if ! command -v python3 >/dev/null 2>&1; then
+  log_error "python3 no está disponible en PATH"
   exit 1
 fi
 
-log_success "Git repository detected: $REPO_ROOT"
+PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+PYTHON_OK=$(python3 -c 'import sys; print(int((sys.version_info.major, sys.version_info.minor) >= (3, 11)))')
+
+if [ "$PYTHON_OK" != "1" ]; then
+  log_error "Se requiere Python >= 3.11. Detectado: $PYTHON_VERSION"
+  exit 1
+fi
+
+log_info "Instalando CLI devtools (editable)"
+python3 -m pip install -q -e "$REPO_ROOT/cli-tools"
+
+if command -v devtools >/dev/null 2>&1; then
+  log_success "CLI devtools instalada"
+else
+  log_warning "No se encontró 'devtools' en PATH tras la instalación"
+fi
+
+if command -v setup-project >/dev/null 2>&1; then
+  log_success "Comando setup-project disponible"
+else
+  log_warning "No se encontró 'setup-project' en PATH tras la instalación"
+fi
 
 # ─────────────────────────────────────────────────────────
-# 2. INSTALL PRE-COMMIT HOOKS
+# 4. LINK GLOBAL SKILLS TO ~/.copilot/skills/
+# ─────────────────────────────────────────────────────────
+
+GLOBAL_SKILLS_DIR="$REPO_ROOT/skills/global"
+COPILOT_SKILLS_DIR="$HOME/.copilot/skills"
+mkdir -p "$COPILOT_SKILLS_DIR"
+
+linked=0
+for skill_dir in "$GLOBAL_SKILLS_DIR"/*/; do
+    [[ -d "$skill_dir" ]] || continue
+    skill_name="$(basename "$skill_dir")"
+    target="$COPILOT_SKILLS_DIR/$skill_name"
+
+    if [[ -L "$target" ]]; then
+        log_info "Ya enlazada: $skill_name"
+    elif [[ -e "$target" ]]; then
+        log_warning "Existe (no es symlink): $skill_name — omitida"
+    else
+        ln -s "$skill_dir" "$target"
+        log_success "Enlazada: $skill_name"
+        ((linked++)) || true
+    fi
+done
+
+# ─────────────────────────────────────────────────────────
+# 5. LINK GLOBAL AGENTS TO ~/.copilot/agents/
+# ─────────────────────────────────────────────────────────
+
+GLOBAL_AGENTS_DIR="$REPO_ROOT/agents/global"
+COPILOT_AGENTS_DIR="$HOME/.copilot/agents"
+mkdir -p "$COPILOT_AGENTS_DIR"
+
+agents_linked=0
+for agent_file in "$GLOBAL_AGENTS_DIR"/*.agent.md; do
+    [[ -f "$agent_file" ]] || continue
+    agent_name="$(basename "$agent_file")"
+    target="$COPILOT_AGENTS_DIR/$agent_name"
+
+    if [[ -L "$target" ]]; then
+        log_info "Agente ya enlazado: $agent_name"
+    elif [[ -e "$target" ]]; then
+        log_warning "Agente existe (no es symlink): $agent_name — omitido"
+    else
+        ln -s "$agent_file" "$target"
+        log_success "Agente enlazado: $agent_name"
+        ((agents_linked++)) || true
+    fi
+done
+
+# ─────────────────────────────────────────────────────────
+# 6. INSTALL PRE-COMMIT HOOKS
 # ─────────────────────────────────────────────────────────
 
 HOOKS_PATH=".githooks"
@@ -61,8 +163,6 @@ if [ ! -d "$REPO_ROOT/$HOOKS_PATH" ]; then
 fi
 
 log_info "Configuring git hooks path to: $HOOKS_PATH"
-
-# Configure git to use .githooks directory for hooks
 git config core.hooksPath "$HOOKS_PATH"
 
 if git config core.hooksPath | grep -q "$HOOKS_PATH"; then
@@ -71,10 +171,6 @@ else
   log_error "Failed to configure git hooks path"
   exit 1
 fi
-
-# ─────────────────────────────────────────────────────────
-# 3. VERIFY HOOK FILES EXIST AND ARE EXECUTABLE
-# ─────────────────────────────────────────────────────────
 
 HOOKS_TO_CHECK=(
   "pre-commit"
@@ -95,7 +191,7 @@ for hook_name in "${HOOKS_TO_CHECK[@]}"; do
 done
 
 # ─────────────────────────────────────────────────────────
-# 4. VERIFY VALIDATE SCRIPT EXISTS
+# 7. VERIFY VALIDATE SCRIPT EXISTS
 # ─────────────────────────────────────────────────────────
 
 VALIDATE_SCRIPT="$REPO_ROOT/scripts/devkit-validate-skill.sh"
@@ -113,7 +209,7 @@ fi
 log_success "Validation script exists and is executable"
 
 # ─────────────────────────────────────────────────────────
-# 5. FINAL VERIFICATION
+# 8. FINAL SUMMARY
 # ─────────────────────────────────────────────────────────
 
 echo ""
@@ -126,11 +222,21 @@ log_info "Environment details:"
 echo "   Repository root: $REPO_ROOT"
 echo "   Hooks path: $REPO_ROOT/$HOOKS_PATH"
 echo "   Configured hooks path: $(git config core.hooksPath)"
+echo "   Skills globales enlazadas: $linked"
+echo "   Agentes globales enlazados: $agents_linked"
 echo ""
 
-log_info "To test the hooks, try:"
-echo "   cd $REPO_ROOT"
-echo "   ./scripts/devkit-validate-skill.sh skills/_TEMPLATE"
+log_info "Reload your shell:"
+echo "   source $SHELL_RC"
+echo ""
+
+log_info "To bootstrap a consumer project by technology (symlink mode), run:"
+echo "   cd /path/to/your/project"
+echo "   setup-project --android"
+echo "   setup-project --ios"
+echo "   setup-project --cmp"
+echo "   setup-project --kmp"
+echo "   setup-project --python"
 echo ""
 
 log_success "Ready to develop!"
