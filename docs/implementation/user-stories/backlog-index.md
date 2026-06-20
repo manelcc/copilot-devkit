@@ -73,21 +73,21 @@ Como contributor creando una nueva skill o agente, quiero un template completo, 
 Como contributor, quiero que un pre-commit rechace skills mal formadas y que un único comando configure mi entorno, para mantener calidad sin revisión manual.
 Épica: EP-1 | Prioridad: Alta (P1) | Fichero: [US-004-precommit-validacion-setup-local.md](US-004-precommit-validacion-setup-local.md)
 
-#### US-005 — Bootstrap CLI devtools
+#### US-005 — Bootstrap CLI devtools ✅ DONE
 Como desarrollador, quiero un comando `devtools` instalable con subcomandos base, para no depender de scripts bash dispersos.
-Épica: EP-9 | Prioridad: Alta (P0) | Fichero: [US-005-bootstrap-cli-devtools.md](US-005-bootstrap-cli-devtools.md)
+Épica: EP-9 | Prioridad: Alta (P0) | Fichero: [US-005-bootstrap-cli-devtools.md](US-005-bootstrap-cli-devtools.md) | Solve: [US-005-bootstrap-cli-devtools.md](../solve/US-005-bootstrap-cli-devtools.md)
 
-#### US-006 — Implementar devtools sync copy-on-demand
+#### US-006 — Implementar devtools sync copy-on-demand ✅ DONE
 Como desarrollador de un proyecto consumidor, quiero `devtools sync` para importar artefactos según un manifest, para no copiar manualmente ni perder actualizaciones.
-Épica: EP-2 | Prioridad: Alta (P1) | Fichero: [US-006-devtools-sync-copy-on-demand.md](US-006-devtools-sync-copy-on-demand.md)
+Épica: EP-2 | Prioridad: Alta (P1) | Fichero: [US-006-devtools-sync-copy-on-demand.md](US-006-devtools-sync-copy-on-demand.md) | Solve: [US-006-devtools-sync-copy-on-demand.md](../solve/US-006-devtools-sync-copy-on-demand.md)
 
 ---
 
 ### Sprint 1 — Migración Backend + Global
 
-#### US-007 — Migrar skills backend Kotlin/Ktor
+#### US-007 — Migrar skills backend Kotlin/Ktor ✅ DONE
 Como desarrollador backend Kotlin, quiero las 6 skills de mycardiochef en `skills/backend/kotlin-ktor/`, para usarlas en cualquier proyecto Ktor.
-Épica: EP-7 | Prioridad: Alta (P0) | Fichero: [US-007-migrar-skills-backend-kotlin-ktor.md](US-007-migrar-skills-backend-kotlin-ktor.md)
+Épica: EP-7 | Prioridad: Alta (P0) | Fichero: [US-007-migrar-skills-backend-kotlin-ktor.md](US-007-migrar-skills-backend-kotlin-ktor.md) | Solve: [US-007-migrar-skills-backend-kotlin-ktor.md](../solve/US-007-migrar-skills-backend-kotlin-ktor.md)
 
 #### US-008 — Migrar agentes e instrucciones backend Ktor
 Como desarrollador backend Kotlin, quiero los agentes de mycardiochef en `agents/backend/kotlin-ktor/` y las instrucciones Ktor, para orquestar tareas desde cualquier proyecto.
