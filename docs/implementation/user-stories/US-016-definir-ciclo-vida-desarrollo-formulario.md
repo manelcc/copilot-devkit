@@ -1,35 +1,41 @@
-# US-016 — Definir ciclo de vida de desarrollo desde formulario
+# US-016 — Agente orquestador del ciclo de desarrollo guiado con quality gates
 
-**Como** contributor o responsable de un proyecto,
-**quiero** poder elegir el ciclo de vida de desarrollo desde un formulario y generar el template correspondiente,
-**para** adaptar el flujo de trabajo del equipo sin editar manualmente plantillas y manteniendo un template por defecto cuando no se personaliza nada.
+**Como** desarrollador implementando una User Story,
+**quiero** un agente que orqueste el ciclo completo de desarrollo con planificación previa, quality gates y decisiones interactivas,
+**para** asegurar que cada US se implementa con calidad, trazabilidad y adaptándose al código y arquitectura existente.
 
 ---
 
 ## Criterios de aceptación
 
-1. El formulario permite seleccionar o configurar el ciclo de vida de desarrollo a partir de una lista de fases predefinidas.
-2. Al confirmar el formulario, el sistema genera un template del ciclo de desarrollo con la estructura seleccionada.
-3. Si el usuario no personaliza nada, el sistema genera el template por defecto actual sin cambios funcionales respecto al que ya existe.
-4. El usuario puede previsualizar el template generado antes de guardarlo o exportarlo.
-5. Si faltan datos obligatorios o la configuración del ciclo es inválida, el template no se genera y se muestra un error descriptivo.
-6. El formulario permite volver al template por defecto en cualquier momento.
-7. El template generado queda disponible en un formato persistente y reutilizable para otros flujos del repositorio.
+1. El agente genera un **plan de implementación detallado** consultando a los agentes expertos de arquitectura, patrones y calidad, adaptándose al código existente del proyecto.
+2. El agente genera **test cases** detallados de la US y propone cuáles deben formar parte del **smoke test**.
+3. El agente **implementa** según el plan generado, respetando las reglas de los agentes expertos.
+4. El agente ejecuta **quality gates** obligatorios: análisis clean-code, clean-architecture y cobertura de tests ≥40%.
+5. Si los quality gates fallan, el agente **vuelve a la fase de análisis** con el reporte de problemas detectados.
+6. El agente pregunta al usuario si desea ejecutar **pruebas E2E** y proporciona instrucciones adaptadas (Docker, móvil, etc.).
+7. El agente pregunta al usuario si desea ejecutar el **smoke test** y proporciona instrucciones o lo ejecuta automáticamente.
+8. El agente prepara **commits atómicos** y pregunta al usuario antes de ejecutarlos.
+9. El agente genera la **descripción de MR/PR** con trazabilidad completa.
+10. Todos los artefactos se guardan en estructura persistente: `docs/quality/`, `docs/smoke-test/`, `docs/test-cases/`, `docs/plan-implementation/`.
 
 ---
 
 ## Notas Técnicas
 
 **Dependencias de US previas**:
-- US-009 — Ciclo de desarrollo genérico ya centralizado en la skill global
-- US-071 — Base de workflow Git común disponible
-- US-073 — Feature lifecycle consolidado como referencia funcional
+- US-009 — Skills globales de clean-code y git disponibles
+- US-013-PLUS — Agentes de quality (clean-architecture, clean-code) disponibles
+- US-007/US-008 — Agentes expertos de Backend Kotlin disponibles como referencia
 
 **Supuestos**:
-- El formulario puede implementarse como UI web o asistente interactivo, siempre que el comportamiento sea el mismo.
-- El template resultante se expresa en un formato versionable, preferiblemente Markdown o YAML.
+- Cada stack (Android Compose, iOS SwiftUI, Backend Kotlin, etc.) tiene su agente experto en arquitectura, patrones y calidad.
+- El agente orquestador es **genérico** y delega análisis específico a los agentes expertos por tecnología.
+- Las pruebas E2E y smoke tests son opcionales pero recomendadas.
 
-**Decisiones abiertas**: ¿El formulario vivirá en una interfaz visual o como asistente interactivo dentro del flujo existente?
+**Decisiones abiertas**: 
+- ¿El bucle de corrección de quality gates tiene un máximo de iteraciones antes de escalar al usuario?
+- ¿Los informes de quality se versionan por intento o solo el último válido?
 
 ---
 
@@ -64,58 +70,138 @@ EP-8 — Global Cross-Stack
 
 ## 4. Solución funcional
 
-**Flujo esperado**:
-1. El usuario abre el formulario de ciclo de desarrollo.
-2. Selecciona fases, orden, controles o variantes del ciclo.
-3. El sistema genera un template nuevo o reutiliza el default según la configuración.
-4. El usuario previsualiza el resultado y decide si lo guarda o lo restablece.
+**Fases del ciclo de desarrollo guiado**:
+
+### Fase A: Planificación y análisis previo
+1. **Recibir US** y confirmar alcance con el usuario.
+2. **Consultar agentes expertos**:
+   - Agente de arquitectura (analiza estructura existente, patrones actuales)
+   - Agente de patrones (recomienda 2-3 patrones candidatos con trade-offs)
+   - Agente de calidad (identifica deuda técnica relevante al alcance)
+3. **Generar plan de implementación** detallado y manual (no solo para IA, debe ser ejecutable por humano).
+4. **Generar test cases** y seleccionar **smoke tests** prioritarios.
+5. **Persistir artefactos**:
+   - `docs/plan-implementation/US-XXX-implementation-plan.md`
+   - `docs/test-cases/US-XXX-test-cases.md`
+   - `docs/smoke-test/US-XXX-smoke-suite.md`
+
+### Fase B: Implementación
+1. Implementar según plan generado.
+2. Respetar reglas de los agentes expertos.
+3. Adaptarse al código existente del proyecto.
+
+### Fase C: Generación de tests
+1. Generar tests unitarios según test cases de Fase A.
+2. Apuntar a cobertura ≥40%.
+
+### Fase D: Quality gates (obligatorios)
+1. Ejecutar análisis **clean-code** → informe en `docs/quality/US-XXX-clean-code-report.md`
+2. Ejecutar análisis **clean-architecture** → informe en `docs/quality/US-XXX-architecture-report.md`
+3. Validar cobertura de tests ≥40%
+4. **Si falla**: volver a Fase A.1.1 con reporte de problemas detectados
+
+### Fase E: Bucle de corrección
+1. Si quality gates de Fase D fallan, analizar problemas con agentes expertos.
+2. Ajustar plan de implementación con correcciones necesarias.
+3. Volver a Fase B.
+
+### Fase F: Pruebas E2E (opcional, decisión del usuario)
+1. Generar resumen de calidad alcanzada.
+2. Preguntar al usuario: ¿Deseas ejecutar pruebas E2E?
+3. **Si sí**: mostrar instrucciones adaptadas (Docker, móvil, web, etc.)
+4. **Si no**: continuar a Fase G.
+
+### Fase G: Smoke tests (opcional, decisión del usuario)
+1. Preguntar al usuario: ¿Deseas ejecutar smoke tests?
+2. **Si sí**: ejecutar o mostrar instrucciones según el stack.
+3. **Si no**: continuar a Fase H.
+
+### Fase H: Commits atómicos (decisión del usuario)
+1. Preparar commits atómicos agrupados por responsabilidad.
+2. Mostrar lista de commits propuestos al usuario.
+3. Preguntar: ¿Realizar estos commits?
+4. **Si sí**: ejecutar commits.
+5. **Si no**: permitir edición manual.
+
+### Fase I: Descripción de MR/PR
+1. Generar descripción completa con trazabilidad: qué se hizo, por qué, cómo probar, checklist de revisión.
+2. Guardar en `docs/mr/US-XXX-description.md`
 
 **Salida esperada**:
-- Template de ciclo de desarrollo generado desde la configuración del formulario.
-- Template por defecto reutilizable cuando no hay personalización.
+- US implementada con calidad validada y trazabilidad completa.
+- Artefactos persistentes en `docs/` para auditoría y revisión.
+- Commits atómicos listos para MR/PR.
 
 ## 5. Checklist de calidad
 - **CRITICAL**
-  - [ ] El formulario genera un template válido al completar los campos obligatorios
-  - [ ] El template por defecto se conserva como opción base
-  - [ ] La configuración inválida bloquea la generación y muestra error claro
+  - [ ] El agente genera plan de implementación consultando agentes expertos de arquitectura, patrones y calidad
+  - [ ] El agente genera test cases y propone smoke tests prioritarios
+  - [ ] Quality gates (clean-code, clean-architecture, cobertura ≥40%) se ejecutan obligatoriamente
+  - [ ] Si quality gates fallan, el agente vuelve a fase de análisis con reporte de problemas
+  - [ ] Todos los artefactos se guardan en `docs/plan-implementation/`, `docs/test-cases/`, `docs/smoke-test/`, `docs/quality/`
 - **HIGH**
-  - [ ] El usuario puede previsualizar antes de guardar
-  - [ ] Existe opción de volver al default sin perder la configuración base
+  - [ ] El agente pregunta al usuario sobre pruebas E2E y proporciona instrucciones adaptadas al stack
+  - [ ] El agente pregunta al usuario sobre ejecución de smoke tests
+  - [ ] El agente prepara commits atómicos y pregunta al usuario antes de ejecutarlos
+  - [ ] El agente genera descripción de MR/PR con trazabilidad completa
 - **MEDIUM**
-  - [ ] El template generado se puede reutilizar en otros flujos
+  - [ ] El plan de implementación es detallado y ejecutable manualmente (no solo para IA)
+  - [ ] El agente se adapta al código y arquitectura existente del proyecto
 - **LOW**
-  - [ ] La nomenclatura del template es consistente con el resto del repo
+  - [ ] Los informes de quality incluyen fecha y versión de análisis
 
 ## 6. Casos de prueba
 - **Funcionales**:
-  - Formulario completo con fases válidas → genera template personalizado
-  - Formulario vacío → genera template por defecto actual
-  - Fase obligatoria ausente → error y no se genera template
-  - Orden de fases inconsistente → error descriptivo
-- **Reglas de negocio**:
-  - El template por defecto debe ser exactamente el que ya está agregado hoy
+  - US con alcance claro → plan de implementación detallado generado consultando expertos
+  - Plan de implementación generado → test cases y smoke tests propuestos
+  - Implementación completa → quality gates ejecutados (clean-code, architecture, tests)
+  - Quality gates OK → agente pregunta por E2E y smoke tests
+  - Usuario acepta commits → commits atómicos ejecutados
+  - Ciclo completo → descripción MR/PR generada con trazabilidad
+- **Quality gates**:
+  - Clean-code falla → volver a fase A.1.1 con reporte
+  - Architecture falla → volver a fase A.1.1 con reporte
+  - Cobertura <40% → volver a fase A.1.1 con reporte
+- **Decisiones del usuario**:
+  - Usuario rechaza E2E → continúa sin pruebas E2E
+  - Usuario rechaza smoke test → continúa sin smoke test
+  - Usuario rechaza commits propuestos → permite edición manual
 
 ## 7. Diagrama de flujo
 ```mermaid
 flowchart TD
-    A[Abrir formulario] --> B{Configurar ciclo}
-    B -->|Sin cambios| C[Usar template por defecto]
-    B -->|Personalizado| D[Validar fases y orden]
-    D -->|Inválido| E[Mostrar error]
-    D -->|Válido| F[Generar template]
-    C --> G[Previsualizar]
-    F --> G[Previsualizar]
-    G --> H{Guardar o exportar}
-    H -->|Guardar| I[Persistir template]
-    H -->|Exportar| J[Descargar o emitir archivo]
+    A[Recibir US] --> B[Consultar agentes expertos]
+    B --> C[Generar plan implementación + test cases]
+    C --> D[Implementar según plan]
+    D --> E[Generar tests unitarios]
+    E --> F{Quality gates}
+    F -->|Clean-code FAIL| G[Volver a A con reporte]
+    F -->|Architecture FAIL| G
+    F -->|Coverage <40%| G
+    F -->|OK| H{Usuario: ¿E2E?}
+    H -->|Sí| I[Mostrar instrucciones E2E]
+    H -->|No| J{Usuario: ¿Smoke test?}
+    I --> J
+    J -->|Sí| K[Ejecutar o mostrar smoke tests]
+    J -->|No| L[Preparar commits atómicos]
+    K --> L
+    L --> M{Usuario: ¿Realizar commits?}
+    M -->|Sí| N[Ejecutar commits]
+    M -->|No| O[Permitir edición manual]
+    N --> P[Generar descripción MR/PR]
+    O --> P
+    G --> B
 ```
 
 ## 8. Notas y Definition of Ready
-- **Decisiones abiertas**: confirmar si el formulario será visual, interactivo por consola o híbrido
-- **Supuestos**: el template por defecto ya existe y se toma como baseline del comportamiento
-- **Dependencias previas**: US-009 y US-071 completadas como referencia de ciclo y workflow
+- **Decisiones abiertas**: 
+  - ¿Límite de iteraciones en bucle de corrección quality gates?
+  - ¿Versionado de informes de quality (por intento o solo último)?
+- **Supuestos**: 
+  - Cada stack tiene agentes expertos disponibles (arquitectura, patrones, calidad)
+  - El plan de implementación debe ser ejecutable manualmente
+- **Dependencias previas**: US-009, US-013-PLUS completadas (agentes expertos disponibles)
 - **Definition of Ready**:
-  - [ ] El formato de salida del template está definido
-  - [ ] La ubicación del formulario en el flujo de producto está acordada
-  - [ ] Se confirma que el template por defecto es la base funcional actual
+  - [ ] Los agentes expertos de arquitectura, patrones y calidad están disponibles para al menos un stack (Backend Kotlin como referencia)
+  - [ ] La estructura de `docs/` (plan-implementation, test-cases, smoke-test, quality) está definida
+  - [ ] Existe al menos un template de informe de quality (clean-code, architecture)
