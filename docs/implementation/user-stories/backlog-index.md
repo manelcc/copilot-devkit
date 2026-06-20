@@ -113,7 +113,7 @@ Como desarrollador Android migrando a Compose, quiero la skill de migración y l
 Como desarrollador Android Compose, quiero skills de patrones Compose, Navigation 3 y un agente experto, para implementar features modernas con calidad.
 Épica: EP-3 | Prioridad: Alta (P1) | Fichero: [US-012-skills-agente-android-compose.md](US-012-skills-agente-android-compose.md)
 
-#### US-013 — Migrar skills e instrucciones iOS SwiftUI
+#### US-013 — Migrar skills e instrucciones iOS SwiftUI ✅ DONE
 Como desarrollador iOS, quiero las skills de bankinter-devtools en `skills/ios/swiftui/` y las instrucciones Swift/SwiftUI, para implementar features iOS con calidad.
 Épica: EP-5 | Prioridad: Alta (P0) | Fichero: [US-013-migrar-skills-instrucciones-ios-swiftui.md](US-013-migrar-skills-instrucciones-ios-swiftui.md)
 

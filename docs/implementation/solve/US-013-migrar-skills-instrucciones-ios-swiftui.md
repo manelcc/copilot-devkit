@@ -1,5 +1,7 @@
 # US-013 - Resolucion
 
+**Status**: ✅ **DONE**
+
 ## Resumen
 Se implementa el namespace iOS SwiftUI con 3 skills nuevas, 1 agente experto y 1 archivo de instrucciones SwiftUI.
 
