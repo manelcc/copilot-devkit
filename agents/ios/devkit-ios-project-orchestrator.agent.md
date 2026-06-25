@@ -29,7 +29,7 @@ Route iOS work to the right subtype path (SwiftUI or UIKit) and apply global wor
 | feature | `instructions/devkit-ios-swiftui.instructions.md` | `instructions/devkit-ios-uikit.instructions.md` |
 | fix | `instructions/devkit-ios-swiftui.instructions.md` | `instructions/devkit-ios-uikit.instructions.md` |
 | review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
-| test | `skills/global/devkit-feature-lifecycle` | `skills/global/devkit-feature-lifecycle` |
+| ciclo / US | `skills/global/devkit-development-lifecycle` | `skills/global/devkit-development-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` | `skills/global/devkit-mr-description-generator` |
 
 ## Quality routing policy

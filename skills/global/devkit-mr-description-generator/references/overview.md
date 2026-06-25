@@ -55,7 +55,7 @@ Outputs:
 ```mermaid
 flowchart LR
     ORC[project-orchestrator] -->|"genera la MR"| MRG[devkit-mr-description-generator]
-    FLA[devkit-feature-lifecycle-agent] -->|último paso| MRG
+    FLA[devkit-development-lifecycle] -->|último paso| MRG
     MRG -->|lee convenciones| GIT[skill: git-operations]
     MRG -->|genera artefacto| MRDOC[doc/mr/*.md]
     MRG -->|actualiza| USDOC[doc/implementation/US-*.md]

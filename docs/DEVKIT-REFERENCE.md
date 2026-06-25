@@ -167,7 +167,7 @@ Los symlinks ya existentes se omiten sin error; sólo se crean los nuevos.
 | `devkit-clean-architecture-quality` | Auditoría de clean architecture en Java/Kotlin/Swift/Python: hallazgos CRITICAL/HIGH/MEDIUM/LOW con plan de remediación accionable |
 | `devkit-clean-code-guardian` | Revisa y corrige violaciones de Clean Code (clases >500 líneas, funciones >30 líneas, anidamiento >3 niveles, magic numbers, SRP) en Kotlin/Java/Swift/Python |
 | `devkit-development-lifecycle` | Ciclo guiado completo de desarrollo de una US: planificación, consulta experta, implementación, quality gates con loop de corrección e interacción con el usuario |
-| `devkit-feature-lifecycle` | Orquestación genérica de feature desde rama hasta ready-for-review; usa `devkit-git-workflow` como base |
+| `devkit-development-lifecycle` | Ciclo completo guiado por US: planificación, expertos, tests, quality gates, corrección, E2E/smoke opcionales y MR. Configuración custom via `.github/devkit-project.config.md` |
 | `devkit-git-workflow` | Workflow git end-to-end: rama desde develop actualizado, commits atómicos semánticos, quality gates, push seguro y preparación de MR/PR |
 | `devkit-mr-description-generator` | Genera descripción de MR/PR en Markdown desde commits de rama y contexto de US; válido para cualquier stack |
 

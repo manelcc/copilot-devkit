@@ -143,13 +143,13 @@ Como contributor, quiero `devtools scaffold skill` y `devtools validate skill` c
 | US-042 ✅ | Skill uikit-patterns — patrones UIKit clásicos para stack iOS UIKit | EP-5 |
 | US-030 ✅ | Skill android-xml-java-patterns — patrones Android legacy Java + XML | EP-4 |
 | US-064 ✅ | Skill spring-java-patterns — patrones Spring Boot Java backend | EP-7 |
-| US-017 | Skills e instrucciones iOS UIKit legacy | EP-5 |
-| US-018 | Skills Compose Multiplatform (CMP) | EP-6 |
-| US-019 | Skills backend Python FastAPI | EP-7 |
-| US-020 | Skills backend Spring Java | EP-7 |
-| US-021 | Skills Android Legacy (XML+Java) | EP-4 |
-| US-086 | Detección incompatibilidades sync + docs consumidores | EP-2 |
-| US-023 | Comando devtools list (inventario de artefactos) | EP-9 |
+| US-017 ✅ | Skills e instrucciones iOS UIKit legacy | EP-5 |
+| US-018 ✅ | Skills Compose Multiplatform (CMP) | EP-6 |
+| US-019 ✅ | Skills backend Python FastAPI | EP-7 |
+| US-020 ✅ | Skills backend Spring Java | EP-7 |
+| US-021 ✅ | Skills Android Legacy (XML+Java) | EP-4 |
+| US-086 ✅ | Detección incompatibilidades sync + docs consumidores | EP-2 |
+| US-023 ✅ | Comando devtools list (inventario de artefactos) | EP-9 |
 
 ---
 

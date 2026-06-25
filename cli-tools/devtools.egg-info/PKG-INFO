@@ -4,3 +4,4 @@ Version: 0.1.0
 Summary: DevTools CLI — gestiona artefactos de automatización IA (skills, agentes, prompts)
 Requires-Python: >=3.11
 Requires-Dist: click>=8.1
+Requires-Dist: pyyaml>=6.0

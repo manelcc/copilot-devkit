@@ -39,7 +39,7 @@ Detect backend Kotlin subtype (Ktor standard vs MCP) and route to the correct ba
 | feature | `devkit-kotlin-mcp-expert` | `devkit-kotlin-expert-pattern` |
 | fix | `devkit-kotlin-mcp-expert` | `devkit-kotlin-expert-pattern` |
 | review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
-| test | `skills/global/devkit-feature-lifecycle` | `skills/global/devkit-feature-lifecycle` |
+| ciclo / US | `skills/global/devkit-development-lifecycle` | `skills/global/devkit-development-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` | `skills/global/devkit-mr-description-generator` |
 | ci/cd | `devkit-devops` | `devkit-devops` |
 

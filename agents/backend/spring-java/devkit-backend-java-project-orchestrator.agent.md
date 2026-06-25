@@ -29,7 +29,7 @@ Route backend Java work in legacy Spring contexts and keep execution aligned wit
 | feature | `instructions/devkit-global.instructions.md` + Java backend conventions |
 | fix | `instructions/devkit-global.instructions.md` + Java backend conventions |
 | review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
-| test | `skills/global/devkit-feature-lifecycle` |
+| ciclo / US | `skills/global/devkit-development-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` |
 
 ## Quality routing policy

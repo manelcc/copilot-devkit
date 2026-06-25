@@ -30,7 +30,7 @@ Route KMP tasks according to module topology and platform targets.
 | feature | `instructions/devkit-kmp.instructions.md` |
 | fix | `instructions/devkit-kmp.instructions.md` |
 | review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
-| test | `skills/global/devkit-feature-lifecycle` |
+| ciclo / US | `skills/global/devkit-development-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` |
 
 ## Quality routing policy

@@ -29,7 +29,7 @@ Route Android work to the correct execution path based on project subtype.
 | feature | `skills/android/compose/devkit-jetpack-compose-patterns` | `skills/android/legacy/devkit-xml-java-patterns` |
 | fix | `skills/android/compose/devkit-jetpack-compose-patterns` | `skills/android/legacy/devkit-xml-java-patterns` |
 | review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
-| test | `skills/global/devkit-feature-lifecycle` | `skills/global/devkit-feature-lifecycle` |
+| ciclo / US | `skills/global/devkit-development-lifecycle` | `skills/global/devkit-development-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` | `skills/global/devkit-mr-description-generator` |
 
 ## Quality routing policy

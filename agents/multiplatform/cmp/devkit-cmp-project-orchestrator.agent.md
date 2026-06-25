@@ -30,7 +30,7 @@ Route Compose Multiplatform work based on current target set and UI module bound
 | feature | `instructions/devkit-cmp.instructions.md` |
 | fix | `instructions/devkit-cmp.instructions.md` |
 | review | `skills/global/devkit-clean-architecture-quality` + `skills/global/devkit-clean-code-guardian` |
-| test | `skills/global/devkit-feature-lifecycle` |
+| ciclo / US | `skills/global/devkit-development-lifecycle` |
 | MR | `skills/global/devkit-mr-description-generator` |
 
 ## Quality routing policy

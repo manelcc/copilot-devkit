@@ -39,6 +39,80 @@ Execute the complete development lifecycle for a User Story with planning, exper
 
 ## Steps
 
+---
+
+### Phase 0: Load Project Config
+
+> **This phase runs before everything else.** It reads `.github/devkit-project.config.md` and configures which phases are active and with which settings.
+
+#### 0.1 Detect config file
+
+Check if `.github/devkit-project.config.md` exists in the project root.
+
+**If the file EXISTS** → read it and extract:
+- `Stack(s)` → set `ACTIVE_STACKS`
+- `Rama base` → set `BASE_BRANCH`
+- `Unit tests` row → set `UNIT_TESTS_ENABLED` (sí/no) and `UNIT_TEST_FRAMEWORK`
+- `Cobertura mínima` → set `COVERAGE_THRESHOLD` (e.g. 40%)
+- `E2E tests` row → set `E2E_ENABLED` (sí/no) and `E2E_METHOD`
+- `Smoke tests` row → set `SMOKE_ENABLED` (sí/no)
+- `Clean code` → set `GATE_CLEAN_CODE` (sí/no)
+- `Clean architecture` → set `GATE_CLEAN_ARCH` (sí/no)
+- `Cobertura` gate row → set `GATE_COVERAGE` (sí/no)
+- `Iteraciones máx.` → set `MAX_ITERATIONS`
+- `Estilo de commits` → set `COMMIT_STYLE`
+- `Formato título MR/PR` → set `MR_TITLE_FORMAT`
+- `Revisores requeridos` → set `REQUIRED_REVIEWERS`
+
+**If the file DOES NOT EXIST** → use conservative defaults:
+```
+UNIT_TESTS_ENABLED=sí
+UNIT_TEST_FRAMEWORK=autodetect
+COVERAGE_THRESHOLD=40%
+E2E_ENABLED=no
+SMOKE_ENABLED=no
+GATE_CLEAN_CODE=sí
+GATE_CLEAN_ARCH=sí
+GATE_COVERAGE=sí
+MAX_ITERATIONS=3
+COMMIT_STYLE=conventional-commits
+MR_TITLE_FORMAT=[US-XXX] descripción
+REQUIRED_REVIEWERS=2
+```
+
+#### 0.2 Show active config summary
+
+Before starting Phase A, show the user a brief config summary:
+
+```
+📋 Configuración del ciclo para {{project_name}} (US-{{id}}):
+  Stack: {{ACTIVE_STACKS}}
+  Tests: Unit={{UNIT_TESTS_ENABLED}} ({{UNIT_TEST_FRAMEWORK}}, ≥{{COVERAGE_THRESHOLD}}) · E2E={{E2E_ENABLED}} · Smoke={{SMOKE_ENABLED}}
+  Gates: Clean-code={{GATE_CLEAN_CODE}} · Arquitectura={{GATE_CLEAN_ARCH}} · Cobertura={{GATE_COVERAGE}}
+  Iteraciones máx: {{MAX_ITERATIONS}}
+  [Sin config — defaults conservadores]   ← solo si no existe el fichero
+```
+
+#### 0.3 Phase activation rules
+
+Apply immediately and throughout the rest of the lifecycle:
+
+| Config value | Effect |
+|---|---|
+| `UNIT_TESTS_ENABLED=no` | Skip Phase C entirely |
+| `E2E_ENABLED=no` | Skip Phase F entirely (no pregunta al usuario) |
+| `SMOKE_ENABLED=no` | Skip Phase G entirely (no pregunta al usuario) |
+| `GATE_CLEAN_CODE=no` | Skip Phase D.1 |
+| `GATE_CLEAN_ARCH=no` | Skip Phase D.2 |
+| `GATE_COVERAGE=no` | Skip Phase D.3 |
+| `MAX_ITERATIONS=N` | Apply as loop limit in Phase E |
+| `COVERAGE_THRESHOLD=X%` | Use X in Phase D.3 check |
+| `api_docs != no` | Activar Phase I.0 (API docs generation) |
+| `api_docs_format` contiene `swagger` | Generar/actualizar OpenAPI spec en Phase I.0 |
+| `api_docs_format` contiene `postman` | Exportar coleción Postman en Phase I.0 |
+
+---
+
 ### Phase A: Planning and Pre-Analysis
 
 #### A.1 Receive and Confirm User Story Scope
@@ -128,32 +202,42 @@ Plan de implementación listo.
 ---
 
 ### Phase C: Test Generation
+> Skip this phase entirely if `UNIT_TESTS_ENABLED=no`.
+
 1. Generate unit tests for all implemented code
 2. Follow test cases from Phase A.1.3
-3. Target code coverage ≥40%
-4. Use project's testing framework and conventions
+3. Target code coverage ≥`{{COVERAGE_THRESHOLD}}` (from project config)
+4. Use `{{UNIT_TEST_FRAMEWORK}}` framework and project conventions
 
 ---
 
 ### Phase D: Quality Gates (Mandatory)
 
+> Gates can be individually disabled via project config. See Phase 0 activation rules.
+
 #### D.1 Execute Clean Code Analysis
+> Skip if `GATE_CLEAN_CODE=no`.
+
 1. Handoff to `devkit-clean-code-guardian` with scope: changed files only
 2. Wait for analysis report
 3. **Persist**: `docs/quality/US-XXX-clean-code-report.md`
 4. Check threshold: critical issues = 0, score ≥7.0
 
 #### D.2 Execute Clean Architecture Analysis
+> Skip if `GATE_CLEAN_ARCH=no`.
+
 1. Handoff to `devkit-clean-architecture-quality` with scope: affected layers
 2. Wait for analysis report
 3. **Persist**: `docs/quality/US-XXX-architecture-report.md`
 4. Check threshold: critical violations = 0
 
 #### D.3 Validate Test Coverage
+> Skip if `GATE_COVERAGE=no` or `UNIT_TESTS_ENABLED=no`.
+
 1. Run test suite with coverage tool (project-specific: JaCoCo, pytest-cov, etc.)
 2. Extract coverage percentage
 3. **Persist**: coverage report in `docs/quality/US-XXX-clean-code-report.md` (append section)
-4. Check threshold: coverage ≥40%
+4. Check threshold: coverage ≥`{{COVERAGE_THRESHOLD}}`
 
 #### D.4 Quality Gate Decision
 - **If D.1 OR D.2 OR D.3 fails**: proceed to Phase E (Correction Loop)
@@ -169,14 +253,17 @@ Plan de implementación listo.
    - Quality reports (clean-code, architecture, coverage)
 3. Consult expert agents again with failure context
 4. Regenerate implementation plan with corrections
-5. **Limit**: Maximum 3 iterations. After 3 failures, escalate to user with:
+5. **Limit**: Maximum `{{MAX_ITERATIONS}}` iterations (from project config, default 3). After limit, escalate to user with:
    - Summary of attempts
    - Persistent issues
    - Recommendation: manual intervention or scope reduction
 
 ---
 
-### Phase F: E2E Tests (Optional, User Decision)
+### Phase F: E2E Tests
+
+> Skip this phase entirely if `E2E_ENABLED=no` (from project config). If `E2E_ENABLED=sí`, execute without asking the user — it is mandatory.
+> If config is missing or `E2E_ENABLED` is not set, ask the user (legacy behavior below).
 
 #### F.1 Generate Quality Summary
 Create summary with:
@@ -185,7 +272,8 @@ Create summary with:
 - Test coverage percentage
 - Overall quality grade
 
-#### F.2 Ask User: Execute E2E Tests?
+#### F.2 Conditional: Ask User Only If No Config
+If project config does NOT disable E2E:
 ```
 Quality gates passed:
 ✓ Clean-code: 8.5/10
@@ -196,11 +284,14 @@ Quality gates passed:
 [Sí] [No]
 ```
 
-#### F.3 If Yes: Provide E2E Instructions
-Detect project type and generate instructions:
-- **Docker projects**: `docker compose up --build`, test endpoints, health checks
-- **Mobile projects**: Deploy to device/emulator, manual test checklist
-- **Web projects**: Start dev server, browser test scenarios
+#### F.3 If Active: Provide E2E Instructions
+Use `E2E_METHOD` from config to generate targeted instructions:
+- **docker-compose**: `docker compose up --build`, test endpoints, health checks
+- **manual-device**: Deploy to device/emulator, manual test checklist
+- **espresso**: Run Espresso test suite with `./gradlew connectedAndroidTest`
+- **xcuitest**: Run XCUITest suite from Xcode or `xcodebuild test`
+- **playwright**: `npx playwright test`, capture screenshots on failure
+- **otro**: Show generic instructions and ask user to describe method
 
 **Persist**: Instructions in `docs/quality/US-XXX-e2e-instructions.md`
 
@@ -209,16 +300,20 @@ Ask user to confirm E2E tests passed before continuing
 
 ---
 
-### Phase G: Smoke Tests (Optional, User Decision)
+### Phase G: Smoke Tests
 
-#### G.1 Ask User: Execute Smoke Tests?
+> Skip this phase entirely if `SMOKE_ENABLED=no` (from project config). If `SMOKE_ENABLED=sí`, execute without asking the user — it is mandatory.
+> If config is missing, ask the user (legacy behavior below).
+
+#### G.1 Conditional: Ask User Only If No Config
+If project config does NOT disable smoke tests:
 ```
 ¿Deseas ejecutar los smoke tests definidos para esta US?
 Smoke tests: TC-001, TC-005 (ver docs/smoke-test/US-XXX-smoke-suite.md)
 [Sí] [No]
 ```
 
-#### G.2 If Yes: Execute or Provide Instructions
+#### G.2 If Active: Execute or Provide Instructions
 - **Automated smoke tests available**: Run them and report results
 - **Manual smoke tests**: Show checklist from `docs/smoke-test/US-XXX-smoke-suite.md`
 
@@ -281,6 +376,31 @@ Se proponen 5 commits atómicos:
 
 ### Phase I: MR/PR Description Generation
 
+#### I.0 API Documentation (Backend stacks only)
+> Skip if `api_docs=no` or stack is not backend (backend-kotlin, backend-python, backend-spring).
+
+Generate API documentation artifacts based on `api_docs_format` from project config:
+
+**If format includes `swagger` or `openapi-file-only`:**
+- Generate/update `docs/api/openapi.yaml` with all endpoints affected by the US
+- For Ktor: use `ktor-openapi-generator` annotations or manual spec update
+- For Spring: leverage `springdoc-openapi` and expose `/v3/api-docs`
+- For Python/FastAPI: auto-generated from route definitions
+- Verify the spec validates correctly (no broken refs, required fields present)
+
+**If format includes `postman`:**
+- Generate `docs/api/US-XXX-postman-collection.json` from the OpenAPI spec
+- Include: request examples, environment variables (`{{base_url}}`, `{{token}}`), happy-path and error scenarios
+- Tool hint: `openapi-to-postman` CLI or manual collection authoring
+- **Persist**: `docs/api/US-XXX-postman-collection.json`
+
+**Inform the user:**
+```
+📄 API Docs generados:
+  [· docs/api/openapi.yaml actualizado]
+  [· docs/api/US-XXX-postman-collection.json]
+```
+
 #### I.1 Generate MR/PR Description
 Handoff to `devkit-mr-description-generator` with context:
 - User Story identifier and scope
@@ -308,6 +428,126 @@ Add to generated description:
 
 ---
 
+### Phase J: Knowledge Capture (Optional, User Decision)
+
+#### J.1 Ask User: Capture as reusable skill?
+```
+¿Quieres capturar el conocimiento de esta feature como skill reutilizable?
+[Sí] [No]
+```
+If No → skip to J.4.
+
+#### J.2 Ask User: Skill scope
+
+```
+¿Qué alcance tiene esta skill?
+
+[A] Proyecto local    — específica de este proyecto, no se sincroniza
+[B] Tecnología        — reutilizable en proyectos del mismo stack (se centraliza en el devkit)
+[C] Global            — agnóstica de tecnología (se centraliza como skill global en el devkit)
+```
+
+#### J.3 Generate skill by scope
+
+---
+
+**Scope A — Proyecto local**
+
+```
+¿Qué prefijo quieres usar para la skill? (ej: "banca", "myapp", "payments")
+Nombre final de la skill: <prefijo>-<feature-slug>
+```
+
+Actions:
+1. Generate skill at `.github/skills/<prefijo>-<feature-slug>/SKILL.md` within the consumer project
+2. Do NOT create any symlink to the devkit repo — this skill is project-private
+3. Update the consumer project's orchestrator or instructions to reference it:
+   - If a `<stack>-project-orchestrator.agent.md` exists in `.github/agents/` → add skill to its `skills:` frontmatter list
+   - Alternatively, add an entry to `.github/copilot-instructions.md` pointing to the new skill
+
+```
+✅ Skill local generada:
+   .github/skills/<prefijo>-<feature-slug>/SKILL.md
+   Referenciada en: .github/agents/<orchestrator>.agent.md
+```
+
+---
+
+**Scope B — Tecnología (stack-specific)**
+
+Stack detected from project config or auto-detect. Map to devkit path:
+
+| Stack | Devkit path |
+|---|---|
+| backend-kotlin | `skills/backend/kotlin-ktor/` |
+| backend-python | `skills/backend/python/` |
+| backend-spring | `skills/backend/spring-java/` |
+| android-compose | `skills/android/compose/` |
+| android-legacy | `skills/android/legacy/` |
+| ios-swiftui | `skills/ios/swiftui/` |
+| ios-uikit | `skills/ios/uikit/` |
+| kmp | `skills/multiplatform/kmp/` |
+| cmp | `skills/multiplatform/cmp/` |
+
+Actions:
+1. Generate skill at `<DEVKIT_REPO>/skills/<tech-path>/devkit-<feature-slug>/SKILL.md`
+2. Create symlink in the consumer project:
+   `.github/skills/devkit-<feature-slug>/` → `<DEVKIT_REPO>/skills/<tech-path>/devkit-<feature-slug>/`
+
+```
+✅ Skill de tecnología centralizada:
+   Devkit: skills/<tech-path>/devkit-<feature-slug>/SKILL.md
+   Symlink: .github/skills/devkit-<feature-slug>/ → devkit
+   Disponible para otros proyectos via: devtools sync
+```
+
+---
+
+**Scope C — Global (stack-agnostic)**
+
+Actions:
+1. Generate skill at `<DEVKIT_REPO>/skills/global/devkit-<feature-slug>/SKILL.md`
+2. Create symlink in the consumer project:
+   `.github/skills/devkit-<feature-slug>/` → `<DEVKIT_REPO>/skills/global/devkit-<feature-slug>/`
+
+```
+✅ Skill global centralizada:
+   Devkit: skills/global/devkit-<feature-slug>/SKILL.md
+   Symlink: .github/skills/devkit-<feature-slug>/ → devkit
+   Disponible para todos los proyectos via: devtools sync
+```
+
+---
+
+All scopes: handoff to `skill-generator` with context:
+- User Story identifier and title
+- Detected scope and target path
+- Stack(s) and design pattern(s) applied
+- Key implementation decisions and trade-offs
+- Relevant code files changed
+- Test strategy used
+- Prefix (scope A) or `devkit-` prefix (scopes B and C)
+
+#### J.4 Finalize
+Show the final summary:
+
+```
+✅ Ciclo completo para US-XXX
+
+  Artefactos generados:
+  · docs/plan-implementation/US-XXX-implementation-plan.md
+  · docs/test-cases/US-XXX-test-cases.md
+  · docs/quality/US-XXX-*.md
+  [· docs/api/openapi.yaml + US-XXX-postman-collection.json]
+  · docs/mr/US-XXX-description.md
+  [· <ruta-skill> (scope: <A|B|C>)]
+
+  Branch lista. Próximo paso:
+  git push origin <branch> && abrir MR/PR
+```
+
+---
+
 ## Expected outputs
 - **Planning artifacts**:
   - `docs/plan-implementation/US-XXX-implementation-plan.md`
@@ -319,6 +559,11 @@ Add to generated description:
   - Optional: `docs/quality/US-XXX-e2e-instructions.md`
 - **MR/PR artifacts**:
   - `docs/mr/US-XXX-description.md`
+- **API documentation** (backend stacks, when `api_docs != no`):
+  - `docs/api/openapi.yaml` (swagger/openapi-file-only)
+  - `docs/api/US-XXX-postman-collection.json` (postman)
+- **Knowledge artifacts** (optional):
+  - `skills/<stack>/devkit-<feature-slug>/SKILL.md`
 - **Code changes**: Implemented and committed atomically
 - **Branch state**: Ready for push and MR/PR creation
 
@@ -364,6 +609,9 @@ Agent: ¿Ejecutar estos commits?
 User: "Sí"
 Agent: [Phase H] Commits ejecutados
 Agent: [Phase I] MR description generada: docs/mr/US-042-description.md
+Agent: [Phase J] ¿Quieres capturar el conocimiento de esta feature como skill?
+User: "Sí"
+Agent: [Phase J] Skill generada: skills/backend-kotlin/devkit-jwt-authentication/SKILL.md
 Agent: Ciclo completo. Branch lista para push. ¿Proceder con push y creación de MR?
 ```
 
@@ -387,3 +635,4 @@ Agent: Quality gates pasados (intento 2/3). Continuando...
 - Quality gates are non-negotiable (Phase D)
 - Maximum 3 correction loop iterations before escalation
 - All artifacts are persisted in `docs/` for traceability and audit
+- Phase J knowledge capture is always optional — never forced

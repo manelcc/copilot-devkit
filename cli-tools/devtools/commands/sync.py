@@ -12,6 +12,73 @@ MANIFEST_FILE = "devtools.manifest.json"
 LOCK_FILE = "devtools.lock.json"
 
 
+# ---------------------------------------------------------------------------
+# Incompatibility detection (US-086)
+# ---------------------------------------------------------------------------
+
+def _build_manifest_keys(manifest: dict) -> set[str]:
+    """Return the set of artifact keys declared in the manifest."""
+    keys: set[str] = set()
+    for artifact in manifest.get("artifacts", []):
+        artifact_type = artifact.get("type", "skills")
+        namespace = artifact.get("namespace", "")
+        for item in artifact.get("items", []):
+            key = f"{artifact_type}/{namespace}/{item}".strip("/").replace("//", "/")
+            keys.add(key)
+    return keys
+
+
+def _check_incompatibilities(
+    manifest: dict, source_base: Path, lock_data: dict
+) -> list[str]:
+    """
+    Return a list of incompatibility messages.
+    Checks:
+      1. Missing 'requires' dependencies — an artifact needs another not in the manifest.
+      2. Orphaned lock entries — artifacts in the lock that were removed from the manifest.
+      3. Invalid source paths — items declared in the manifest that don't exist in source.
+    """
+    issues: list[str] = []
+    manifest_keys = _build_manifest_keys(manifest)
+
+    for artifact in manifest.get("artifacts", []):
+        artifact_type = artifact.get("type", "skills")
+        namespace = artifact.get("namespace", "")
+        base = (
+            source_base / artifact_type / namespace
+            if namespace
+            else source_base / artifact_type
+        )
+
+        for item in artifact.get("items", []):
+            # 1. Check requires dependencies
+            for req in artifact.get("requires", []):
+                if req not in manifest_keys:
+                    issues.append(
+                        f"'{item}' requiere '{req}' pero ese artefacto no está en el manifest"
+                    )
+
+            # 2. Validate source path exists
+            source_path = base / item
+            if not source_path.exists():
+                issues.append(
+                    f"'{item}' (type={artifact_type}, namespace={namespace or '—'}) "
+                    f"no existe en source: '{source_path}'"
+                )
+
+    # 3. Orphaned lock entries
+    lock_artifacts: list[dict] = lock_data.get("artifacts", [])
+    for entry in lock_artifacts:
+        key = entry.get("artifact", "")
+        if key and key not in manifest_keys:
+            issues.append(
+                f"Artefacto '{key}' está en el lock pero ya no aparece en el manifest "
+                f"(puede haber sido eliminado; usa --force para limpiar el lock)"
+            )
+
+    return issues
+
+
 def _sha256(path: Path) -> str:
     """Return first 8 chars of SHA-256 for a file or a directory tree."""
     h = hashlib.sha256()
@@ -96,6 +163,19 @@ def sync(manifest_path: str, dry_run: bool, force: bool) -> None:
     lock_index: dict[str, dict] = {
         a["artifact"]: a for a in lock_data.get("artifacts", [])
     }
+
+    # --- Incompatibility check (US-086) ---
+    incompatibilities = _check_incompatibilities(manifest, source_base, lock_data)
+    if incompatibilities:
+        if not force:
+            msg_lines = "\n  ".join(incompatibilities)
+            raise click.ClickException(
+                f"Se detectaron {len(incompatibilities)} incompatibilidad(es). "
+                f"Usa --force para continuar de todas formas:\n  {msg_lines}"
+            )
+        else:
+            for issue in incompatibilities:
+                click.echo(f"  [WARN] incompatibilidad (ignorada por --force): {issue}")
 
     newly_synced: list[dict] = []
     warnings: int = 0

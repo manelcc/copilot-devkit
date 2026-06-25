@@ -49,6 +49,6 @@ If stack detection is ambiguous, ask the user before delegating.
 
 - `skills/global/devkit-clean-architecture-quality/`
 - `skills/global/devkit-clean-code-guardian/`
-- `skills/global/devkit-feature-lifecycle/`
+- `skills/global/devkit-development-lifecycle/` — ciclo completo guiado por defecto (soporta config custom via `.github/devkit-project.config.md`)
 - `skills/global/devkit-git-workflow/`
 - `skills/global/devkit-mr-description-generator/`
