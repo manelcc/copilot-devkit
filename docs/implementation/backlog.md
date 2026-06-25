@@ -516,7 +516,7 @@ sin copiarlos manualmente ni romper actualizaciones futuras.
 | US-044 | Agente ios-uikit-expert | EP-5 | 5 |
 | US-051 | Skill cmp-ui-patterns | EP-6 | 5 |
 | US-052 | Agente kmp-expert | EP-6 | 5 |
-| US-064 | Skill spring-java-patterns | EP-7 | 5 |
+| US-064 ✅ | Skill spring-java-patterns | EP-7 | 5 |
 | US-065 | Agente backend-python-expert | EP-7 | 3 |
 | US-075 | Agente qa-testcase global | EP-8 | 5 |
 | US-084 | Comando devtools list | EP-9 | 3 |
