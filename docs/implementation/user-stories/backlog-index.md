@@ -97,7 +97,7 @@ Como desarrollador backend Kotlin, quiero los agentes de mycardiochef en `agents
 Como desarrollador en cualquier stack, quiero las skills de calidad y git en `skills/global/`, para seguir convenciones en todos los proyectos.
 Épica: EP-8 | Prioridad: Alta (P0) | Fichero: [US-009-migrar-skills-globales.md](US-009-migrar-skills-globales.md)
 
-#### US-010 — Agente project-orchestrator e instrucciones globales
+#### US-010 — Agente project-orchestrator e instrucciones globales ✅ DONE
 Como usuario en cualquier stack, quiero un agente orquestador que delegue al agente correcto según mi contexto, para no saber de memoria qué skill invocar.
 Épica: EP-8 | Prioridad: Alta (P0) | Fichero: [US-010-agente-orchestrator-instrucciones-globales.md](US-010-agente-orchestrator-instrucciones-globales.md)
 
@@ -105,11 +105,11 @@ Como usuario en cualquier stack, quiero un agente orquestador que delegue al age
 
 ### Sprint 2 — Android Compose + iOS SwiftUI
 
-#### US-011 — Skill migrate-xml-to-compose e instrucciones Android Compose
+#### US-011 — Skill migrate-xml-to-compose e instrucciones Android Compose ✅ DONE
 Como desarrollador Android migrando a Compose, quiero la skill de migración y las instrucciones Compose, para implementar features con guía de calidad.
 Épica: EP-3 | Prioridad: Alta (P0) | Fichero: [US-011-skill-xml-to-compose-instrucciones-android.md](US-011-skill-xml-to-compose-instrucciones-android.md)
 
-#### US-012 — Skills y agente Android Compose (patterns, Nav3)
+#### US-012 — Skills y agente Android Compose (patterns, Nav3) ✅ DONE
 Como desarrollador Android Compose, quiero skills de patrones Compose, Navigation 3 y un agente experto, para implementar features modernas con calidad.
 Épica: EP-3 | Prioridad: Alta (P1) | Fichero: [US-012-skills-agente-android-compose.md](US-012-skills-agente-android-compose.md)
 
@@ -117,7 +117,7 @@ Como desarrollador Android Compose, quiero skills de patrones Compose, Navigatio
 Como desarrollador iOS, quiero las skills de bankinter-devtools en `skills/ios/swiftui/` y las instrucciones Swift/SwiftUI, para implementar features iOS con calidad.
 Épica: EP-5 | Prioridad: Alta (P0) | Fichero: [US-013-migrar-skills-instrucciones-ios-swiftui.md](US-013-migrar-skills-instrucciones-ios-swiftui.md)
 
-#### US-013-PLUS — Importar patrones y quality skills Android, iOS (enrich) y Python
+#### US-013-PLUS — Importar patrones y quality skills Android, iOS (enrich) y Python ✅ DONE
 Como desarrollador mobile/backend, quiero skills de patrones, quality skills, agentes y prompts para Android, iOS y Python desde el proyecto de referencia, para diagnosticar patrones y calidad en los tres stacks.
 Épica: EP-3/EP-5/EP-4 | Prioridad: P0 | Fichero: [US-013-PLUS-import-patterns-quality-android-ios-python.md](US-013-PLUS-import-patterns-quality-android-ios-python.md)
 
@@ -125,11 +125,11 @@ Como desarrollador mobile/backend, quiero skills de patrones, quality skills, ag
 
 ### Sprint 3 — KMP + CLI completo
 
-#### US-014 — Skills KMP y agente multiplatform
+#### US-014 — Skills KMP y agente multiplatform ✅ DONE
 Como desarrollador KMP, quiero skills del módulo compartido y un agente KMP, para implementar lógica multiplataforma con patrones correctos.
 Épica: EP-6 | Prioridad: Alta (P1) | Fichero: [US-014-skills-kmp-agente-multiplatform.md](US-014-skills-kmp-agente-multiplatform.md)
 
-#### US-015 — Comandos CLI scaffold y validate
+#### US-015 — Comandos CLI scaffold y validate ✅ DONE
 Como contributor, quiero `devtools scaffold skill` y `devtools validate skill` completamente funcionales, para crear y verificar skills sin conocer la estructura interna.
 Épica: EP-9 | Prioridad: Alta (P1) | Fichero: [US-015-comandos-cli-scaffold-validate.md](US-015-comandos-cli-scaffold-validate.md)
 
@@ -139,7 +139,7 @@ Como contributor, quiero `devtools scaffold skill` y `devtools validate skill` c
 
 | US | Descripción | Épica |
 |---|---|---|
-| US-016 | Formulario para definir ciclo de vida de desarrollo y generar template | EP-8 |
+| US-016 ✅ | Formulario para definir ciclo de vida de desarrollo y generar template | EP-8 |
 | US-017 | Skills e instrucciones iOS UIKit legacy | EP-5 |
 | US-018 | Skills Compose Multiplatform (CMP) | EP-6 |
 | US-019 | Skills backend Python FastAPI | EP-7 |
