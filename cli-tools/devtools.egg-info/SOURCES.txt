@@ -10,7 +10,6 @@ devtools.egg-info/top_level.txt
 devtools/commands/__init__.py
 devtools/commands/list_cmd.py
 devtools/commands/scaffold.py
-devtools/commands/setup_project.py
 devtools/commands/sync.py
 devtools/commands/validate.py
 devtools/utils/__init__.py

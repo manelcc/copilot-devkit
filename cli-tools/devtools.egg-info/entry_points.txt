@@ -1,3 +1,2 @@
 [console_scripts]
 devtools = devtools.cli:main
-setup-project = devtools.commands.setup_project:setup_project
