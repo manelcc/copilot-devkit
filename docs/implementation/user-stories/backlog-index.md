@@ -57,19 +57,19 @@ El backlog cubre 4 sprints principales:
 
 ### Sprint 0 — Fundamentos
 
-#### US-001 — Inicializar estructura de directorios
+#### US-001 — Inicializar estructura de directorios ✅ DONE
 Como contributor, quiero encontrar todos los directorios de namespaces desde el primer commit, para añadir artefactos sin ambigüedad.
 Épica: EP-1 | Prioridad: Alta (P0) | Fichero: [US-001-inicializar-estructura-directorios.md](US-001-inicializar-estructura-directorios.md)
 
-#### US-002 — README, governance y copilot-instructions
+#### US-002 — README, governance y copilot-instructions ✅ DONE
 Como consumidor o contributor, quiero un README que explique el propósito y cómo empezar en < 5 min, para usar o contribuir al repo.
 Épica: EP-1 | Prioridad: Alta (P0) | Fichero: [US-002-readme-governance-copilot-instructions.md](US-002-readme-governance-copilot-instructions.md)
 
-#### US-003 — Templates base de skills y agentes
+#### US-003 — Templates base de skills y agentes ✅ DONE
 Como contributor creando una nueva skill o agente, quiero un template completo, para generar artefactos consistentes sin partir de cero.
 Épica: EP-1 | Prioridad: Alta (P0) | Fichero: [US-003-templates-base-skills-agentes.md](US-003-templates-base-skills-agentes.md)
 
-#### US-004 — Pre-commit, validación y setup local
+#### US-004 — Pre-commit, validación y setup local ✅ DONE
 Como contributor, quiero que un pre-commit rechace skills mal formadas y que un único comando configure mi entorno, para mantener calidad sin revisión manual.
 Épica: EP-1 | Prioridad: Alta (P1) | Fichero: [US-004-precommit-validacion-setup-local.md](US-004-precommit-validacion-setup-local.md)
 
@@ -93,7 +93,7 @@ Como desarrollador backend Kotlin, quiero las 6 skills de mycardiochef en `skill
 Como desarrollador backend Kotlin, quiero los agentes de mycardiochef en `agents/backend/kotlin-ktor/` y las instrucciones Ktor, para orquestar tareas desde cualquier proyecto.
 Épica: EP-7 | Prioridad: Alta (P0) | Fichero: [US-008-migrar-agentes-instrucciones-backend-ktor.md](US-008-migrar-agentes-instrucciones-backend-ktor.md) | Solve: [US-008-migrar-agentes-instrucciones-backend-ktor.md](../solve/US-008-migrar-agentes-instrucciones-backend-ktor.md)
 
-#### US-009 — Migrar skills globales (clean-code, git, MR)
+#### US-009 — Migrar skills globales (clean-code, git, MR) ✅ DONE
 Como desarrollador en cualquier stack, quiero las skills de calidad y git en `skills/global/`, para seguir convenciones en todos los proyectos.
 Épica: EP-8 | Prioridad: Alta (P0) | Fichero: [US-009-migrar-skills-globales.md](US-009-migrar-skills-globales.md)
 

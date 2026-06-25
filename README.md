@@ -1,59 +1,52 @@
 # copilot-devkit
 
-Repositorio base para construir y gobernar un devkit de GitHub Copilot con:
+Repositorio centralizado de agentes, skills, prompts e instrucciones reutilizables para GitHub Copilot en proyectos multi-stack. Los equipos lo consumen via CLI sin duplicar ni mantener copias locales.
 
-- agentes especializados por stack
-- skills reutilizables por dominio
-- prompts e instrucciones por contexto
-- herramientas CLI para scaffold, validacion y sincronizacion
+## Stacks cubiertos
 
-Este repositorio sigue el enfoque de trabajo definido actualmente en el canal:
+| Stack | Lenguaje | Frameworks clave |
+|---|---|---|
+| Android Compose | Kotlin | Jetpack Compose, Coroutines, Hilt, Navigation 3 |
+| Android Legacy | Java + Kotlin | XML Views, ViewBinding, Retrofit |
+| iOS SwiftUI | Swift | SwiftUI, Combine, SPM |
+| iOS UIKit | Swift | UIKit, Storyboard/XIB |
+| KMP | Kotlin | Kotlin Multiplatform, Ktor Client, SQLDelight |
+| CMP | Kotlin | Compose Multiplatform (Android + iOS + Desktop) |
+| Backend Kotlin | Kotlin | Ktor, Exposed/JPA, Flyway, Coroutines |
+| Backend Python | Python | FastAPI, SQLAlchemy, Pydantic |
+| Backend Spring | Java | Spring Boot, JPA, Maven/Gradle |
 
-- https://vscode.dev/github/manelcc/copilot-devkit/blob/develop
-
-## Objetivo actual
-
-En esta fase estamos consolidando la topologia inicial del proyecto para que cualquier contributor pueda:
-
-- ubicar rapidamente artefactos por stack
-- mantener simetria entre agents, skills y prompts
-- escalar el catalogo sin romper convenciones
-- automatizar validaciones y bootstrap local con cli-tools y scripts
-
-## Estructura objetivo (Sprint 0)
+## Estructura del repositorio
 
 ```text
-.
-├── .github/
-│   ├── copilot-instructions.md
-│   └── agents/
-│       ├── project-orchestrator.agent.md
-│       └── devkit-feature-lifecycle.agent.md
-├── agents/
-├── skills/
-├── prompts/
-├── instructions/
-├── cli-tools/
-├── docs/
-├── scripts/
-└── README.md
+copilot-devkit/
+├── .github/            # copilot-instructions.md + agentes activos
+├── agents/             # Agentes por stack (global, android, ios, multiplatform, backend)
+├── skills/             # Skills por stack (misma jerarquía que agents/)
+├── prompts/            # Prompts por stack (misma jerarquía que agents/)
+├── instructions/       # Instrucciones .instructions.md por stack
+├── cli-tools/          # CLI Python: devtools scaffold / validate / sync
+├── scripts/            # Scripts de validación y setup
+└── docs/               # Governance, backlog y documentación
 ```
 
-## Convenciones clave
+## Quick-start para proyectos consumidores
 
-1. Simetria 1:1 entre namespaces de agents, skills y prompts.
-2. Jerarquia por stack: global, android, ios, multiplatform, backend.
-3. Artefactos por defecto con stubs y .gitkeep para versionar hojas vacias.
-4. Evolucion incremental del contenido via user stories en docs/implementation/user-stories.
+```bash
+pip install -e cli-tools/
+devtools sync --manifest devtools.manifest.json
+```
 
-## Estado
+## Quick-start para contributors
 
-- Estructura base de directorios inicial creada.
-- Stubs iniciales de instrucciones por stack creados.
-- Orquestadores globales en .github/agents definidos como placeholders.
+```bash
+./scripts/setup.sh
+devtools scaffold skill mi-skill global
+```
 
-## Siguientes hitos
+## Governance
 
-- completar contenido funcional de agentes, skills, prompts e instrucciones
-- implementar comandos CLI de scaffold, validate, sync
-- reforzar validaciones de simetria y calidad en scripts de soporte
+- Decisiones de diseño: [`docs/implementation/constitution.md`](docs/implementation/constitution.md)
+- Épicas y roadmap: [`docs/implementation/epics.md`](docs/implementation/epics.md)
+- Backlog: [`docs/implementation/user-stories/backlog-index.md`](docs/implementation/user-stories/backlog-index.md)
+- Estrategia de sync: [`docs/implementation/sync-strategy.md`](docs/implementation/sync-strategy.md)
