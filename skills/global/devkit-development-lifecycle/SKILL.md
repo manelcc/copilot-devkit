@@ -490,15 +490,25 @@ Stack detected from project config or auto-detect. Map to devkit path:
 | cmp | `skills/multiplatform/cmp/` |
 
 Actions:
-1. Generate skill at `<DEVKIT_REPO>/skills/<tech-path>/devkit-<feature-slug>/SKILL.md`
-2. Create symlink in the consumer project:
-   `.github/skills/devkit-<feature-slug>/` → `<DEVKIT_REPO>/skills/<tech-path>/devkit-<feature-slug>/`
+1. Generate skill at `.github/skills/devkit-<feature-slug>/` inside the consumer project (temporary location)
+2. Run `devtools promote` to move it to the devkit and create the symlink automatically:
+
+```bash
+devtools promote devkit-<feature-slug> --tech <stack>
+# ej: devtools promote devkit-auth-retry --tech python
+```
+
+What `devtools promote` does:
+- Moves the skill folder to `<DEVKIT_REPO>/skills/<tech-path>/devkit-<feature-slug>/`
+- Replaces the local folder with a symlink → devkit
+- Creates `~/.copilot/skills/devkit-<feature-slug>/` symlink for VS Code Copilot
 
 ```
 ✅ Skill de tecnología centralizada:
    Devkit: skills/<tech-path>/devkit-<feature-slug>/SKILL.md
-   Symlink: .github/skills/devkit-<feature-slug>/ → devkit
-   Disponible para otros proyectos via: devtools sync
+   Symlink proyecto: .github/skills/devkit-<feature-slug>/ → devkit
+   Symlink global: ~/.copilot/skills/devkit-<feature-slug>/ → devkit
+   Disponible para otros proyectos: devtools sync
 ```
 
 ---
@@ -506,15 +516,19 @@ Actions:
 **Scope C — Global (stack-agnostic)**
 
 Actions:
-1. Generate skill at `<DEVKIT_REPO>/skills/global/devkit-<feature-slug>/SKILL.md`
-2. Create symlink in the consumer project:
-   `.github/skills/devkit-<feature-slug>/` → `<DEVKIT_REPO>/skills/global/devkit-<feature-slug>/`
+1. Generate skill at `.github/skills/devkit-<feature-slug>/` inside the consumer project (temporary location)
+2. Run `devtools promote` with `--tech global`:
+
+```bash
+devtools promote devkit-<feature-slug> --tech global
+```
 
 ```
 ✅ Skill global centralizada:
    Devkit: skills/global/devkit-<feature-slug>/SKILL.md
-   Symlink: .github/skills/devkit-<feature-slug>/ → devkit
-   Disponible para todos los proyectos via: devtools sync
+   Symlink proyecto: .github/skills/devkit-<feature-slug>/ → devkit
+   Symlink global: ~/.copilot/skills/devkit-<feature-slug>/ → devkit
+   Disponible para todos los proyectos: devtools sync
 ```
 
 ---

@@ -9,6 +9,7 @@ devtools.egg-info/requires.txt
 devtools.egg-info/top_level.txt
 devtools/commands/__init__.py
 devtools/commands/list_cmd.py
+devtools/commands/promote.py
 devtools/commands/scaffold.py
 devtools/commands/sync.py
 devtools/commands/validate.py
