@@ -161,14 +161,14 @@ quiero una decisión documentada sobre cómo los proyectos consumidores importan
 para que todos los equipos usen el mismo mecanismo y no haya deriva.
 
 ### Criterios de aceptación
-- [ ] `docs/implementation/sync-strategy.md` documenta las opciones evaluadas y la decisión tomada
-- [ ] La estrategia elegida soporta: selección por namespace, versionado semántico, detección de conflictos
-- [ ] Existe un `devtools.manifest.json` de ejemplo para proyectos consumidores
-- [ ] La estrategia es independiente de si el proyecto consumidor es Android, iOS o Backend
+- [x] `docs/implementation/sync-strategy.md` documenta las opciones evaluadas y la decisión tomada
+- [x] La estrategia es independiente de si el proyecto consumidor es Android, iOS o Backend
+- [x] `setup-project.sh --android|--ios|--python|--kmp|--cmp` enlaza artefactos via symlinks
+- [x] `setup-project.sh --list` muestra todo lo disponible
 
 ### Referencias
-- `BK:.specify/integrations/copilot.manifest.json`
-- `BK:cli-tools/sync_skills/`
+- `scripts/setup.sh` — setup de máquina
+- `setup-project.sh` — setup por proyecto
 
 ---
 
@@ -428,14 +428,13 @@ quiero ejecutar `devtools sync` para importar los artefactos que necesito,
 sin copiarlos manualmente ni romper actualizaciones futuras.
 
 ### Criterios de aceptación
-- [ ] `devtools sync --manifest devtools.manifest.json` lee el manifest y copia artefactos al destino
-- [ ] Soporta `mode: copy` (copia física) y `mode: symlink`
-- [ ] Detecta y reporta versiones incompatibles
-- [ ] No sobreescribe sin confirmación si hay cambios locales
-- [ ] Genera un `devtools.lock.json` con el estado sincronizado
+- [x] `setup-project.sh --<tecnología>` enlaza por symlink los artefactos del namespace correspondiente
+- [x] `setup-project.sh --skill <nombre>` enlaza una skill concreta
+- [x] Los symlinks en `.github/` son detectados automáticamente por VS Code + Copilot
+- [ ] `devtools sync` con soporte copy-on-demand (pendiente, no bloqueante)
 
 ### Fuente
-> `BK:cli-tools/sync_skills/`
+> `setup-project.sh`
 
 ---
 
