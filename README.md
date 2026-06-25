@@ -149,6 +149,76 @@ devtools list --format json            # salida JSON
 
 ---
 
+## Actualizar un proyecto consumidor con los últimos cambios del devkit
+
+Los proyectos consumen el devkit via **symlinks**, lo que significa que el contenido de las skills y agentes existentes se actualiza automáticamente. Solo hay que actuar cuando el devkit añade artefactos **nuevos**.
+
+### Artefactos existentes (ya enlazados)
+
+No requieren ninguna acción. Al leer un fichero a través del symlink, Copilot siempre lee la versión actual del devkit.
+
+### Artefactos nuevos (añadidos al devkit)
+
+Re-ejecuta el setup de tecnología del proyecto para crear los nuevos symlinks:
+
+```bash
+cd /ruta/al/proyecto-x
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --python   # o el stack del proyecto
+```
+
+El script detecta qué symlinks ya existen y solo crea los que faltan — nunca sobreescribe.
+
+---
+
+## Promover una skill de proyecto al devkit
+
+Cuando en la Fase J del ciclo de desarrollo creas una skill en un proyecto X y quieres que sea reutilizable por otros proyectos del mismo stack, usa `devtools promote`.
+
+### Flujo completo
+
+```
+Proyecto X (.github/skills/devkit-mi-feature/)
+         ↓  devtools promote devkit-mi-feature --tech python
+Devkit (skills/backend/python/devkit-mi-feature/)   ← fuente de verdad
+         ↑ symlink automático desde proyecto X        ← el proyecto sigue usándola
+         ↑ symlink en ~/.copilot/skills/              ← VS Code la carga globalmente
+```
+
+### Uso
+
+```bash
+# Desde el proyecto X, promover al stack de tecnología detectado
+devtools promote devkit-auth-retry --tech python
+
+# Promover como artefacto global (independiente de stack)
+devtools promote devkit-ci-conventions --tech global
+
+# Ver qué haría sin ejecutar nada
+devtools promote devkit-auth-retry --tech python --dry-run
+
+# Desde otra ruta
+devtools promote devkit-auth-retry --tech kotlin --project ../mi-proyecto-kotlin
+```
+
+### Namespaces de tecnología disponibles
+
+| Flag `--tech` | Destino en devkit |
+|---|---|
+| `python` | `skills/backend/python/` |
+| `kotlin` / `kotlin-ktor` | `skills/backend/kotlin-ktor/` |
+| `spring` / `spring-java` | `skills/backend/spring-java/` |
+| `android` / `android-compose` | `skills/android/compose/` |
+| `android-legacy` | `skills/android/legacy/` |
+| `ios` / `ios-swiftui` | `skills/ios/swiftui/` |
+| `ios-uikit` | `skills/ios/uikit/` |
+| `kmp` | `skills/multiplatform/kmp/` |
+| `cmp` | `skills/multiplatform/cmp/` |
+| `global` | `skills/global/` |
+
+Tras la promoción, la skill queda disponible para cualquier proyecto del mismo stack al re-ejecutar `setup-project.sh`.
+
+---
+
 ## Quick-start para contributors
 
 ```bash
