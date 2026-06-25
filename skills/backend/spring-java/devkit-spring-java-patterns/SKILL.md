@@ -1,5 +1,5 @@
 ---
-name: "spring-java-patterns"
+name: devkit-spring-java-patterns
 description: >
   Skill de patrones Spring Boot Java para servicios backend mantenibles y alineados
   con convenciones corporativas. Cubre controllers REST, servicios, repositorios JPA,

@@ -1,5 +1,5 @@
 ---
-name: ios-swift-concurrency
+name: devkit-ios-swift-concurrency
 description: >
   Structured guidance for Swift concurrency in iOS features: async/await,
   Task, task groups, MainActor isolation, and cancellation-safe UI updates.

@@ -1,5 +1,5 @@
 ---
-name: swiftui-testing-xctest
+name: devkit-swiftui-testing-xctest
 description: >
   Practical testing patterns for SwiftUI features using XCTest, asynchronous
   expectations, and UI test coverage for key interaction flows.

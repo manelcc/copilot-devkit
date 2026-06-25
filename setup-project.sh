@@ -178,11 +178,15 @@ echo ""
 
 # Link technology-specific content only (global already in ~/.copilot/)
 
-# 1. Link Android
+# 1. Link Android (compose + legacy only; KMP requiere --kmp explícito)
 if [[ "$ANDROID" == true ]]; then
-    link_folder "$SKILLS_DIR/android" "$TARGET_SKILLS_DIR" "android" "skills"
-    link_folder "$AGENTS_DIR/android" "$TARGET_AGENTS_DIR" "android" "agents"
-    link_folder "$PROMPTS_DIR/android" "$TARGET_PROMPTS_DIR" "android" "prompts"
+    link_folder "$SKILLS_DIR/android/compose" "$TARGET_SKILLS_DIR/android/compose" "android/compose" "skills"
+    link_folder "$SKILLS_DIR/android/legacy"  "$TARGET_SKILLS_DIR/android/legacy"  "android/legacy"  "skills"
+    link_folder "$AGENTS_DIR/android/compose" "$TARGET_AGENTS_DIR/android/compose" "android/compose" "agents"
+    link_folder "$AGENTS_DIR/android/legacy"  "$TARGET_AGENTS_DIR/android/legacy"  "android/legacy"  "agents"
+    link_item   "$AGENTS_DIR/android/devkit-android-project-orchestrator.agent.md" "$TARGET_AGENTS_DIR" "agents"
+    link_folder "$PROMPTS_DIR/android/compose" "$TARGET_PROMPTS_DIR/android/compose" "android/compose" "prompts"
+    link_folder "$PROMPTS_DIR/android/legacy"  "$TARGET_PROMPTS_DIR/android/legacy"  "android/legacy"  "prompts"
     link_item "$INSTRUCTIONS_DIR/devkit-android-compose.instructions.md" "$TARGET_INSTRUCTIONS_DIR" "instructions"
     link_item "$INSTRUCTIONS_DIR/devkit-android-legacy.instructions.md" "$TARGET_INSTRUCTIONS_DIR" "instructions"
 fi
@@ -218,6 +222,21 @@ if [[ "$PYTHON" == true ]]; then
     link_folder "$AGENTS_DIR/backend/python" "$TARGET_AGENTS_DIR" "python" "agents"
     link_folder "$PROMPTS_DIR/backend/python" "$TARGET_PROMPTS_DIR" "python" "prompts"
     # No extra instructions for Python
+fi
+
+# ─── Official Android skills (via android CLI) ───────────────────────────────
+if [[ "$ANDROID" == true ]]; then
+    if command -v android >/dev/null 2>&1; then
+        echo ""
+        echo "📱 Instalando official Android skills (android/skills)..."
+        android skills add --all --project="$PROJECT_DIR" 2>&1 | sed 's/^/  /'
+        echo "  ✓ Official Android skills instaladas"
+    else
+        echo ""
+        echo "  ⚠️  'android' CLI no encontrado — omitiendo official Android skills."
+        echo "     Instálalo con: curl -fsSL https://d.android.com/dl/android-cli/install.sh | bash"
+        echo "     Luego ejecuta: android skills add --all --project=."
+    fi
 fi
 
 echo ""

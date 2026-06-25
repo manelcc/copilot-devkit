@@ -1,5 +1,5 @@
 ---
-name: jetpack-compose-patterns
+name: devkit-jetpack-compose-patterns
 description: >
   Practical guidance for implementing modern Jetpack Compose features using
   production-ready patterns: state hoisting, remember/rememberSaveable,

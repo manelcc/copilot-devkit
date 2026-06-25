@@ -1,5 +1,5 @@
 ---
-name: "kmp-shared-module-patterns"
+name: devkit-kmp-shared-module-patterns
 description: "Design patterns and best practices for Kotlin Multiplatform shared modules: expect/actual, Ktor Client, SQLDelight, coroutines, and iOS interop"
 triggers:
   - "how to structure expect/actual in KMP"

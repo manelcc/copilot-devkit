@@ -1,5 +1,5 @@
 ---
-name: "android-xml-java-patterns"
+name: devkit-android-xml-java-patterns
 description: >
   Skill de patrones Android legacy con XML + Java. Cubre ViewBinding, Retrofit,
   Room, MVVM legacy con LiveData y recomendaciones de migración gradual a Kotlin

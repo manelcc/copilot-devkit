@@ -1,5 +1,5 @@
 ---
-name: android-patterns
+name: devkit-android-patterns
 description: >
   Skill de patrones de diseño Android/Kotlin para decidir patrón aplicable en
   una implementación, identificar el patrón existente en código y detectar

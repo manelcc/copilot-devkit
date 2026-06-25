@@ -1,5 +1,5 @@
 ---
-name: "uikit-patterns"
+name: devkit-uikit-patterns
 description: >
   Skill de patrones UIKit clásicos para desarrollar y mantener apps iOS legacy.
   Cubre ViewControllers, Auto Layout, UITableView/UICollectionView, MVVM legacy,

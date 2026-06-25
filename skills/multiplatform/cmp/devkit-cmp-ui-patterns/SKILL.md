@@ -1,5 +1,5 @@
 ---
-name: "cmp-ui-patterns"
+name: devkit-cmp-ui-patterns
 description: "Compose Multiplatform UI design patterns: state management (MVI/MVVM), type-safe navigation, theming strategies, and performance optimization for Android & iOS"
 triggers:
   - "how to structure state in Compose Multiplatform"

@@ -1,5 +1,5 @@
 ---
-name: ios-patterns
+name: devkit-ios-patterns
 description: >
   Skill de patrones de diseño iOS/Swift para decidir patrón aplicable en una
   implementación, identificar el patrón existente en código y detectar
