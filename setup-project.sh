@@ -11,6 +11,7 @@
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --cmp
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --kmp
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --python
+#   bash $COPILOT_DEVKIT_HOME/setup-project.sh --kotlin
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --skill <nombre>
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --list
 
@@ -33,6 +34,7 @@ IOS=false
 CMP=false
 KMP=false
 PYTHON=false
+KOTLIN=false
 SPECIFIC_SKILLS=()
 DO_LIST=false
 
@@ -43,11 +45,12 @@ while [[ $# -gt 0 ]]; do
         --cmp)       CMP=true;      shift ;;
         --kmp)       KMP=true;      shift ;;
         --python)    PYTHON=true;   shift ;;
+        --kotlin)    KOTLIN=true;   shift ;;
         --skill)     SPECIFIC_SKILLS+=("$2"); shift 2 ;;
         --list)      DO_LIST=true;  shift ;;
         *)
             echo "❌ Opción desconocida: $1"
-            echo "   Uso: setup-project.sh [--android] [--ios] [--cmp] [--kmp] [--python] [--skill <nombre>] [--list]"
+            echo "   Uso: setup-project.sh [--android] [--ios] [--cmp] [--kmp] [--python] [--kotlin] [--skill <nombre>] [--list]"
             exit 1
             ;;
     esac
@@ -109,7 +112,7 @@ if [[ "$DO_LIST" == true ]]; then
         esac
 
         echo "[$section]"
-        for category in android ios multiplatform/cmp multiplatform/kmp backend/python; do
+        for category in android ios multiplatform/cmp multiplatform/kmp backend/python backend/kotlin-ktor; do
             dir="$section_dir/$category"
             [[ -d "$dir" ]] || continue
             entries=("$dir"/*)
@@ -135,7 +138,7 @@ if [[ ${#SPECIFIC_SKILLS[@]} -gt 0 ]]; then
     echo ""
     for skill_name in "${SPECIFIC_SKILLS[@]}"; do
         found=false
-        for dir in "$SKILLS_DIR"/android "$SKILLS_DIR"/ios "$SKILLS_DIR"/multiplatform/cmp "$SKILLS_DIR"/multiplatform/kmp "$SKILLS_DIR"/backend/python; do
+        for dir in "$SKILLS_DIR"/android "$SKILLS_DIR"/ios "$SKILLS_DIR"/multiplatform/cmp "$SKILLS_DIR"/multiplatform/kmp "$SKILLS_DIR"/backend/python "$SKILLS_DIR"/backend/kotlin-ktor; do
             skill_path="$dir/$skill_name"
             if [[ -e "$skill_path" ]]; then
                 link_item "$skill_path" "$TARGET_SKILLS_DIR" "skills"
@@ -154,8 +157,8 @@ if [[ ${#SPECIFIC_SKILLS[@]} -gt 0 ]]; then
 fi
 
 # ─── Validate at least one tech flag ─────────────────────────────────────────
-if [[ "$ANDROID" == false && "$IOS" == false && "$CMP" == false && "$KMP" == false && "$PYTHON" == false ]]; then
-    echo "❌ Debes indicar al menos una tecnología: --android --ios --cmp --kmp --python"
+if [[ "$ANDROID" == false && "$IOS" == false && "$CMP" == false && "$KMP" == false && "$PYTHON" == false && "$KOTLIN" == false ]]; then
+    echo "❌ Debes indicar al menos una tecnología: --android --ios --cmp --kmp --python --kotlin"
     echo "   O usa --skill <nombre> para enlazar skills específicas."
     echo "   Usa --list para ver el contenido disponible."
     exit 1
@@ -172,6 +175,7 @@ TECHS_ENABLED=()
 [[ "$CMP" == true ]] && TECHS_ENABLED+=("cmp")
 [[ "$KMP" == true ]] && TECHS_ENABLED+=("kmp")
 [[ "$PYTHON" == true ]] && TECHS_ENABLED+=("python")
+[[ "$KOTLIN" == true ]] && TECHS_ENABLED+=("kotlin")
 
 echo "🏷️  Tecnologías: ${TECHS_ENABLED[*]}"
 echo ""
@@ -222,6 +226,14 @@ if [[ "$PYTHON" == true ]]; then
     link_folder "$AGENTS_DIR/backend/python" "$TARGET_AGENTS_DIR" "python" "agents"
     link_folder "$PROMPTS_DIR/backend/python" "$TARGET_PROMPTS_DIR" "python" "prompts"
     # No extra instructions for Python
+fi
+
+# 6. Link Kotlin/Ktor backend
+if [[ "$KOTLIN" == true ]]; then
+    link_folder "$SKILLS_DIR/backend/kotlin-ktor" "$TARGET_SKILLS_DIR" "kotlin-ktor" "skills"
+    link_folder "$AGENTS_DIR/backend/kotlin-ktor" "$TARGET_AGENTS_DIR" "kotlin-ktor" "agents"
+    link_folder "$PROMPTS_DIR/backend/kotlin-ktor" "$TARGET_PROMPTS_DIR" "kotlin-ktor" "prompts"
+    link_item "$INSTRUCTIONS_DIR/devkit-backend-kotlin.instructions.md" "$TARGET_INSTRUCTIONS_DIR" "instructions"
 fi
 
 # ─── Official Android skills (via android CLI) ───────────────────────────────

@@ -1,10 +1,12 @@
 ---
 description: >
-  Orchestrates the complete guided development lifecycle with planning, expert consultation,
-  quality gates, and interactive user decisions. Ensures every User Story is implemented with
-  traceability, quality validation, and adaptability to existing code and architecture.
-  Also runs the project config wizard when .github/devkit-project.config.md is missing or
-  the user requests lifecycle configuration for the project.
+  Stack-agnostic lifecycle orchestrator. Use this ONLY when there is no stack-specific
+  project orchestrator for the current project. If you are working in a Python project,
+  use devkit-backend-python-project-orchestrator instead. If you are working in a
+  Kotlin/Ktor project, use devkit-backend-kotlin-project-orchestrator instead.
+  Orchestrates planning, expert consultation, quality gates, and interactive user decisions
+  for any User Story. Also runs the project config wizard when
+  .github/devkit-project.config.md is missing or the user requests lifecycle configuration.
 handoffs:
   - devkit-clean-architecture-quality
   - devkit-clean-code-guardian

@@ -1,8 +1,11 @@
 ---
 name: "devkit-backend-python-project-orchestrator"
 description: >
-  Orchestrates Python backend tasks by detecting framework signals and routing
-  work to Python backend conventions and global workflow skills.
+  PRIMARY ENTRY POINT for Python backend projects. Use this orchestrator — NOT
+  devkit-development-lifecycle-orchestrator — whenever you are working inside a
+  Python project. Detects framework signals (FastAPI / Flask / plain Python) and
+  routes features, fixes, reviews, US cycles and MRs to the correct conventions
+  and global workflow skills.
 model: Claude Sonnet 4.6 (copilot)
 tools:
   - search
@@ -14,6 +17,9 @@ tools:
 ---
 
 # Devkit Backend Python Project Orchestrator
+
+> **Scope**: Python backend projects only.  
+> **Do NOT use** `devkit-development-lifecycle-orchestrator` when working in a Python project — use this agent instead. It handles the full lifecycle (features, fixes, US cycles, MRs) and delegates to global skills internally.
 
 ## Mission
 Route backend Python tasks based on detected framework and project structure.
