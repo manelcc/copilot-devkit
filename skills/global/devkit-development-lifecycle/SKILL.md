@@ -220,15 +220,15 @@ Plan de implementación listo.
 
 1. Handoff to `devkit-clean-code-guardian` with scope: changed files only
 2. Wait for analysis report
-3. **Persist**: `docs/quality/US-XXX-clean-code-report.md`
+3. **MANDATORY PERSISTENCE — BLOCKING**: Write the report to `docs/quality/US-XXX-clean-code-report.md` (replace `XXX` with the real US id). Create `docs/quality/` if it does not exist. **The agent MUST NOT proceed to step 4 until this file is confirmed written on disk.**
 4. Check threshold: critical issues = 0, score ≥7.0
 
 #### D.2 Execute Clean Architecture Analysis
 > Skip if `GATE_CLEAN_ARCH=no`.
 
-1. Handoff to `devkit-clean-architecture-quality` with scope: affected layers
+1. Handoff to `devkit-clean-architecture-quality` (or `devkit-python-clean-architecture-quality` for Python projects) with scope: affected layers
 2. Wait for analysis report
-3. **Persist**: `docs/quality/US-XXX-architecture-report.md`
+3. **MANDATORY PERSISTENCE — BLOCKING**: Write the report to `docs/quality/US-XXX-architecture-report.md` (replace `XXX` with the real US id). Create `docs/quality/` if it does not exist. **The agent MUST NOT proceed to step 4 until this file is confirmed written on disk.**
 4. Check threshold: critical violations = 0
 
 #### D.3 Validate Test Coverage
@@ -236,10 +236,12 @@ Plan de implementación listo.
 
 1. Run test suite with coverage tool (project-specific: JaCoCo, pytest-cov, etc.)
 2. Extract coverage percentage
-3. **Persist**: coverage report in `docs/quality/US-XXX-clean-code-report.md` (append section)
+3. **MANDATORY PERSISTENCE — BLOCKING**: Append coverage section to `docs/quality/US-XXX-clean-code-report.md`. **The agent MUST NOT proceed to step 4 until the file is updated.**
 4. Check threshold: coverage ≥`{{COVERAGE_THRESHOLD}}`
 
 #### D.4 Quality Gate Decision
+> **Pre-condition**: Files `docs/quality/US-XXX-clean-code-report.md` and `docs/quality/US-XXX-architecture-report.md` MUST exist before this step is evaluated. If either is missing, treat the corresponding gate as FAILED regardless of analysis outcome.
+
 - **If D.1 OR D.2 OR D.3 fails**: proceed to Phase E (Correction Loop)
 - **If all pass**: proceed to Phase F (E2E Tests)
 

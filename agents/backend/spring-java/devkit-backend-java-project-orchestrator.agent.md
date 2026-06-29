@@ -41,6 +41,7 @@ Route backend Java work in legacy Spring contexts and keep execution aligned wit
 1. Detect build/runtime mode (Maven/Gradle).
 2. Keep changes scoped to Spring Java backend modules.
 3. Apply global review, test workflow, and MR skills.
+4. **Fallback de lifecycle**: Si `devkit-development-lifecycle` skill no está disponible (falla la carga), NO continuar silenciosamente. Ejecutar el lifecycle **inline** completando TODAS las fases interactivas obligatorias en orden. Registrar en la respuesta que se está usando el modo fallback inline. **Fases mínimas obligatorias inline:** (a) leer la US, (b) consultar experto de stack, (c) implementar con quality gates, **(d) persistir informes — `docs/quality/US-XXX-clean-code-report.md` y `docs/quality/US-XXX-architecture-report.md` — OBLIGATORIO antes de cualquier commit**, (e) confirmar cobertura ≥40%, (f) pedir aprobación git.
 
 ## Output format
 - Detected mode

@@ -88,7 +88,9 @@ For detailed phase logic, see `skills/global/devkit-development-lifecycle/SKILL
 ## Post-Execution
 
 After completing the cycle:
-1. Confirm all artifacts are persisted in `docs/`.
+1. **MANDATORY — Confirm quality gate artifacts are persisted in `docs/`:**
+   - `docs/quality/US-XXX-clean-code-report.md` — **MUST exist** (D.1 gate). If missing → gate = FAILED, commits BLOCKED.
+   - `docs/quality/US-XXX-architecture-report.md` — **MUST exist** (D.2 gate). If missing → gate = FAILED, commits BLOCKED.
 2. Confirm commits are executed (or user has manual control).
 3. Confirm MR/PR description is generated and ready for publication.
 4. Ask the user if they want to proceed with branch push and MR/PR creation.

@@ -4,13 +4,8 @@ description: >
   Orchestrates Android tasks by detecting Compose vs Legacy stacks and routing work
   to the correct Android implementation path.
 model: Claude Sonnet 4.6 (copilot)
-tools:
-  - search
-  - codebase
-  - usages
-  - problems
-  - edit/editFiles
-  - runCommands
+tools:vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, vscode/toolSearch, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, todo
+[vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, vscode/toolSearch, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, todo]
 ---
 
 # Devkit Android Project Orchestrator
@@ -43,6 +38,7 @@ Route Android work to the correct execution path based on project subtype.
 3. Prioritize stack-specific skill first, then global skills for workflow/review/MR.
 4. Keep changes scoped to Android folders only.
 5. For feasible Android operations, prioritize CLI-executable flows over IDE-only manual steps.
+6. **Fallback de lifecycle**: Si `devkit-development-lifecycle` skill no está disponible (falla la carga), NO continuar silenciosamente. Ejecutar el lifecycle **inline** completando TODAS las fases interactivas obligatorias en orden. Registrar en la respuesta que se está usando el modo fallback inline. **Fases mínimas obligatorias inline:** (a) leer la US, (b) consultar experto de stack, (c) implementar con quality gates, **(d) persistir informes — `docs/quality/US-XXX-clean-code-report.md` y `docs/quality/US-XXX-architecture-report.md` — OBLIGATORIO antes de cualquier commit**, (e) confirmar cobertura ≥40%, (f) pedir aprobación git.
 
 ## Output format
 - Detected subtype

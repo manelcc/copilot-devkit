@@ -39,14 +39,63 @@ Generar un informe de calidad auditable con evidencia verificable, impacto y rem
 - Focus opcional: arquitectura, seguridad, concurrencia, datos, DI, testing, config.
 - Constraints opcionales: incluir/excluir modulos y tipos de fichero.
 
+## Scope policy (obligatorio)
+- Alcance por defecto: solo diff de la branch actual contra `origin/develop`.
+- Orden de inspeccion obligatorio:
+  1. cambios sin commit (working tree de la rama),
+  2. commits exclusivos de la rama (`origin/develop..HEAD`).
+- No analizar repo completo salvo peticion explicita del usuario.
+- Si no existe o no es accesible `origin/develop`, detener y pedir confirmacion de rama base.
+
+## Template source of truth (obligatorio)
+- Ruta template arquitectura:
+  - `/Users/manelcc/Library/CloudStorage/OneDrive-SopraSteria/mac/onedrive-IA/COPILOT/docs/quality/_TEMPLATE-architecture-report.md`
+- Regla obligatoria:
+  - El informe final DEBE usar exactamente este template como estructura base.
+  - No se permite inventar secciones ni reordenar bloques fuera del template.
+  - Si el template no existe o no es legible, detener y devolver exactamente:
+    - `No existe o no es legible el template de arquitectura en COPILOT: /Users/manelcc/Library/CloudStorage/OneDrive-SopraSteria/mac/onedrive-IA/COPILOT/docs/quality/_TEMPLATE-architecture-report.md`
+
 ## Steps
 1. Definir scope y focus.
 2. Detectar lenguajes presentes en el scope (Java/Kotlin/Swift/Python).
 3. Validar ficheros de reglas obligatorios de cada lenguaje detectado.
 4. Cargar solo las reglas del lenguaje del fichero analizado.
-5. Analizar codigo y registrar solo hallazgos verificables.
-6. Clasificar severidad y priorizar por impacto/esfuerzo.
-7. Emitir informe con quick wins y plan de remediacion.
+5. Delimitar alcance obligatorio al diff de branch contra `origin/develop` (working tree + commits de rama).
+6. Cargar template obligatorio de arquitectura desde COPILOT.
+7. Analizar codigo y registrar solo hallazgos verificables.
+8. Clasificar severidad y priorizar por impacto/esfuerzo.
+9. Rellenar el template sin alterar su estructura base.
+10. Escribir el informe completo en el proyecto analizado:
+   - Ruta: `docs/quality/clean-architecture-<YYYY-MM-DD>.md` (fecha de ejecucion real).
+   - Crear el directorio `docs/quality/` si no existe.
+  - El fichero debe respetar al 100% la estructura del template oficial.
+   - Si ya existe un fichero del mismo dia, sobreescribir.
+
+## Preflight gate (obligatorio, fail-fast)
+- Antes de redactar cualquier informe, validar y registrar internamente:
+  1. Existe y es legible `origin/develop`.
+  2. Existe y es legible el template oficial de arquitectura.
+  3. Existen reglas obligatorias del lenguaje detectado.
+  4. Scope efectivo limitado a:
+     - working tree de la rama,
+     - commits `origin/develop..HEAD`.
+- Si falla cualquiera, detener y no generar informe.
+
+## Definition of Done (obligatorio)
+- Un informe de arquitectura solo se considera valido si cumple TODOS los puntos:
+  1. Estructura exacta del template oficial (secciones y orden sin invencion ad-hoc).
+  2. Scope explicitado como branch diff contra `origin/develop`.
+  3. Hallazgos con evidencia verificable (ruta + simbolo + comportamiento).
+  4. Cada hallazgo incluye recomendacion accionable.
+  5. Incluye referencia externa verificable (libro o web tecnica oficial) por severidad reportada.
+  6. Incluye un "good example" aplicable por severidad reportada.
+  7. Quality Gate coherente con el contenido del propio informe.
+
+## Errores contractuales (respuesta exacta)
+- Si falla el template: `No existe o no es legible el template de arquitectura en COPILOT: /Users/manelcc/Library/CloudStorage/OneDrive-SopraSteria/mac/onedrive-IA/COPILOT/docs/quality/_TEMPLATE-architecture-report.md`
+- Si falla rama base: `No se puede resolver origin/develop. Confirma rama base para continuar el analisis de quality.`
+- Si faltan reglas: `No existen los ficheros obligatorios de reglas en skills/global/devkit-clean-architecture-quality/references/rules. Contacten con el equipo de Bankinter DevTools.`
 
 ## Reglas obligatorias
 - `skills/global/devkit-clean-architecture-quality/references/rules/java-rules-critical.md`
@@ -77,6 +126,7 @@ Si falta algun fichero obligatorio, detener y devolver exactamente:
 - Quick wins.
 - Riesgos sistemicos.
 - Plan 7/30 dias.
+- Fichero `docs/quality/clean-architecture-<YYYY-MM-DD>.md` escrito en el proyecto analizado.
 
 ## Validation
 - Cada hallazgo referencia regla del mismo lenguaje del fichero revisado.

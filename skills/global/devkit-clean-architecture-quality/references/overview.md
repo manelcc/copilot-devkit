@@ -13,13 +13,22 @@ flowchart TD
     C --> D[Validar reglas obligatorias en references/rules]
     D --> E{Reglas completas?}
     E -- No --> F[Devolver error de reglas faltantes y detener]
-    E -- Si --> G[Cargar reglas del lenguaje detectado]
-    G --> H[Analizar codigo y configuracion]
-    H --> I[Recoger evidencia por hallazgo]
-    I --> J[Clasificar severidad]
-    J --> K[Priorizar por impacto y esfuerzo]
-    K --> L[Emitir resumen, hallazgos, quick wins y plan 7/30 dias]
+    E -- Si --> G[Validar y cargar template oficial de COPILOT]
+    G --> H{Template accesible?}
+    H -- No --> I[Devolver error de template y detener]
+    H -- Si --> J[Cargar reglas del lenguaje detectado]
+    J --> K[Analizar codigo y configuracion]
+    K --> L[Recoger evidencia por hallazgo]
+    L --> M[Clasificar severidad]
+    M --> N[Priorizar por impacto y esfuerzo]
+    N --> O[Rellenar template oficial]
+    O --> P[Escribir informe en docs/quality/clean-architecture-YYYY-MM-DD.md]
 ```
+
+## Template oficial (obligatorio)
+
+- `/Users/manelcc/Library/CloudStorage/OneDrive-SopraSteria/mac/onedrive-IA/COPILOT/docs/quality/_TEMPLATE-architecture-report.md`
+- Sin template accesible no se emite informe.
 
 ## Rule files
 

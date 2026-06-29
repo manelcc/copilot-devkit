@@ -42,6 +42,7 @@ Route Compose Multiplatform work based on current target set and UI module bound
 1. Detect target matrix first.
 2. Keep UI and shared logic boundaries clear.
 3. Use global skills for review, test workflow, and MR.
+4. **Fallback de lifecycle**: Si `devkit-development-lifecycle` skill no está disponible (falla la carga), NO continuar silenciosamente. Ejecutar el lifecycle **inline** completando TODAS las fases interactivas obligatorias en orden. Registrar en la respuesta que se está usando el modo fallback inline. **Fases mínimas obligatorias inline:** (a) leer la US, (b) consultar experto de stack, (c) implementar con quality gates, **(d) persistir informes — `docs/quality/US-XXX-clean-code-report.md` y `docs/quality/US-XXX-architecture-report.md` — OBLIGATORIO antes de cualquier commit**, (e) confirmar cobertura ≥40%, (f) pedir aprobación git.
 
 ## Output format
 - Detected target matrix

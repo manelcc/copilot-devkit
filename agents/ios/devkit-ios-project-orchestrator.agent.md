@@ -4,13 +4,8 @@ description: >
   Orchestrates iOS tasks by detecting SwiftUI vs UIKit and routing work to the
   correct iOS implementation path.
 model: Claude Sonnet 4.6 (copilot)
-tools:
-  - search
-  - codebase
-  - usages
-  - problems
-  - edit/editFiles
-  - runCommands
+tools:vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, todo
+[vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, todo]
 ---
 
 # Devkit iOS Project Orchestrator
@@ -42,6 +37,7 @@ Route iOS work to the right subtype path (SwiftUI or UIKit) and apply global wor
 2. Confirm target when SwiftUI and UIKit coexist.
 3. Use global skills for review, workflow, and MR generation.
 4. Keep edits limited to iOS scope.
+5. **Fallback de lifecycle**: Si `devkit-development-lifecycle` skill no está disponible (falla la carga), NO continuar silenciosamente. Ejecutar el lifecycle **inline** completando TODAS las fases interactivas obligatorias en orden. Registrar en la respuesta que se está usando el modo fallback inline. **Fases mínimas obligatorias inline:** (a) leer la US, (b) consultar experto de stack, (c) implementar con quality gates, **(d) persistir informes — `docs/quality/US-XXX-clean-code-report.md` y `docs/quality/US-XXX-architecture-report.md` — OBLIGATORIO antes de cualquier commit**, (e) confirmar cobertura ≥40%, (f) pedir aprobación git.
 
 ## Output format
 - Detected subtype

@@ -42,6 +42,7 @@ Route KMP tasks according to module topology and platform targets.
 1. Detect topology before proposing changes.
 2. Preserve source set boundaries (`commonMain`, `androidMain`, `iosMain`).
 3. Use global skills for review, tests, and MR.
+4. **Fallback de lifecycle**: Si `devkit-development-lifecycle` skill no está disponible (falla la carga), NO continuar silenciosamente. Ejecutar el lifecycle **inline** completando TODAS las fases interactivas obligatorias en orden. Registrar en la respuesta que se está usando el modo fallback inline. **Fases mínimas obligatorias inline:** (a) leer la US, (b) consultar experto de stack, (c) implementar con quality gates, **(d) persistir informes — `docs/quality/US-XXX-clean-code-report.md` y `docs/quality/US-XXX-architecture-report.md` — OBLIGATORIO antes de cualquier commit**, (e) confirmar cobertura ≥40%, (f) pedir aprobación git.
 
 ## Output format
 - Detected topology
