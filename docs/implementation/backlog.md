@@ -25,7 +25,7 @@
 
 ## US-001 — Inicialización del repositorio y estructura de directorios
 
-**Épica**: EP-1 | **Prioridad**: P0 | **SP**: 3 | **Estado**: `[ ]`
+**Épica**: EP-1 | **Prioridad**: P0 | **SP**: 3 | **Estado**: `[x]`
 
 ### Descripción
 Como desarrollador que va a contribuir al repo,  
@@ -33,12 +33,12 @@ quiero encontrar la estructura de directorios completa y lista desde el primer c
 para poder añadir artefactos en el namespace correcto sin tener que decidir dónde van.
 
 ### Criterios de aceptación
-- [ ] Existen los directorios: `agents/{global,android/{compose,legacy,kmp},ios/{swiftui,uikit},multiplatform/{kmp,cmp},backend/{kotlin-ktor,python,spring-java}}`
-- [ ] Misma jerarquía para `skills/` y `prompts/` e `instructions/`
-- [ ] Cada directorio tiene un `.gitkeep` o README mínimo
-- [ ] Existe `docs/implementation/` con los documentos de governance
-- [ ] Existe `scripts/` con estructura lista para shell tools
-- [ ] Existe `cli-tools/` con estructura Python base
+- [x] Existen los directorios: `agents/{global,android/{compose,legacy,kmp},ios/{swiftui,uikit},multiplatform/{kmp,cmp},backend/{kotlin-ktor,python,spring-java}}`
+- [x] Misma jerarquía para `skills/` y `prompts/` e `instructions/`
+- [x] Cada directorio tiene un `.gitkeep` o README mínimo
+- [x] Existe `docs/implementation/` con los documentos de governance
+- [x] Existe `scripts/` con estructura lista para shell tools
+- [x] Existe `cli-tools/` con estructura Python base
 
 ### Dependencias
 - Ninguna (primer ticket)
@@ -60,8 +60,8 @@ para entender rápidamente qué hay aquí y cómo usarlo.
 
 ### Criterios de aceptación
 - [x] `docs/implementation/constitution.md` existe y está ratificado
-- [ ] `README.md` en raíz con: propósito, mapa de estructura, quick-start, link a constitution
-- [ ] `.github/copilot-instructions.md` apunta a los documentos clave del repo
+- [x] `README.md` en raíz con: propósito, mapa de estructura, quick-start, link a constitution
+- [x] `.github/copilot-instructions.md` apunta a los documentos clave del repo
 
 ### Referencias
 - `BK:.github/copilot-instructions.md`
@@ -71,7 +71,7 @@ para entender rápidamente qué hay aquí y cómo usarlo.
 
 ## US-003 — Template base para skills
 
-**Épica**: EP-1 | **Prioridad**: P0 | **SP**: 3 | **Estado**: `[ ]`
+**Épica**: EP-1 | **Prioridad**: P0 | **SP**: 3 | **Estado**: `[x]`
 
 ### Descripción
 Como desarrollador creando una nueva skill,  
@@ -79,10 +79,10 @@ quiero un template `_TEMPLATE/` con SKILL.md y references/overview.md rellenos d
 para generar skills consistentes sin partir de cero.
 
 ### Criterios de aceptación
-- [ ] Existe `skills/_TEMPLATE/SKILL.md` con frontmatter completo (name, description, triggers, non-triggers)
-- [ ] Existe `skills/_TEMPLATE/references/overview.md` con diagrama Mermaid de ejemplo
-- [ ] El template incluye secciones: Purpose, When to use, When NOT to use, Inputs, Steps, Expected outputs, Validation, Examples
-- [ ] El skill-generator puede usar este template como base
+- [x] Existe `skills/_TEMPLATE/SKILL.md` con frontmatter completo (name, description, triggers, non-triggers)
+- [x] Existe `skills/_TEMPLATE/references/overview.md` con diagrama Mermaid de ejemplo
+- [x] El template incluye secciones: Purpose, When to use, When NOT to use, Inputs, Steps, Expected outputs, Validation, Examples
+- [x] El skill-generator puede usar este template como base
 
 ### Referencias
 - `MC:.github/skills/clean-code-guardian/SKILL.md` — ejemplo de skill compleja
@@ -92,7 +92,7 @@ para generar skills consistentes sin partir de cero.
 
 ## US-004 — Template base para agentes
 
-**Épica**: EP-1 | **Prioridad**: P0 | **SP**: 2 | **Estado**: `[ ]`
+**Épica**: EP-1 | **Prioridad**: P0 | **SP**: 2 | **Estado**: `[x]`
 
 ### Descripción
 Como desarrollador creando un nuevo agente,  
@@ -100,9 +100,9 @@ quiero un template `_TEMPLATE.agent.md` como punto de partida,
 para mantener estructura y frontmatter consistentes.
 
 ### Criterios de aceptación
-- [ ] Existe `agents/_TEMPLATE.agent.md` con frontmatter: description, handoffs, skills referenciadas
-- [ ] Incluye secciones estándar: Pre-Execution Checks, Outline, Post-Execution
-- [ ] Existe ejemplo de handoff a otro agente
+- [x] Existe `agents/_TEMPLATE.agent.md` con frontmatter: description, handoffs, skills referenciadas
+- [x] Incluye secciones estándar: Pre-Execution Checks, Outline, Post-Execution
+- [x] Existe ejemplo de handoff a otro agente
 
 ### Referencias
 - `MC:.github/agents/_TEMPLATE.agent.md`
@@ -134,7 +134,7 @@ para mantener la calidad del catálogo sin revisión manual de cada PR.
 
 ## US-006 — Setup local del desarrollador
 
-**Épica**: EP-1 | **Prioridad**: P1 | **SP**: 2 | **Estado**: `[ ]`
+**Épica**: EP-1 | **Prioridad**: P1 | **SP**: 2 | **Estado**: `[x]`
 
 ### Descripción
 Como nuevo contributor,  
@@ -142,9 +142,9 @@ quiero ejecutar un único comando (`./setup.sh`) para tener el entorno listo,
 para no perder tiempo configurando hooks, dependencias Python y permisos.
 
 ### Criterios de aceptación
-- [ ] `setup.sh` instala hooks git, hace `pip install -e cli-tools/`, y verifica dependencias (Python ≥ 3.11)
-- [ ] Imprime resumen de lo instalado
-- [ ] Es idempotente (ejecutarlo dos veces no rompe nada)
+- [x] `setup.sh` instala hooks git, hace `pip install -e cli-tools/`, y verifica dependencias (Python ≥ 3.11)
+- [x] Imprime resumen de lo instalado
+- [x] Es idempotente (ejecutarlo dos veces no rompe nada)
 
 ### Referencias
 - `BK:setup.sh`
