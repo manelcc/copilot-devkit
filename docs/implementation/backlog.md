@@ -183,7 +183,7 @@ para que todos los equipos usen el mismo mecanismo y no haya deriva.
 
 ## US-060 — Migrar skills backend Kotlin/Ktor
 
-**Épica**: EP-7 | **Prioridad**: P0 | **SP**: 8 | **Estado**: `[ ]`
+**Épica**: EP-7 | **Prioridad**: P0 | **SP**: 8 | **Estado**: `[x]`
 
 ### Descripción
 Como desarrollador backend Kotlin,  
@@ -191,16 +191,16 @@ quiero encontrar todas las skills de mycardiochef disponibles en `skills/backend
 para usarlas en cualquier proyecto Ktor sin copiarlas manualmente.
 
 ### Criterios de aceptación
-- [ ] Skills migradas a `skills/backend/kotlin-ktor/`:
+- [x] Skills migradas a `skills/backend/kotlin-ktor/`:
   - `kotlin-mcp-server-generator/`
   - `logging-kotlin/`
   - `unit-testing-kotlin/`
   - `postgresql-crud/`
   - `mycardio-middleware-auth-flow/` → renombrada a `ktor-auth-flow/`
   - `middleware-webscraping-contract/`
-- [ ] Cada skill tiene frontmatter actualizado con namespace correcto
-- [ ] Referencias internas actualizadas (paths relativos válidos)
-- [ ] `references/overview.md` existe en cada una
+- [x] Cada skill tiene frontmatter actualizado con namespace correcto
+- [x] Referencias internas actualizadas (paths relativos válidos)
+- [x] `references/overview.md` existe en cada una
 
 ### Fuente
 > `MC:.github/skills/kotlin-mcp-server-generator/`  
