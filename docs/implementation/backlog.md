@@ -229,8 +229,8 @@ para orquestar tareas Ktor sin mantener copias locales en cada proyecto.
   - `payload-logging-trace.agent.md`
   - `x-correlation-id-strategy.agent.md`
   - `devops-agent.agent.md`
-- [x] Agente `project-orchestrator.agent.md` → `agents/global/`
-- [x] Agente `qa-testcase-agent.agent.md` → `agents/global/`
+- [x] Agente `devkit-project-orchestrator.agent.md` → `agents/global/`
+- [x] Agente `devkit-qa-testcase-agent.agent.md` → `agents/global/`
 - [x] Handoffs internos actualizados a las nuevas rutas
 
 ### Fuente
@@ -315,7 +315,7 @@ quiero un agente orquestador que sepa delegar al agente/skill correcto según el
 para no tener que saber qué skill invocar manualmente.
 
 ### Criterios de aceptación
-- [ ] `agents/global/project-orchestrator.agent.md` creado
+- [ ] `agents/global/devkit-project-orchestrator.agent.md` creado
 - [ ] Detecta el stack del proyecto (Android, iOS, KMP, Backend) y redirige al agente correcto
 - [ ] Incluye handoffs explícitos a todos los agentes de stack
 - [ ] Tiene criterios de activación claros
