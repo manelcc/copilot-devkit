@@ -246,7 +246,7 @@ para orquestar tareas Ktor sin mantener copias locales en cada proyecto.
 
 ## US-062 — Migrar instrucciones Ktor
 
-**Épica**: EP-7 | **Prioridad**: P0 | **SP**: 2 | **Estado**: `[ ]`
+**Épica**: EP-7 | **Prioridad**: P0 | **SP**: 2 | **Estado**: `[x]`
 
 ### Descripción
 Como desarrollador Ktor en cualquier proyecto,  
@@ -254,9 +254,9 @@ quiero que `instructions/backend-kotlin.instructions.md` contenga las reglas del
 para que Copilot genere código Ktor de calidad sin configuración adicional.
 
 ### Criterios de aceptación
-- [ ] `instructions/backend-kotlin.instructions.md` creado con `applyTo: "**/*.kt"` en proyectos backend
-- [ ] Incluye reglas de: estructura Ktor, HMAC auth, Flyway, Coroutines, documentación Kotlin
-- [ ] Referencia las skills de `backend/kotlin-ktor/` para tareas específicas
+- [x] `instructions/backend-kotlin.instructions.md` creado con `applyTo: "**/*.kt"` en proyectos backend
+- [x] Incluye reglas de: estructura Ktor, HMAC auth, Flyway, Coroutines, documentación Kotlin
+- [x] Referencia las skills de `backend/kotlin-ktor/` para tareas específicas
 
 ### Fuente
 > `MC:.github/copilot-instructions.md`  
