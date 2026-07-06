@@ -153,7 +153,7 @@ para no perder tiempo configurando hooks, dependencias Python y permisos.
 
 ## US-010 — Definición de la estrategia sync_skills
 
-**Épica**: EP-2 | **Prioridad**: P0 | **SP**: 5 | **Estado**: `[ ]`
+**Épica**: EP-2 | **Prioridad**: P0 | **SP**: 5 | **Estado**: `[x]`
 
 ### Descripción
 Como arquitecto del ecosistema,  
