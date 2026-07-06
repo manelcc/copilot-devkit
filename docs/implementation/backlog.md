@@ -214,7 +214,7 @@ para usarlas en cualquier proyecto Ktor sin copiarlas manualmente.
 
 ## US-061 — Migrar agentes backend
 
-**Épica**: EP-7 | **Prioridad**: P0 | **SP**: 5 | **Estado**: `[ ]`
+**Épica**: EP-7 | **Prioridad**: P0 | **SP**: 5 | **Estado**: `[x]`
 
 ### Descripción
 Como desarrollador backend,  
@@ -222,16 +222,16 @@ quiero encontrar los agentes especializados de mycardiochef en `agents/backend/k
 para orquestar tareas Ktor sin mantener copias locales en cada proyecto.
 
 ### Criterios de aceptación
-- [ ] Agentes migrados a `agents/backend/kotlin-ktor/`:
+- [x] Agentes migrados a `agents/backend/kotlin-ktor/`:
   - `kotlin-expert-pattern.agent.md`
   - `kotlin-server-quality.agent.md`
   - `kotlin-mcp-expert.agent.md`
   - `payload-logging-trace.agent.md`
   - `x-correlation-id-strategy.agent.md`
   - `devops-agent.agent.md`
-- [ ] Agente `project-orchestrator.agent.md` → `agents/global/`
-- [ ] Agente `qa-testcase-agent.agent.md` → `agents/global/`
-- [ ] Handoffs internos actualizados a las nuevas rutas
+- [x] Agente `project-orchestrator.agent.md` → `agents/global/`
+- [x] Agente `qa-testcase-agent.agent.md` → `agents/global/`
+- [x] Handoffs internos actualizados a las nuevas rutas
 
 ### Fuente
 > `MC:.github/agents/kotlin-expert-pattern.agent.md`  
