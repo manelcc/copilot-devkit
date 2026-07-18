@@ -12,6 +12,16 @@ tools:
   - problems
   - edit/editFiles
   - runCommands
+handoffs:
+  - target: "devkit-kotlin-expert-pattern"
+    when: "Design-pattern guidance or architecture decision is requested"
+    context: "Affected layer, constraints, and current code context"
+  - target: "devkit-devops"
+    when: "CI/CD pipeline generation or deployment automation is requested"
+    context: "Provider, registry, environment targets, and secret constraints"
+  - target: "Scrum Master"
+    when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
+    context: "Prompt del usuario, alcance MCP y cualquier contexto de producto o US disponible"
 ---
 
 # Kotlin MCP Server Development Expert

@@ -7,13 +7,12 @@ description: >
   routes features, fixes, reviews, US cycles and MRs to the correct conventions
   and global workflow skills.
 model: Claude Sonnet 4.6 (copilot)
-tools:
-  - search
-  - codebase
-  - usages
-  - problems
-  - edit/editFiles
-  - runCommands
+tools:vscode, execute, read, agent, edit, search, web, browser, todo
+[vscode, execute, read, agent, edit, search, web, browser, todo]
+handoffs:
+   - target: "Scrum Master"
+      when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
+      context: "User request, Python backend scope, and any available product or US context"
 ---
 
 # Devkit Backend Python Project Orchestrator

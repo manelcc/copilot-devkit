@@ -24,6 +24,9 @@ handoffs:
   - target: "devkit-clean-architecture-quality"
     when: "Architectural review across platforms: boundary violations, circular deps, expect/actual misuse"
     context: "Full project topology with shared/androidApp/iosApp structure"
+  - target: "Scrum Master"
+    when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
+    context: "User request, KMP scope, and any available product or US context"
 ---
 
 # Devkit KMP Expert

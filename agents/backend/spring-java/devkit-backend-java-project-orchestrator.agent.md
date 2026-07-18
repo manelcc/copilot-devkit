@@ -11,6 +11,10 @@ tools:
   - problems
   - edit/editFiles
   - runCommands
+handoffs:
+  - target: "Scrum Master"
+    when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
+    context: "User request, Java backend scope, and any available product or US context"
 ---
 
 # Devkit Backend Java Project Orchestrator

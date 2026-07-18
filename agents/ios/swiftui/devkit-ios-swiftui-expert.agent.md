@@ -28,6 +28,9 @@ handoffs:
   - target: "swiftui-testing-xctest"
     when: "La tarea requiere cobertura de testing unitario/UI con XCTest"
     context: "Escenarios críticos, criterios de aceptación y dependencias a mockear"
+  - target: "Scrum Master"
+    when: "La tarea es backlog refinement, epics, user stories, acceptance criteria, o sprint readiness"
+    context: "Prompt del usuario, alcance SwiftUI y cualquier contexto de producto o US disponible"
 ---
 
 # iOS SwiftUI Expert

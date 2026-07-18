@@ -24,6 +24,9 @@ handoffs:
   - target: "devkit-clean-code-guardian"
     when: "User requests code style review of CMP composables"
     context: "CMP screen files and scope (current branch)"
+    - target: "Scrum Master"
+        when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
+        context: "User request, CMP scope, and any available product or US context"
 ---
 
 # Devkit CMP Expert

@@ -37,7 +37,11 @@ Qué hace:
 
 ### 2 — Por proyecto (una vez por repo consumidor)
 
-Desde la **raíz del proyecto** que va a usar el devkit, ejecuta el setup de tecnología. Crea symlinks en `.github/` con los artefactos del stack.
+Desde la **raíz del proyecto** que va a usar el devkit, ejecuta el setup de tecnología.
+
+#### GitHub Copilot (VS Code)
+
+Crea symlinks en `.github/` con los artefactos del stack.
 
 ```bash
 # Android
@@ -73,6 +77,43 @@ Resultado en el proyecto:
 
 > Las skills globales (clean-code, git-workflow, etc.) ya están en `~/.copilot/skills/`
 > y no necesitan enlazarse por proyecto.
+
+#### Gemini (Android Studio)
+
+Añade `--gemini` a cualquier comando anterior. Crea la estructura nativa de Android Studio:
+
+```bash
+# Android + Gemini
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --android --gemini
+
+# Android + KMP + Gemini
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --android --kmp --gemini
+```
+
+Resultado adicional en el proyecto:
+```
+.agents/
+└── skills/        ← skills en estructura plana (.agents/skills/<name>/SKILL.md)
+AGENTS.md          ← instrucciones y definición de agentes cargadas en cada prompt
+```
+
+| Artefacto | Gemini | Cómo usarlo |
+|---|---|---|
+| Skills | `.agents/skills/` | `@skill-name` en el chat del Modo Agente |
+| Instructions | `AGENTS.md` | Se carga automáticamente en cada prompt |
+| Agents | `AGENTS.md` | Importado vía `@./` desde `.github/agents/` |
+| Prompts | Prompt Library (UI) | Gestión manual desde Android Studio |
+
+> `--gemini` puede combinarse con cualquier tech flag y es compatible con el setup
+> de Copilot. Los mismos ficheros sirven para ambos IDEs sin duplicar nada.
+
+#### Usar ambos IDEs en el mismo proyecto
+
+```bash
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --android --gemini
+```
+
+Un solo comando configura tanto Copilot como Gemini simultáneamente.
 
 ---
 

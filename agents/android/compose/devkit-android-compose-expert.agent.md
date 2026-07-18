@@ -28,6 +28,9 @@ handoffs:
   - target: "android-navigation-compose"
     when: "La tarea afecta navegacion de Compose (NavHost, rutas, argumentos, deep links, multiples back stacks)"
     context: "Mapa de destinos, contratos de argumentos, reglas de back/up y requisitos de persistencia de estado"
+  - target: "Scrum Master"
+    when: "La tarea es backlog refinement, epics, user stories, acceptance criteria, o sprint readiness"
+    context: "Prompt del usuario, alcance Android Compose y cualquier contexto de producto o US disponible"
 ---
 
 # Android Compose Expert

@@ -25,6 +25,9 @@ handoffs:
   - target: "devkit-development-lifecycle-orchestrator"
     when: "La tarea no es específica de Spring Java o necesita orchestración global de ciclo de vida"
     context: "Descripción de la tarea y contexto del proyecto"
+  - target: "Scrum Master"
+    when: "La tarea es backlog refinement, epics, user stories, acceptance criteria, o sprint readiness"
+    context: "Prompt del usuario, alcance Spring Java y cualquier contexto de producto o US disponible"
 ---
 
 # Spring Java Expert
