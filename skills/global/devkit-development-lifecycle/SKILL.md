@@ -263,35 +263,93 @@ Plan de implementación listo.
 
 > Gates can be individually disabled via project config. See Phase 0 activation rules.
 
+> ### 🚨 REGLA DE ORO — Phase D (HARD STOP)
+>
+> **AMBAS gates D.1 (clean-code) y D.2 (clean-architecture) son OBLIGATORIAS e INDEPENDIENTES.**
+> Ninguna puede ser omitida, reemplazada ni saltada porque la otra haya pasado o fallado.
+> La fase D NO termina hasta que se cumplan TODAS las condiciones siguientes:
+>
+> 1. **D.1 completado** → informe escrito en disco + todos los HIGH y MEDIUM resueltos.
+> 2. **D.2 completado** → informe escrito en disco + todos los HIGH y MEDIUM resueltos.
+> 3. **D.3 completado** (si aplica) → cobertura ≥ umbral del proyecto.
+> 4. **D.5 ejecutado** → desarrollador consultado sobre hallazgos LOW y code smells.
+>
+> El agente NO puede avanzar a Phase E ni Phase F hasta que las 4 condiciones anteriores se cumplan.
+> Si cualquier condición no está satisfecha, el agente debe volver a ejecutar el gate correspondiente.
+
 #### D.1 Execute Clean Code Analysis
 > Skip if `GATE_CLEAN_CODE=no`.
 
 1. Handoff to `devkit-clean-code-guardian` with scope: changed files only
 2. Wait for analysis report
-3. **MANDATORY PERSISTENCE — BLOCKING**: Write the report to `docs/quality/US-XXX-clean-code-report.md` (replace `XXX` with the real US id). Create `docs/quality/` if it does not exist. **The agent MUST NOT proceed to step 4 until this file is confirmed written on disk.**
-4. Check threshold: critical issues = 0, score ≥7.0
+3. **MANDATORY PERSISTENCE — BLOCKING**: Write the report to `docs/quality/clean-code/US-XXX-clean-code-report.md` (replace `XXX` with the real US id). Create `docs/quality/clean-code/` if it does not exist. **The agent MUST NOT proceed to step 4 until this file is confirmed written on disk.**
+4. Classify findings by severity:
+   - **HIGH**: Blocking. Must be fixed before any other gate runs.
+   - **MEDIUM**: Blocking. Must be fixed before advancing to D.5.
+   - **LOW / Code smell**: Non-blocking. Collected for D.5 consultation.
+5. **If HIGH or MEDIUM findings exist**:
+   - Show findings grouped by severity with file and line reference.
+   - **HARD STOP**: Do NOT proceed to D.2 until all HIGH and MEDIUM from D.1 are resolved.
+   - After fixes are applied, **re-execute D.1** (re-run the full clean-code analysis on changed files).
+   - Only when D.1 produces zero HIGH and zero MEDIUM findings → proceed to D.2.
 
 #### D.2 Execute Clean Architecture Analysis
 > Skip if `GATE_CLEAN_ARCH=no`.
+> **This gate is INDEPENDENT of D.1. Both MUST run regardless of each other's outcome.**
 
 1. Handoff to `devkit-clean-architecture-quality` (or `devkit-python-clean-architecture-quality` for Python projects) with scope: affected layers
 2. Wait for analysis report
-3. **MANDATORY PERSISTENCE — BLOCKING**: Write the report to `docs/quality/US-XXX-architecture-report.md` (replace `XXX` with the real US id). Create `docs/quality/` if it does not exist. **The agent MUST NOT proceed to step 4 until this file is confirmed written on disk.**
-4. Check threshold: critical violations = 0
+3. **MANDATORY PERSISTENCE — BLOCKING**: Write the report to `docs/quality/clean-architecture/US-XXX-architecture-report.md` (replace `XXX` with the real US id). Create `docs/quality/clean-architecture/` if it does not exist. **The agent MUST NOT proceed to step 4 until this file is confirmed written on disk.**
+4. Classify findings by severity:
+   - **HIGH**: Blocking. Must be fixed before advancing to D.3/D.5.
+   - **MEDIUM**: Blocking. Must be fixed before advancing to D.3/D.5.
+   - **LOW / Code smell**: Non-blocking. Collected for D.5 consultation.
+5. **If HIGH or MEDIUM findings exist**:
+   - Show findings grouped by severity with layer, file and line reference.
+   - **HARD STOP**: Do NOT proceed to D.3 or D.5 until all HIGH and MEDIUM from D.2 are resolved.
+   - After fixes are applied, **re-execute D.2** (re-run the full architecture analysis on affected layers).
+   - Only when D.2 produces zero HIGH and zero MEDIUM findings → proceed to D.3.
 
 #### D.3 Validate Test Coverage
 > Skip if `GATE_COVERAGE=no` or `UNIT_TESTS_ENABLED=no`.
 
 1. Run test suite with coverage tool (project-specific: JaCoCo, pytest-cov, etc.)
 2. Extract coverage percentage
-3. **MANDATORY PERSISTENCE — BLOCKING**: Append coverage section to `docs/quality/US-XXX-clean-code-report.md`. **The agent MUST NOT proceed to step 4 until the file is updated.**
+3. **MANDATORY PERSISTENCE — BLOCKING**: Append coverage section to `docs/quality/clean-code/US-XXX-clean-code-report.md`. **The agent MUST NOT proceed to step 4 until the file is updated.**
 4. Check threshold: coverage ≥`{{COVERAGE_THRESHOLD}}`
 
-#### D.4 Quality Gate Decision
-> **Pre-condition**: Files `docs/quality/US-XXX-clean-code-report.md` and `docs/quality/US-XXX-architecture-report.md` MUST exist before this step is evaluated. If either is missing, treat the corresponding gate as FAILED regardless of analysis outcome.
+#### D.4 Quality Gate Decision (interim)
+> **Pre-condition**: Files `docs/quality/clean-code/US-XXX-clean-code-report.md` and `docs/quality/clean-architecture/US-XXX-architecture-report.md` MUST exist before this step is evaluated. If either is missing, treat the corresponding gate as FAILED regardless of analysis outcome.
 
 - **If D.1 OR D.2 OR D.3 fails**: proceed to Phase E (Correction Loop)
-- **If all pass**: proceed to Phase F (E2E Tests)
+- **If all pass**: proceed to D.5
+
+#### D.5 Developer Consultation — LOW findings and Code Smells
+> **This step is MANDATORY whenever D.1 or D.2 produced LOW severity findings or code smells, even if all HIGH and MEDIUM were already resolved.**
+> Skip only if both D.1 and D.2 produced zero LOW findings and zero code smells.
+
+1. Collect all LOW and code-smell findings from both reports (`docs/quality/clean-code/US-XXX-clean-code-report.md` and `docs/quality/clean-architecture/US-XXX-architecture-report.md`).
+2. Present them to the developer grouped by source (clean-code / architecture):
+
+```
+📋 Hallazgos pendientes de decisión — LOW / Code Smells
+
+[Clean Code]
+  LOW  · <archivo>:<línea> — <descripción>
+  SMELL· <archivo>:<línea> — <descripción>
+
+[Arquitectura]
+  LOW  · <capa>/<archivo>:<línea> — <descripción>
+
+Para cada hallazgo, ¿qué quieres hacer?
+[F] Fijar ahora   [A] Aceptar (añadir a deuda técnica)   [I] Ignorar (justificación requerida)
+```
+
+3. For each finding, record the developer's decision in the corresponding report file.
+   - **Fijar**: Apply the fix, update the report marking it as resolved.
+   - **Aceptar**: Add a `TECH-DEBT` annotation to the report with a brief justification.
+   - **Ignorar**: Add an `IGNORED` annotation with the developer's justification; this must be explicit.
+4. **Only after ALL LOW and code-smell findings have a recorded decision** → proceed to Phase F.
 
 ---
 
@@ -312,23 +370,27 @@ Plan de implementación listo.
 
 ### Phase F: E2E Tests
 
+> **Pre-condition**: Phase D is fully complete — D.1 and D.2 both executed, all HIGH and MEDIUM resolved, and D.5 developer consultation done for all LOW/code-smell findings. If any of these are incomplete, return to Phase D before entering Phase F.
+
 > Skip this phase entirely if `E2E_ENABLED=no` (from project config). If `E2E_ENABLED=sí`, execute without asking the user — it is mandatory.
 > If config is missing or `E2E_ENABLED` is not set, ask the user (legacy behavior below).
 
 #### F.1 Generate Quality Summary
 Create summary with:
-- Clean-code score
-- Architecture compliance status
+- Clean-code score (from D.1 final re-run)
+- Architecture compliance status (from D.2 final re-run)
 - Test coverage percentage
+- LOW/code-smell decisions (fixed / accepted as debt / ignored with justification)
 - Overall quality grade
 
 #### F.2 Conditional: Ask User Only If No Config
 If project config does NOT disable E2E:
 ```
 Quality gates passed:
-✓ Clean-code: 8.5/10
-✓ Architecture: Compliant
+✓ Clean-code: 8.5/10  (HIGH: 0, MEDIUM: 0)
+✓ Architecture: Compliant  (HIGH: 0, MEDIUM: 0)
 ✓ Coverage: 52%
+ℹ LOW/Code-smells: <N> hallazgos con decisión registrada
 
 ¿Deseas ejecutar pruebas E2E?
 [Sí] [No]
@@ -601,7 +663,8 @@ Show the final summary:
   Artefactos generados:
   · docs/plan-implementation/US-XXX-implementation-plan.md
   · docs/test-cases/US-XXX-test-cases.md
-  · docs/quality/US-XXX-*.md
+  · docs/quality/clean-code/US-XXX-clean-code-report.md
+  · docs/quality/clean-architecture/US-XXX-architecture-report.md
   [· docs/api/openapi.yaml + US-XXX-postman-collection.json]
   · docs/mr/US-XXX-description.md
   [· <ruta-skill> (scope: <A|B|C>)]
@@ -618,8 +681,8 @@ Show the final summary:
   - `docs/test-cases/US-XXX-test-cases.md`
   - `docs/smoke-test/US-XXX-smoke-suite.md`
 - **Quality artifacts**:
-  - `docs/quality/US-XXX-clean-code-report.md`
-  - `docs/quality/US-XXX-architecture-report.md`
+  - `docs/quality/clean-code/US-XXX-clean-code-report.md`
+  - `docs/quality/clean-architecture/US-XXX-architecture-report.md`
   - Optional: `docs/quality/US-XXX-e2e-instructions.md`
 - **MR/PR artifacts**:
   - `docs/mr/US-XXX-description.md`

@@ -105,7 +105,12 @@ If checks pass, invoke `devkit-development-lifecycle` skill with US identifier a
 - **Phase A**: Planning with expert consultation (architecture, patterns, quality)
 - **Phase B**: Implementation according to plan
 - **Phase C**: Unit test generation (coverage ≥40%)
-- **Phase D**: Quality gates (clean-code, architecture, coverage)
+- **Phase D**: Quality gates (clean-code **AND** clean-architecture — **ambas obligatorias**; HIGH y MEDIUM bloqueantes; LOW/code-smell → consulta desarrollador en D.5)
+  - **D.1 Clean Code**: MUST run. HIGH/MEDIUM → HARD STOP + fix + re-run. Zero HIGH/MEDIUM required to advance to D.2.
+  - **D.2 Clean Architecture**: MUST run (independent of D.1). HIGH/MEDIUM → HARD STOP + fix + re-run. Zero HIGH/MEDIUM required to advance to D.3.
+  - **D.3 Coverage**: validate threshold.
+  - **D.4 Gate decision**: both reports must exist; any failure → Phase E.
+  - **D.5 LOW/smell consultation**: mandatory if any LOW or code-smell found in D.1 or D.2; developer decides fix/debt/ignore for each.
 - **Phase E**: Correction loop if quality gates fail (max 3 iterations)
 - **Phase F**: E2E tests (optional, user decision)
 - **Phase G**: Smoke tests (optional, user decision)
@@ -117,8 +122,8 @@ For detailed phase logic, see `skills/global/devkit-development-lifecycle/SKILL
 
 After completing the cycle:
 1. **MANDATORY — Confirm quality gate artifacts are persisted in `docs/`:**
-   - `docs/quality/US-XXX-clean-code-report.md` — **MUST exist** (D.1 gate). If missing → gate = FAILED, commits BLOCKED.
-   - `docs/quality/US-XXX-architecture-report.md` — **MUST exist** (D.2 gate). If missing → gate = FAILED, commits BLOCKED.
+   - `docs/quality/clean-code/US-XXX-clean-code-report.md` — **MUST exist** (D.1 gate). If missing → gate = FAILED, commits BLOCKED.
+   - `docs/quality/clean-architecture/US-XXX-architecture-report.md` — **MUST exist** (D.2 gate). If missing → gate = FAILED, commits BLOCKED.
 2. Confirm commits are executed (or user has manual control).
 3. Confirm MR/PR description is generated and ready for publication.
 4. Ask the user if they want to proceed with branch push and MR/PR creation.
@@ -165,10 +170,22 @@ User: "Sí"
 
 Agent: [Phase B] Implementando según plan...
 Agent: [Phase C] Generando tests unitarios...
-Agent: [Phase D.1] Clean-code: ✓ Score 8.5
-Agent: [Phase D.2] Architecture: ✓ Compliant
+Agent: [Phase D.1] Clean-code análisis ejecutado → HIGH: 0, MEDIUM: 2, LOW: 1
+Agent: 🚨 HARD STOP D.1 — MEDIUM findings deben resolverse antes de continuar a D.2:
+  · MEDIUM · UserService.kt:42 — función >30 líneas (extrae lógica de validación)
+  · MEDIUM · UserController.kt:18 — magic number (reemplaza por constante)
+Agent: ¿Aplico las correcciones automáticamente? [Sí / Manual]
+User: "Sí"
+Agent: Correcciones aplicadas. Re-ejecutando D.1...
+Agent: [Phase D.1 re-run] Clean-code: ✓ HIGH: 0, MEDIUM: 0, LOW: 1 — avanzando a D.2
+Agent: [Phase D.2] Arquitectura análisis ejecutado → HIGH: 0, MEDIUM: 0, LOW: 0 ✓
 Agent: [Phase D.3] Coverage: ✓ 52%
-Agent: Quality gates pasados. ¿Deseas ejecutar pruebas E2E?
+Agent: [Phase D.5] Hallazgos LOW pendientes de decisión:
+  [Clean Code] LOW · UserService.kt:88 — nombre de variable poco descriptivo
+  ¿Qué quieres hacer? [F] Fijar  [A] Aceptar deuda  [I] Ignorar
+User: "Aceptar deuda"
+Agent: Registrado como TECH-DEBT en el informe. Phase D completada.
+Agent: Quality gates passed. ¿Deseas ejecutar pruebas E2E?
 
 User: "Sí"
 
