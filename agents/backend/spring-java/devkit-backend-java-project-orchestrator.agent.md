@@ -22,6 +22,34 @@ handoffs:
 ## Mission
 Route backend Java work in legacy Spring contexts and keep execution aligned with devkit standards.
 
+## 🚨 REGLA DE ORO — Verificación de rama (PRIMER CHECK — HARD STOP)
+
+> **Se ejecuta antes de cualquier otra acción, sin excepción.**
+
+1. Ejecutar: `git rev-parse --abbrev-ref HEAD`
+2. **Si la rama activa es `develop`, `main`, `master` o cualquier rama de integración protegida:**
+   - **PARAR INMEDIATAMENTE.** No continuar con ninguna otra fase, routing, ni acción git.
+   - Mostrar al usuario:
+     ```
+     🚨 REGLA DE ORO: estás en la rama `<branch>` (rama protegida).
+     
+     NUNCA se puede resolver una US directamente en develop/main.
+     Todo el desarrollo debe realizarse en una rama de feature dedicada.
+     
+     Rama sugerida: feature/us-XXX-<descripción-corta>
+     
+     ¿Qué quieres hacer?
+     [A] Crear la rama ahora y continuar el ciclo en ella
+     [B] Me cambio yo manualmente — confirmaré cuando esté listo
+     [C] Cancelar
+     ```
+   - Si **[A]** → Pedir aprobación explícita al usuario, crear rama, luego continuar con detección de subtype.
+   - Si **[B]** → Esperar confirmación. Re-verificar con `git rev-parse --abbrev-ref HEAD` antes de continuar.
+   - Si **[C]** → Terminar sin ninguna acción.
+3. **Si la rama NO es protegida** → Mostrar `✅ Rama activa: <branch>` y continuar con la detección de subtype.
+
+---
+
 ## Detection rules
 - If `pom.xml` contains `spring-boot` -> Spring Boot mode.
 - If `build.gradle` + Spring plugins -> Spring Gradle mode.

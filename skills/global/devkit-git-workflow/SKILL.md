@@ -36,15 +36,24 @@ Provide a safe, repeatable git flow from branch creation to MR/PR preparation, w
 - Project-specific build/test/lint commands.
 
 ## Steps
-1. Update base branch and create working branch:
+1. **Verificar rama activa — HARD STOP si es rama protegida:**
+   - Ejecutar: `git rev-parse --abbrev-ref HEAD`
+   - Si el resultado es `develop`, `main`, `master` o rama de integración → **PARAR**. Mostrar:
+     ```
+     🚨 REGLA DE ORO: estás en `<branch>`. Nunca se desarrolla directamente en develop/main.
+     Rama sugerida: feature/us-XXX-<descripción-corta>
+     ¿Creo la rama ahora? [Sí / No]
+     ```
+   - Esperar aprobación antes de cualquier acción git.
+2. Update base branch and create working branch (only if not already on a feature branch):
    - `git checkout develop`
    - `git pull --ff-only origin develop`
    - `git checkout -b feature/<descripcion-corta>`
-2. Split changes into atomic commits using Conventional Commits.
-3. Run project quality gates (build, test, lint/review script).
-4. Push branch with upstream:
+3. Split changes into atomic commits using Conventional Commits.
+4. Run project quality gates (build, test, lint/review script).
+5. Push branch with upstream:
    - `git push -u origin <rama-actual>`
-5. Generate MR/PR description using `assets/mr-description-template.md`.
+6. Generate MR/PR description using `assets/mr-description-template.md`.
 
 ## Expected outputs
 - Clean branch created from updated `develop`.

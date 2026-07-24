@@ -27,6 +27,34 @@ Route backend Python tasks based on detected framework and project structure.
 
 > Estas reglas tienen prioridad sobre cualquier otra instrucción del agente.
 
+### 🚨 REGLA DE ORO #0 — NUNCA trabajar en develop/main (HARD STOP)
+
+**Esta regla se comprueba ANTES de cualquier otra acción**, incluyendo leer ficheros de código, crear ficheros, analizar la US, o ejecutar cualquier comando git.
+
+1. Ejecutar: `git rev-parse --abbrev-ref HEAD`
+2. **Si la rama activa es `develop`, `main`, `master` o cualquier rama de integración protegida:**
+   - **PARAR INMEDIATAMENTE. No realizar ninguna acción posterior.**
+   - Mostrar al usuario:
+     ```
+     🚨 REGLA DE ORO: estás en la rama `<branch>` (rama protegida).
+     
+     NUNCA se puede resolver una US directamente en develop/main.
+     Todo el desarrollo debe realizarse en una rama de feature dedicada.
+     
+     Rama sugerida: feature/us-XXX-<descripción-corta>
+     
+     ¿Qué quieres hacer?
+     [A] Crear la rama ahora y continuar el ciclo en ella
+     [B] Me cambio yo manualmente — confirmaré cuando esté listo
+     [C] Cancelar
+     ```
+   - Si **[A]** → Aplicar el protocolo de aprobación git de abajo, crear rama, luego continuar.
+   - Si **[B]** → Esperar confirmación. Re-verificar con `git rev-parse --abbrev-ref HEAD` antes de continuar.
+   - Si **[C]** → Terminar sin ninguna acción.
+3. **Si la rama NO es protegida** → Mostrar `✅ Rama activa: <branch>` y continuar normalmente.
+
+---
+
 | # | Regla | Acción prohibida sin permiso explícito |
 |---|---|---|
 | 🥇 1 | **NUNCA hacer `git commit`** sin pedir permiso primero al usuario | `git commit`, `git commit -m`, `--amend` |

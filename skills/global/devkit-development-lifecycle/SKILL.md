@@ -41,6 +41,54 @@ Execute the complete development lifecycle for a User Story with planning, exper
 
 ---
 
+### Phase -1: 🚨 REGLA DE ORO — Verificación de rama (HARD STOP)
+
+> **Esta fase es la primera en ejecutarse, siempre, sin excepción. Ninguna otra fase puede comenzar hasta que esta haya pasado.**
+
+#### -1.1 Comprobar rama activa
+
+Ejecutar: `git rev-parse --abbrev-ref HEAD`
+
+#### -1.2 Evaluar resultado
+
+**Si la rama activa es `develop`, `main`, `master`, o cualquier rama de integración protegida:**
+
+→ **PARAR INMEDIATAMENTE. No continuar con ninguna fase posterior.**
+
+Mostrar al usuario:
+
+```
+🚨 REGLA DE ORO VIOLADA
+
+Rama actual: `<branch>` — rama de integración protegida.
+
+NUNCA se puede resolver una US directamente en develop/main.
+Todo el desarrollo debe realizarse en una rama de feature dedicada.
+
+Rama sugerida para este trabajo:
+  feature/us-XXX-<descripción-corta>
+
+¿Qué quieres hacer?
+[A] Crear la rama ahora y continuar el ciclo en ella
+[B] Me cambio yo manualmente — avísame cuando confirme la rama
+[C] Cancelar
+```
+
+- Si **[A]** → Mostrar el protocolo obligatorio de aprobación git, crear la rama si el usuario aprueba, y luego continuar desde Phase 0 ya en la rama de feature.
+- Si **[B]** → Esperar a que el usuario confirme que está en la rama correcta. Volver a verificar con `git rev-parse --abbrev-ref HEAD` antes de continuar.
+- Si **[C]** → Terminar el ciclo.
+
+**Si la rama activa es una rama de feature, fix, chore, refactor o cualquier otra rama no protegida:**
+
+→ Mostrar confirmación y continuar:
+```
+✅ Rama activa: `<branch>` — correcta para desarrollo.
+```
+
+→ Proceder a Phase 0.
+
+---
+
 ### Phase 0: Load Project Config
 
 > **This phase runs before everything else.** It reads `.github/devkit-project.config.md` and configures which phases are active and with which settings.
