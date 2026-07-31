@@ -1,7 +1,13 @@
 ---
 name: "devkit-x-correlation-id-strategy"
 description: "Use when: implementar estrategia X-Correlation-ID, trazar flujos multi-request, propagar correlation headers entre servicios, estandarizar request/correlation IDs en API y logs."
-tools: ["search", "codebase", "usages", "problems", "edit/editFiles", "runCommands"]
+tools:
+  - search
+  - codebase
+  - usages
+  - problems
+  - edit/editFiles
+  - runCommands
 ---
 
 # devkit-x-correlation-id-strategy

@@ -1,7 +1,13 @@
 ---
 name: "devkit-payload-logging-trace"
 description: "Use when: implementar logging de payloads request/response JSON, activar trazas en debug/stage, auditar logs de integraciones internas, y mejorar troubleshooting HTTP sin exponer secretos."
-tools: ["search", "codebase", "usages", "problems", "edit/editFiles", "runCommands"]
+tools:
+  - search
+  - codebase
+  - usages
+  - problems
+  - edit/editFiles
+  - runCommands
 ---
 
 # devkit-payload-logging-trace

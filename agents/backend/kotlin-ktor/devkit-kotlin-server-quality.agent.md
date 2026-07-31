@@ -2,7 +2,13 @@
 name: "devkit-kotlin-server-quality"
 description: "Portable Kotlin server-side code quality auditor with prioritized, evidence-based findings."
 model: Claude Sonnet 4.6 (copilot)
-tools: ["search", "codebase", "usages", "problems", "edit/editFiles", "runCommands"]
+tools:
+  - search
+  - codebase
+  - usages
+  - problems
+  - edit/editFiles
+  - runCommands
 ---
 
 # devkit-kotlin-server-quality

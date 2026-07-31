@@ -1,4 +1,5 @@
 ---
+name: "devkit-development-lifecycle-orchestrator"
 description: >
   Stack-agnostic lifecycle orchestrator. Use this ONLY when there is no stack-specific
   project orchestrator for the current project. If you are working in a Python project,
@@ -7,6 +8,23 @@ description: >
   Orchestrates planning, expert consultation, quality gates, and interactive user decisions
   for any User Story. Also runs the project config wizard when
   .github/devkit-project.config.md is missing or the user requests lifecycle configuration.
+model: Claude Sonnet 4.6 (copilot)
+tools:
+  - vscode/memory
+  - vscode/askQuestions
+  - vscode/toolSearch
+  - execute/runInTerminal
+  - execute/getTerminalOutput
+  - read/readFile
+  - read/problems
+  - agent/runSubagent
+  - edit/editFiles
+  - edit/createFile
+  - search/codebase
+  - search/fileSearch
+  - search/textSearch
+  - search/listDirectory
+  - search/changes
 handoffs:
   - devkit-clean-architecture-quality
   - devkit-clean-code-guardian
@@ -102,8 +120,8 @@ If checks pass, invoke `devkit-development-lifecycle` skill with US identifier a
 ### Phase A: Planning and Pre-Analysis
 
 #### A.1 Receive User Story
-- **Phase A**: Planning with expert consultation (architecture, patterns, quality)
-- **Phase B**: Implementation according to plan
+- **Phase A**: Planning with expert consultation (architecture, patterns, quality) → **ends with HARD STOP A.1.4**: show full plan to user, wait for implementation mode choice [A/B/C] — NO CODE before user responds
+- **Phase B**: Implementation — starts ONLY after user chooses mode in A.1.4
 - **Phase C**: Unit test generation (coverage ≥40%)
 - **Phase D**: Quality gates (clean-code **AND** clean-architecture — **ambas obligatorias**; HIGH y MEDIUM bloqueantes; LOW/code-smell → consulta desarrollador en D.5)
   - **D.1 Clean Code**: MUST run. HIGH/MEDIUM → HARD STOP + fix + re-run. Zero HIGH/MEDIUM required to advance to D.2.
@@ -116,6 +134,7 @@ If checks pass, invoke `devkit-development-lifecycle` skill with US identifier a
 - **Phase G**: Smoke tests (optional, user decision)
 - **Phase H**: Atomic commits (user decision)
 - **Phase I**: MR/PR description generation
+- **Phase J**: Knowledge capture (ALWAYS ask — never skip) → ¿Capturar como skill reutilizable? Scope A (local), B (stack), C (global)
 
 For detailed phase logic, see `skills/global/devkit-development-lifecycle/SKILL
 ## Post-Execution
@@ -127,9 +146,14 @@ After completing the cycle:
 2. Confirm commits are executed (or user has manual control).
 3. Confirm MR/PR description is generated and ready for publication.
 4. Ask the user if they want to proceed with branch push and MR/PR creation.
-5. **Optional**: Ask if they want to generate a reusable feature-skill from this implementation:
-   - If yes → Run: `devtools scaffold skill <feature-name> <stack-namespace>`
-   - Example: `devtools scaffold skill user-authentication backend/kotlin-ktor`
+5. **MANDATORY — Phase J — Knowledge Capture**: Always ask, without exception:
+   ```
+   ¿Quieres capturar el conocimiento de esta feature como skill reutilizable?
+   [Sí] [No]
+   ```
+   - If **Sí** → follow Phase J steps from `devkit-development-lifecycle` skill (ask scope A/B/C, then handoff to `skill-generator`)
+   - If **No** → skip and show final summary
+   - **NEVER skip this question**, even if the implementation was trivial
    - Persists at: `skills/<stack-namespace>/<feature-name>/SKILL.md`
 
 ---

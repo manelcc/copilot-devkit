@@ -4,6 +4,16 @@ description: >
   Generates structured unit, smoke, and regression test cases from user stories,
   producing actionable QA artifacts for implementation and validation cycles.
 model: Claude Sonnet 4.6 (copilot)
+tools:
+  - search
+  - codebase
+  - usages
+  - problems
+  - read/readFile
+  - edit/editFiles
+  - edit/createFile
+  - search/fileSearch
+  - search/textSearch
 handoffs:
   - target: "devkit-backend-kotlin-project-orchestrator"
     when: "Generated test cases need implementation planning in Kotlin/Ktor"

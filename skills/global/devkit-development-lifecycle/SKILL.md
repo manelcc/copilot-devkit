@@ -201,21 +201,51 @@ Execute in parallel:
    - `docs/test-cases/US-XXX-test-cases.md`
    - `docs/smoke-test/US-XXX-smoke-suite.md`
 
----
+#### A.1.4 Present Plan to User — HARD STOP (MANDATORY)
 
-### Phase B: Implementation
+> **NINGUNA línea de código puede escribirse hasta que este paso se complete.**
+> El agente DEBE mostrar el plan completo y recibir respuesta explícita del usuario antes de continuar.
 
-#### B.0 Ask User: Implementation Mode
-Before any code is written, ask the user how they want the implementation handled:
+1. Display the full implementation plan to the user:
 
 ```
-Plan de implementación listo.
-¿Cómo quieres gestionar la implementación?
+📋 Plan de implementación para US-XXX — <título>
 
+Expertos consultados:
+  · Arquitectura: <recomendación principal>
+  · Patrones: <patrón seleccionado + justificación>
+  · Calidad: <deuda técnica detectada>
+
+Pasos de implementación:
+  1. <paso 1>
+  2. <paso 2>
+  ...
+
+Estrategia de tests:
+  · Framework: <framework>
+  · Cobertura objetivo: ≥<threshold>%
+  · Test cases: docs/test-cases/US-XXX-test-cases.md
+
+Artefacto guardado: docs/plan-implementation/US-XXX-implementation-plan.md
+
+---
+¿Cómo quieres gestionar la implementación?
 [A] Automático   — El agente implementa todo según el plan
 [B] Manual       — Tú implementas, el agente supervisa y valida
 [C] Híbrido      — Elige qué partes implementa el agente y cuáles tú
 ```
+
+2. **WAIT for the user's choice [A], [B], or [C].** Do NOT proceed to Phase B until the user responds.
+3. Pass the user's choice to Phase B.
+
+---
+
+### Phase B: Implementation
+
+#### B.0 Implementation Mode (resolved in A.1.4)
+> The implementation mode was selected by the user in Phase A.1.4.
+> Execute the corresponding section below based on that choice.
+> **If no choice was received yet — STOP. Return to A.1.4 and wait for user input.**
 
 #### B.1 If Automatic
 1. Implement all steps from plan A.1.2 sequentially

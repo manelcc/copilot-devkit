@@ -4,8 +4,33 @@ description: >
   Orchestrates iOS tasks by detecting SwiftUI vs UIKit and routing work to the
   correct iOS implementation path.
 model: Claude Sonnet 4.6 (copilot)
-tools:vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, todo
-[vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, todo]
+tools:
+  - vscode/memory
+  - vscode/askQuestions
+  - vscode/toolSearch
+  - vscode/installExtension
+  - vscode/runCommand
+  - execute/runInTerminal
+  - execute/runTests
+  - execute/getTerminalOutput
+  - execute/sendToTerminal
+  - execute/killTerminal
+  - read/readFile
+  - read/problems
+  - read/terminalLastCommand
+  - read/terminalSelection
+  - agent/runSubagent
+  - edit/editFiles
+  - edit/createFile
+  - edit/createDirectory
+  - search/codebase
+  - search/fileSearch
+  - search/textSearch
+  - search/listDirectory
+  - search/changes
+  - search/usages
+  - web/fetch
+  - web/githubTextSearch
 handoffs:
   - target: "Scrum Master"
     when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"

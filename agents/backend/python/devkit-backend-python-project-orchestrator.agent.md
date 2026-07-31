@@ -7,8 +7,33 @@ description: >
   routes features, fixes, reviews, US cycles and MRs to the correct conventions
   and global workflow skills.
 model: Claude Sonnet 4.6 (copilot)
-tools:vscode, execute, read, agent, edit, search, web, browser, todo
-[vscode, execute, read, agent, edit, search, web, browser, todo]
+tools:
+  - vscode/memory
+  - vscode/askQuestions
+  - vscode/toolSearch
+  - vscode/installExtension
+  - vscode/runCommand
+  - execute/runInTerminal
+  - execute/runTests
+  - execute/getTerminalOutput
+  - execute/sendToTerminal
+  - execute/killTerminal
+  - read/readFile
+  - read/problems
+  - read/terminalLastCommand
+  - read/terminalSelection
+  - agent/runSubagent
+  - edit/editFiles
+  - edit/createFile
+  - edit/createDirectory
+  - search/codebase
+  - search/fileSearch
+  - search/textSearch
+  - search/listDirectory
+  - search/changes
+  - search/usages
+  - web/fetch
+  - web/githubTextSearch
 handoffs:
    - target: "Scrum Master"
       when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
