@@ -9,22 +9,8 @@ description: >
   for any User Story. Also runs the project config wizard when
   .github/devkit-project.config.md is missing or the user requests lifecycle configuration.
 model: Claude Sonnet 4.6 (copilot)
-tools:
-  - vscode/memory
-  - vscode/askQuestions
-  - vscode/toolSearch
-  - execute/runInTerminal
-  - execute/getTerminalOutput
-  - read/readFile
-  - read/problems
-  - agent/runSubagent
-  - edit/editFiles
-  - edit/createFile
-  - search/codebase
-  - search/fileSearch
-  - search/textSearch
-  - search/listDirectory
-  - search/changes
+tools:vscode, execute, read, agent, edit, search, web, browser, 'mcp-server-code-review-local/*', 'microsoft/azure-devops-mcp/*', todo
+[vscode, execute, read, agent, edit, search, web, browser, 'mcp-server-code-review-local/*', todo]
 handoffs:
   - devkit-clean-architecture-quality
   - devkit-clean-code-guardian
