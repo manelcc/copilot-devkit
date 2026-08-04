@@ -8,32 +8,58 @@ description: >
   and global workflow skills.
 model: Claude Sonnet 4.6 (copilot)
 tools:
-  - vscode/memory
-  - vscode/askQuestions
-  - vscode/toolSearch
   - vscode/installExtension
+  - vscode/memory
+  - vscode/newWorkspace
+  - vscode/resolveMemoryFileUri
   - vscode/runCommand
+  - vscode/vscodeAPI
+  - vscode/extensions
+  - vscode/toolSearch
+  - vscode/askQuestions
+  - execute/runNotebookCell
+  - execute/getTerminalOutput
+  - execute/killTerminal
+  - execute/sendToTerminal
+  - execute/runTask
+  - execute/createAndRunTask
   - execute/runInTerminal
   - execute/runTests
-  - execute/getTerminalOutput
-  - execute/sendToTerminal
-  - execute/killTerminal
-  - read/readFile
+  - execute/testFailure
+  - read/getNotebookSummary
   - read/problems
-  - read/terminalLastCommand
+  - read/readFile
+  - read/viewImage
+  - read/readNotebookCellOutput
   - read/terminalSelection
+  - read/terminalLastCommand
+  - read/getTaskOutput
   - agent/runSubagent
-  - edit/editFiles
-  - edit/createFile
   - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - search/changes
   - search/codebase
   - search/fileSearch
-  - search/textSearch
   - search/listDirectory
-  - search/changes
+  - search/textSearch
   - search/usages
   - web/fetch
   - web/githubTextSearch
+  - browser/openBrowserPage
+  - browser/readPage
+  - browser/screenshotPage
+  - browser/navigatePage
+  - browser/clickElement
+  - browser/dragElement
+  - browser/hoverElement
+  - browser/typeInPage
+  - browser/runPlaywrightCode
+  - browser/handleDialog
+  - todo
 handoffs:
    - target: "Scrum Master"
       when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"

@@ -6,7 +6,59 @@ description: >
   "valida el backlog", "qué le falta a esta US", "está ready esta historia", "prepara el sprint backlog",
   "no cumple la DoD", "ayúdame a refinar", "necesito épicas para", "desglosa este requisito en historias".
   Do NOT use for code generation, architecture design, infrastructure setup, or CI/CD pipelines.
-tools: [vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, perplexity-mcp/perplexity_ask, perplexity-mcp/perplexity_compute, perplexity-mcp/perplexity_doctor, perplexity-mcp/perplexity_export, perplexity-mcp/perplexity_get_research, perplexity-mcp/perplexity_hydrate_cloud_entry, perplexity-mcp/perplexity_list_researches, perplexity-mcp/perplexity_login, perplexity-mcp/perplexity_models, perplexity-mcp/perplexity_reason, perplexity-mcp/perplexity_research, perplexity-mcp/perplexity_retrieve, perplexity-mcp/perplexity_search, perplexity-mcp/perplexity_sync_cloud, todo]
+tools:
+  - vscode/installExtension
+  - vscode/memory
+  - vscode/newWorkspace
+  - vscode/resolveMemoryFileUri
+  - vscode/runCommand
+  - vscode/vscodeAPI
+  - vscode/extensions
+  - vscode/toolSearch
+  - vscode/askQuestions
+  - execute/runNotebookCell
+  - execute/getTerminalOutput
+  - execute/killTerminal
+  - execute/sendToTerminal
+  - execute/runTask
+  - execute/createAndRunTask
+  - execute/runInTerminal
+  - execute/runTests
+  - execute/testFailure
+  - read/getNotebookSummary
+  - read/problems
+  - read/readFile
+  - read/viewImage
+  - read/readNotebookCellOutput
+  - read/terminalSelection
+  - read/terminalLastCommand
+  - read/getTaskOutput
+  - agent/runSubagent
+  - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - search/changes
+  - search/codebase
+  - search/fileSearch
+  - search/listDirectory
+  - search/textSearch
+  - search/usages
+  - web/fetch
+  - web/githubTextSearch
+  - browser/openBrowserPage
+  - browser/readPage
+  - browser/screenshotPage
+  - browser/navigatePage
+  - browser/clickElement
+  - browser/dragElement
+  - browser/hoverElement
+  - browser/typeInPage
+  - browser/runPlaywrightCode
+  - browser/handleDialog
+  - todo
 model: "Claude Sonnet 4.5 (copilot)"
 argument-hint: "Describe qué necesitas: crear épicas, redactar historias, validar backlog, refinar un ítem..."
 ---

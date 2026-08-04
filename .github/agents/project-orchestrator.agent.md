@@ -5,8 +5,59 @@ description: >
   routes to the appropriate specialized agent or skill, and coordinates multi-agent workflows.
   The single entry point when the user is unsure which agent to use.
 model: Claude Sonnet 4.6 (copilot)
-tools:vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/toolSearch, vscode/askQuestions, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, todo
-[vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/toolSearch, vscode/askQuestions, execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubTextSearch, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, postgresql-mcp/pgsql_bulk_load_csv, postgresql-mcp/pgsql_connect, postgresql-mcp/pgsql_db_context, postgresql-mcp/pgsql_describe_csv, postgresql-mcp/pgsql_disconnect, postgresql-mcp/pgsql_get_dashboard_context, postgresql-mcp/pgsql_get_dashboard_guidance, postgresql-mcp/pgsql_get_dashboard_metric_data, postgresql-mcp/pgsql_get_dashboard_query_analysis, postgresql-mcp/pgsql_get_dashboard_server_config, postgresql-mcp/pgsql_get_dashboard_sessions, postgresql-mcp/pgsql_get_dashboard_wait_analysis, postgresql-mcp/pgsql_get_metrics_group, postgresql-mcp/pgsql_get_server_capabilities, postgresql-mcp/pgsql_list_connection_profiles, postgresql-mcp/pgsql_list_dashboard_sessions, postgresql-mcp/pgsql_list_databases, postgresql-mcp/pgsql_modify, postgresql-mcp/pgsql_open_script, postgresql-mcp/pgsql_query, postgresql-mcp/pgsql_query_plan, postgresql-mcp/pgsql_visualize_schema, cweijan.vscode-postgresql-client2/dbclient-getDatabases, cweijan.vscode-postgresql-client2/dbclient-getTables, cweijan.vscode-postgresql-client2/dbclient-executeQuery, ms-ossdata.vscode-pgsql/pgsql_migration_oracle_app, ms-ossdata.vscode-pgsql/pgsql_migration_show_report, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, todo]
+tools:
+  - vscode/installExtension
+  - vscode/memory
+  - vscode/newWorkspace
+  - vscode/resolveMemoryFileUri
+  - vscode/runCommand
+  - vscode/vscodeAPI
+  - vscode/extensions
+  - vscode/toolSearch
+  - vscode/askQuestions
+  - execute/runNotebookCell
+  - execute/getTerminalOutput
+  - execute/killTerminal
+  - execute/sendToTerminal
+  - execute/runTask
+  - execute/createAndRunTask
+  - execute/runInTerminal
+  - execute/runTests
+  - execute/testFailure
+  - read/getNotebookSummary
+  - read/problems
+  - read/readFile
+  - read/viewImage
+  - read/readNotebookCellOutput
+  - read/terminalSelection
+  - read/terminalLastCommand
+  - read/getTaskOutput
+  - agent/runSubagent
+  - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - search/changes
+  - search/codebase
+  - search/fileSearch
+  - search/listDirectory
+  - search/textSearch
+  - search/usages
+  - web/fetch
+  - web/githubTextSearch
+  - browser/openBrowserPage
+  - browser/readPage
+  - browser/screenshotPage
+  - browser/navigatePage
+  - browser/clickElement
+  - browser/dragElement
+  - browser/hoverElement
+  - browser/typeInPage
+  - browser/runPlaywrightCode
+  - browser/handleDialog
+  - todo
 ---
 
 # Project Orchestrator

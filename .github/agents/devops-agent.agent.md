@@ -6,12 +6,58 @@ description: >
   (CI runner built once + app image per push), staging on OpenShift and production on Google Cloud Run.
 model: Claude Sonnet 4.6 (copilot)
 tools:
-  - search
-  - codebase
-  - usages
-  - problems
+  - vscode/installExtension
+  - vscode/memory
+  - vscode/newWorkspace
+  - vscode/resolveMemoryFileUri
+  - vscode/runCommand
+  - vscode/vscodeAPI
+  - vscode/extensions
+  - vscode/toolSearch
+  - vscode/askQuestions
+  - execute/runNotebookCell
+  - execute/getTerminalOutput
+  - execute/killTerminal
+  - execute/sendToTerminal
+  - execute/runTask
+  - execute/createAndRunTask
+  - execute/runInTerminal
+  - execute/runTests
+  - execute/testFailure
+  - read/getNotebookSummary
+  - read/problems
+  - read/readFile
+  - read/viewImage
+  - read/readNotebookCellOutput
+  - read/terminalSelection
+  - read/terminalLastCommand
+  - read/getTaskOutput
+  - agent/runSubagent
+  - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
   - edit/editFiles
-  - runCommands
+  - edit/editNotebook
+  - edit/rename
+  - search/changes
+  - search/codebase
+  - search/fileSearch
+  - search/listDirectory
+  - search/textSearch
+  - search/usages
+  - web/fetch
+  - web/githubTextSearch
+  - browser/openBrowserPage
+  - browser/readPage
+  - browser/screenshotPage
+  - browser/navigatePage
+  - browser/clickElement
+  - browser/dragElement
+  - browser/hoverElement
+  - browser/typeInPage
+  - browser/runPlaywrightCode
+  - browser/handleDialog
+  - todo
 ---
 
 # DevOps Agent

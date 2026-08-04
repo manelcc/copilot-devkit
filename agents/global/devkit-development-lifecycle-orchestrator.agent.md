@@ -9,8 +9,59 @@ description: >
   for any User Story. Also runs the project config wizard when
   .github/devkit-project.config.md is missing or the user requests lifecycle configuration.
 model: Claude Sonnet 4.6 (copilot)
-tools:vscode, execute, read, agent, edit, search, web, browser, 'mcp-server-code-review-local/*', 'microsoft/azure-devops-mcp/*', todo
-[vscode, execute, read, agent, edit, search, web, browser, 'mcp-server-code-review-local/*', todo]
+tools:
+  - vscode/installExtension
+  - vscode/memory
+  - vscode/newWorkspace
+  - vscode/resolveMemoryFileUri
+  - vscode/runCommand
+  - vscode/vscodeAPI
+  - vscode/extensions
+  - vscode/toolSearch
+  - vscode/askQuestions
+  - execute/runNotebookCell
+  - execute/getTerminalOutput
+  - execute/killTerminal
+  - execute/sendToTerminal
+  - execute/runTask
+  - execute/createAndRunTask
+  - execute/runInTerminal
+  - execute/runTests
+  - execute/testFailure
+  - read/getNotebookSummary
+  - read/problems
+  - read/readFile
+  - read/viewImage
+  - read/readNotebookCellOutput
+  - read/terminalSelection
+  - read/terminalLastCommand
+  - read/getTaskOutput
+  - agent/runSubagent
+  - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - search/changes
+  - search/codebase
+  - search/fileSearch
+  - search/listDirectory
+  - search/textSearch
+  - search/usages
+  - web/fetch
+  - web/githubTextSearch
+  - browser/openBrowserPage
+  - browser/readPage
+  - browser/screenshotPage
+  - browser/navigatePage
+  - browser/clickElement
+  - browser/dragElement
+  - browser/hoverElement
+  - browser/typeInPage
+  - browser/runPlaywrightCode
+  - browser/handleDialog
+  - todo
 handoffs:
   - devkit-clean-architecture-quality
   - devkit-clean-code-guardian

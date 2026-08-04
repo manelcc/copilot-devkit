@@ -5,15 +5,58 @@ description: >
   producing actionable QA artifacts for implementation and validation cycles.
 model: Claude Sonnet 4.6 (copilot)
 tools:
-  - search
-  - codebase
-  - usages
-  - problems
+  - vscode/installExtension
+  - vscode/memory
+  - vscode/newWorkspace
+  - vscode/resolveMemoryFileUri
+  - vscode/runCommand
+  - vscode/vscodeAPI
+  - vscode/extensions
+  - vscode/toolSearch
+  - vscode/askQuestions
+  - execute/runNotebookCell
+  - execute/getTerminalOutput
+  - execute/killTerminal
+  - execute/sendToTerminal
+  - execute/runTask
+  - execute/createAndRunTask
+  - execute/runInTerminal
+  - execute/runTests
+  - execute/testFailure
+  - read/getNotebookSummary
+  - read/problems
   - read/readFile
-  - edit/editFiles
+  - read/viewImage
+  - read/readNotebookCellOutput
+  - read/terminalSelection
+  - read/terminalLastCommand
+  - read/getTaskOutput
+  - agent/runSubagent
+  - edit/createDirectory
   - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - search/changes
+  - search/codebase
   - search/fileSearch
+  - search/listDirectory
   - search/textSearch
+  - search/usages
+  - web/fetch
+  - web/githubTextSearch
+  - browser/openBrowserPage
+  - browser/readPage
+  - browser/screenshotPage
+  - browser/navigatePage
+  - browser/clickElement
+  - browser/dragElement
+  - browser/hoverElement
+  - browser/typeInPage
+  - browser/runPlaywrightCode
+  - browser/handleDialog
+  - todo
 handoffs:
   - target: "devkit-backend-kotlin-project-orchestrator"
     when: "Generated test cases need implementation planning in Kotlin/Ktor"
