@@ -58,6 +58,9 @@ tools:
   - browser/handleDialog
   - todo
 handoffs:
+  - target: "devkit-ai-architecture-expert"
+    when: "The request needs AI/ML/LLM/RAG/agent architecture, technology selection, model serving, or mobile-to-backend AI integration decisions"
+    context: "Backend constraints, product objective, data sensitivity, latency, scale, and existing integration contracts"
   - target: "devkit-kotlin-mcp-expert"
     when: "MCP server setup, tools/resources/prompts, or kotlin-sdk usage is requested"
     context: "Detected MCP indicators and requested deliverable"

@@ -7,60 +7,12 @@ description: >
   routes features, fixes, reviews, US cycles and MRs to the correct conventions
   and global workflow skills.
 model: Claude Sonnet 4.6 (copilot)
-tools:
-  - vscode/installExtension
-  - vscode/memory
-  - vscode/newWorkspace
-  - vscode/resolveMemoryFileUri
-  - vscode/runCommand
-  - vscode/vscodeAPI
-  - vscode/extensions
-  - vscode/toolSearch
-  - vscode/askQuestions
-  - execute/runNotebookCell
-  - execute/getTerminalOutput
-  - execute/killTerminal
-  - execute/sendToTerminal
-  - execute/runTask
-  - execute/createAndRunTask
-  - execute/runInTerminal
-  - execute/runTests
-  - execute/testFailure
-  - read/getNotebookSummary
-  - read/problems
-  - read/readFile
-  - read/viewImage
-  - read/readNotebookCellOutput
-  - read/terminalSelection
-  - read/terminalLastCommand
-  - read/getTaskOutput
-  - agent/runSubagent
-  - edit/createDirectory
-  - edit/createFile
-  - edit/createJupyterNotebook
-  - edit/editFiles
-  - edit/editNotebook
-  - edit/rename
-  - search/changes
-  - search/codebase
-  - search/fileSearch
-  - search/listDirectory
-  - search/textSearch
-  - search/usages
-  - web/fetch
-  - web/githubTextSearch
-  - browser/openBrowserPage
-  - browser/readPage
-  - browser/screenshotPage
-  - browser/navigatePage
-  - browser/clickElement
-  - browser/dragElement
-  - browser/hoverElement
-  - browser/typeInPage
-  - browser/runPlaywrightCode
-  - browser/handleDialog
-  - todo
+tools:vscode, execute, read, agent, cweijan.vscode-postgresql-client2, ms-azuretools.vscode-containers, ms-ossdata.vscode-pgsql, ms-python.python, edit, search, web, browser, 'com.github/github-mcp/*', 'com.miro/miro-mcp/*', todo
+[vscode, execute, read, agent, edit, search, web, browser, todo]
 handoffs:
+   - target: "devkit-ai-architecture-expert"
+     when: "The request needs AI/ML/LLM/RAG/agent architecture, technology selection, model serving, or mobile-to-backend AI integration decisions"
+     context: "Backend constraints, product objective, data sensitivity, latency, scale, and existing integration contracts"
    - target: "Scrum Master"
       when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
       context: "User request, Python backend scope, and any available product or US context"

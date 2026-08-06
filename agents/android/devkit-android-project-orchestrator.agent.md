@@ -58,6 +58,9 @@ tools:
   - browser/handleDialog
   - todo
 handoffs:
+  - target: "devkit-ai-architecture-expert"
+    when: "The request needs AI/ML/LLM/RAG/agent architecture, technology selection, or on-device versus backend inference decisions"
+    context: "Android targets, product objective, data sensitivity, offline, latency, and existing integration constraints"
   - target: "Scrum Master"
     when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
     context: "User request, Android scope, and any available product or US context"

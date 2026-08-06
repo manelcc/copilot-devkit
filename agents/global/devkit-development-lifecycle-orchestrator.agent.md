@@ -63,6 +63,11 @@ tools:
   - browser/handleDialog
   - todo
 handoffs:
+  - devkit-ai-architecture-expert
+  - devkit-android-project-orchestrator
+  - devkit-backend-kotlin-project-orchestrator
+  - devkit-backend-python-project-orchestrator
+  - devkit-ios-project-orchestrator
   - devkit-clean-architecture-quality
   - devkit-clean-code-guardian
   - Scrum Master
@@ -144,9 +149,16 @@ Before anything else, check if `.github/devkit-project.config.md` exists in the 
 1. **User Story identifier** provided (e.g., "US-042")
 2. **User Story file** exists in `docs/implementation/user-stories/US-XXX-*.md`
 3. **Stack detection** completed (use config `Stack(s)` field if available, otherwise auto-detect)
-4. **Expert agents available** for detected stack
+4. **AI architecture decision required?** — If the US needs technology selection, AI/ML/LLM/RAG/agent design, model integration, or mobile-to-AI architecture, hand off to `devkit-ai-architecture-expert` before implementation planning.
+5. **Stack-specific orchestrator available?** — If yes, **HANDOFF explicitly**:
+   - **Android** → handoff to `devkit-android-project-orchestrator`
+   - **iOS** → handoff to `devkit-ios-project-orchestrator`
+   - **Backend Kotlin/Ktor** → handoff to `devkit-backend-kotlin-project-orchestrator`
+   - **Backend Python** → handoff to `devkit-backend-python-project-orchestrator`
+   - **Stack-agnostic or multi-stack** → continue with this orchestrator
 
-If checks pass, invoke `devkit-development-lifecycle` skill with US identifier and project config summary.
+If the AI architecture expert or a stack-specific orchestrator is required, execute the handoff and stop.
+If checks pass and no stack-specific orchestrator, invoke `devkit-development-lifecycle` skill with US identifier and project config summary.
 
 ---
 

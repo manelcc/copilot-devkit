@@ -58,6 +58,9 @@ tools:
   - browser/handleDialog
   - todo
 handoffs:
+  - target: "devkit-ai-architecture-expert"
+    when: "The request needs AI/ML/LLM/RAG/agent architecture, technology selection, or on-device versus backend inference decisions"
+    context: "Target platforms, shared UI boundaries, product objective, data sensitivity, offline, and latency constraints"
   - target: "Scrum Master"
     when: "The request is about backlog refinement, epics, user stories, acceptance criteria, or sprint readiness"
     context: "User request, CMP scope, and any available product or US context"
