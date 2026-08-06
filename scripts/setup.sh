@@ -87,7 +87,15 @@ if [ "$PYTHON_OK" != "1" ]; then
 fi
 
 log_info "Instalando CLI devtools (editable)"
+set +e
 python3 -m pip install -q -e "$REPO_ROOT/cli-tools"
+pip_exit_code=$?
+set -e
+
+if [ "$pip_exit_code" -ne 0 ]; then
+  log_warning "Fallo en pip editable install. Reintentando con compatibilidad PEP 668 (--break-system-packages)."
+  python3 -m pip install -q --break-system-packages -e "$REPO_ROOT/cli-tools"
+fi
 
 if command -v devtools >/dev/null 2>&1; then
   log_success "CLI devtools instalada"
