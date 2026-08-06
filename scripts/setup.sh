@@ -110,21 +110,21 @@ COPILOT_SKILLS_DIR="$HOME/.copilot/skills"
 mkdir -p "$COPILOT_SKILLS_DIR"
 
 linked=0
-for skill_dir in "$GLOBAL_SKILLS_DIR"/*/; do
-    [[ -d "$skill_dir" ]] || continue
-    skill_name="$(basename "$skill_dir")"
-    target="$COPILOT_SKILLS_DIR/$skill_name"
+while IFS= read -r skill_md; do
+  skill_dir="$(dirname "$skill_md")"
+  skill_name="$(basename "$skill_dir")"
+  target="$COPILOT_SKILLS_DIR/$skill_name"
 
-    if [[ -L "$target" ]]; then
-        log_info "Ya enlazada: $skill_name"
-    elif [[ -e "$target" ]]; then
-        log_warning "Existe (no es symlink): $skill_name — omitida"
-    else
-        ln -s "$skill_dir" "$target"
-        log_success "Enlazada: $skill_name"
-        ((linked++)) || true
-    fi
-done
+  if [[ -L "$target" ]]; then
+    log_info "Ya enlazada: $skill_name"
+  elif [[ -e "$target" ]]; then
+    log_warning "Existe (no es symlink): $skill_name — omitida"
+  else
+    ln -s "$skill_dir" "$target"
+    log_success "Enlazada: $skill_name"
+    ((linked++)) || true
+  fi
+done < <(find "$GLOBAL_SKILLS_DIR" -type f -name "SKILL.md" | sort)
 
 # ─────────────────────────────────────────────────────────
 # 5. LINK GLOBAL AGENTS TO ~/.copilot/agents/
