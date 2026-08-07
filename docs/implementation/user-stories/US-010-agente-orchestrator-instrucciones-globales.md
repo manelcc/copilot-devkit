@@ -80,7 +80,7 @@ Todos los artefactos del repositorio adoptan el prefijo `devkit-`. Esto aplica *
 ### Agentes existentes (`agents/backend/kotlin-ktor/`)
 | Nombre actual | Nombre nuevo |
 |---|---|
-| `devops-agent.agent.md` | `devkit-devops.agent.md` |
+| `devops-agent.agent.md` | `agents/global/devkit-devops.agent.md` |
 | `kotlin-expert-pattern.agent.md` | `devkit-kotlin-expert-pattern.agent.md` |
 | `kotlin-mcp-expert.agent.md` | `devkit-kotlin-mcp-expert.agent.md` |
 | `kotlin-server-quality.agent.md` | `devkit-kotlin-server-quality.agent.md` |

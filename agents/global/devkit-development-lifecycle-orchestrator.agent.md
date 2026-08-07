@@ -9,59 +9,8 @@ description: >
   for any User Story. Also runs the project config wizard when
   .github/devkit-project.config.md is missing or the user requests lifecycle configuration.
 model: Claude Sonnet 4.6 (copilot)
-tools:
-  - vscode/installExtension
-  - vscode/memory
-  - vscode/newWorkspace
-  - vscode/resolveMemoryFileUri
-  - vscode/runCommand
-  - vscode/vscodeAPI
-  - vscode/extensions
-  - vscode/toolSearch
-  - vscode/askQuestions
-  - execute/runNotebookCell
-  - execute/getTerminalOutput
-  - execute/killTerminal
-  - execute/sendToTerminal
-  - execute/runTask
-  - execute/createAndRunTask
-  - execute/runInTerminal
-  - execute/runTests
-  - execute/testFailure
-  - read/getNotebookSummary
-  - read/problems
-  - read/readFile
-  - read/viewImage
-  - read/readNotebookCellOutput
-  - read/terminalSelection
-  - read/terminalLastCommand
-  - read/getTaskOutput
-  - agent/runSubagent
-  - edit/createDirectory
-  - edit/createFile
-  - edit/createJupyterNotebook
-  - edit/editFiles
-  - edit/editNotebook
-  - edit/rename
-  - search/changes
-  - search/codebase
-  - search/fileSearch
-  - search/listDirectory
-  - search/textSearch
-  - search/usages
-  - web/fetch
-  - web/githubTextSearch
-  - browser/openBrowserPage
-  - browser/readPage
-  - browser/screenshotPage
-  - browser/navigatePage
-  - browser/clickElement
-  - browser/dragElement
-  - browser/hoverElement
-  - browser/typeInPage
-  - browser/runPlaywrightCode
-  - browser/handleDialog
-  - todo
+tools:vscode, execute, read, agent, cweijan.vscode-postgresql-client2/dbclient-getDatabases, cweijan.vscode-postgresql-client2/dbclient-getTables, cweijan.vscode-postgresql-client2/dbclient-executeQuery, ms-azuretools.vscode-containers/containerToolsConfig, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, edit, search, web, browser, 'com.github/github-mcp/*', 'com.microsoft/microsoft-learn-mcp/*', 'com.miro/miro-mcp/*', 'mcp_docker/*', 'mcp-server-code-review-local/*', todo
+[vscode, execute, read, agent, cweijan.vscode-postgresql-client2/dbclient-getDatabases, cweijan.vscode-postgresql-client2/dbclient-getTables, cweijan.vscode-postgresql-client2/dbclient-executeQuery, ms-azuretools.vscode-containers/containerToolsConfig, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, edit, search, web, browser, 'com.github/github-mcp/*', 'com.microsoft/microsoft-learn-mcp/*', 'mcp_docker/*', 'microsoft/azure-devops-mcp/*', todo]
 handoffs:
   - devkit-ai-architecture-expert
   - devkit-android-project-orchestrator

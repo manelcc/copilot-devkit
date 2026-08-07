@@ -24,12 +24,12 @@
    - `kotlin-mcp-expert.agent.md`
    - `payload-logging-trace.agent.md`
    - `x-correlation-id-strategy.agent.md`
-   - `devops-agent.agent.md`
-2. El agente `project-orchestrator.agent.md` se ubica en `agents/global/` y su contenido está actualizado para redirigir al nuevo namespace.
-3. El agente `qa-testcase-agent.agent.md` se ubica en `agents/global/` y su descripción cubre pruebas para backend Kotlin.
-4. Todos los agentes migrados tienen `frontmatter` válido y parseable.
-5. Los handoffs dentro de los agentes referencian rutas actualizadas y no contienen rutas rotas.
-6. No hay referencias a `mycardiochef` en los agentes migrados.
+2. El agente `devkit-devops.agent.md` se ubica en `agents/global/` como agente agnóstico de CI/CD.
+3. El agente `project-orchestrator.agent.md` se ubica en `agents/global/` y su contenido está actualizado para redirigir al nuevo namespace.
+4. El agente `qa-testcase-agent.agent.md` se ubica en `agents/global/` y su descripción cubre pruebas para backend Kotlin.
+5. Todos los agentes migrados tienen `frontmatter` válido y parseable.
+6. Los handoffs dentro de los agentes referencian rutas actualizadas y no contienen rutas rotas.
+7. No hay referencias a `mycardiochef` en los agentes migrados.
 
 ---
 
