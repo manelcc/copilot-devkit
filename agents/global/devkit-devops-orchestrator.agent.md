@@ -5,9 +5,8 @@ description: >
   Backend Kotlin/Ktor, Backend Python, Backend Spring Java, Android, iOS, KMP, CMP.
   Supports GitLab CI, GitHub Actions, and Azure DevOps. Routes to the correct pipeline skill
   based on detected stack and CI provider. Also governs the environments/branching strategy skill.
-model: Claude Sonnet 4.6 (copilot)
-tools:vscode, execute, read, agent, edit, search, web, browser, 'com.github/github-mcp/*', 'mcp_docker/*', 'microsoft/azure-devops-mcp/*', todo
-[vscode, execute, read, agent, edit, search, web, browser, 'com.github/github-mcp/*', 'microsoft/azure-devops-mcp/*', todo]
+model: auto
+tools:vscode, execute, read, agent, edit, search, web, browser, todo
 ---
 
 # DevKit — DevOps Orchestrator

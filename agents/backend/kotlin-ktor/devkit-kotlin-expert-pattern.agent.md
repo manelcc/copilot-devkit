@@ -4,60 +4,8 @@ description: >
   Kotlin server-side and KMP design patterns guidance.
   Diagnoses problems, recommends 2-3 pattern candidates with trade-offs, and delivers
   idiomatic Ktor/Exposed/Koin implementation templates. NOT for Android UI (Compose/ViewModel).
-model: Claude Sonnet 4.6 (copilot)
-tools:
-  - vscode/installExtension
-  - vscode/memory
-  - vscode/newWorkspace
-  - vscode/resolveMemoryFileUri
-  - vscode/runCommand
-  - vscode/vscodeAPI
-  - vscode/extensions
-  - vscode/toolSearch
-  - vscode/askQuestions
-  - execute/runNotebookCell
-  - execute/getTerminalOutput
-  - execute/killTerminal
-  - execute/sendToTerminal
-  - execute/runTask
-  - execute/createAndRunTask
-  - execute/runInTerminal
-  - execute/runTests
-  - execute/testFailure
-  - read/getNotebookSummary
-  - read/problems
-  - read/readFile
-  - read/viewImage
-  - read/readNotebookCellOutput
-  - read/terminalSelection
-  - read/terminalLastCommand
-  - read/getTaskOutput
-  - agent/runSubagent
-  - edit/createDirectory
-  - edit/createFile
-  - edit/createJupyterNotebook
-  - edit/editFiles
-  - edit/editNotebook
-  - edit/rename
-  - search/changes
-  - search/codebase
-  - search/fileSearch
-  - search/listDirectory
-  - search/textSearch
-  - search/usages
-  - web/fetch
-  - web/githubTextSearch
-  - browser/openBrowserPage
-  - browser/readPage
-  - browser/screenshotPage
-  - browser/navigatePage
-  - browser/clickElement
-  - browser/dragElement
-  - browser/hoverElement
-  - browser/typeInPage
-  - browser/runPlaywrightCode
-  - browser/handleDialog
-  - todo
+model: auto
+tools:vscode, execute, read, agent, edit, search, web, browser, todo
 ---
 
 # Kotlin Design Patterns Expert Agent

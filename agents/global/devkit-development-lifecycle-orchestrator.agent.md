@@ -8,9 +8,8 @@ description: >
   Orchestrates planning, expert consultation, quality gates, and interactive user decisions
   for any User Story. Also runs the project config wizard when
   .github/devkit-project.config.md is missing or the user requests lifecycle configuration.
-model: Claude Sonnet 4.6 (copilot)
-tools:vscode, execute, read, agent, cweijan.vscode-postgresql-client2/dbclient-getDatabases, cweijan.vscode-postgresql-client2/dbclient-getTables, cweijan.vscode-postgresql-client2/dbclient-executeQuery, ms-azuretools.vscode-containers/containerToolsConfig, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, edit, search, web, browser, 'com.github/github-mcp/*', 'com.microsoft/microsoft-learn-mcp/*', 'com.miro/miro-mcp/*', 'mcp_docker/*', 'mcp-server-code-review-local/*', todo
-[vscode, execute, read, agent, cweijan.vscode-postgresql-client2/dbclient-getDatabases, cweijan.vscode-postgresql-client2/dbclient-getTables, cweijan.vscode-postgresql-client2/dbclient-executeQuery, ms-azuretools.vscode-containers/containerToolsConfig, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, edit, search, web, browser, 'com.github/github-mcp/*', 'com.microsoft/microsoft-learn-mcp/*', 'mcp_docker/*', 'microsoft/azure-devops-mcp/*', todo]
+model: auto
+tools:vscode, execute, read, agent, edit, search, web, browser, todo
 handoffs:
   - devkit-ai-architecture-expert
   - devkit-android-project-orchestrator

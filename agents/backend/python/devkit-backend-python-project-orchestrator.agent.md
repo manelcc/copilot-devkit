@@ -6,9 +6,8 @@ description: >
   Python project. Detects framework signals (FastAPI / Flask / plain Python) and
   routes features, fixes, reviews, US cycles and MRs to the correct conventions
   and global workflow skills.
-model: Claude Sonnet 4.6 (copilot)
-tools:vscode, execute, read, agent, cweijan.vscode-postgresql-client2, ms-azuretools.vscode-containers, ms-ossdata.vscode-pgsql, ms-python.python, edit, search, web, browser, 'com.github/github-mcp/*', 'com.miro/miro-mcp/*', todo
-[vscode, execute, read, agent, edit, search, web, browser, todo]
+model: auto
+tools:vscode, execute, read, agent, edit, search, web, browser, todo
 handoffs:
    - target: "devkit-ai-architecture-expert"
      when: "The request needs AI/ML/LLM/RAG/agent architecture, technology selection, model serving, or mobile-to-backend AI integration decisions"

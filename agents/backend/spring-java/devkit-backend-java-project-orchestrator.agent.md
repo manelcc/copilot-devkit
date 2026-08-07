@@ -3,60 +3,8 @@ name: "devkit-backend-java-project-orchestrator"
 description: >
   Orchestrates Java backend tasks by detecting Spring Boot legacy context and
   routing to Java backend conventions with global workflow skills.
-model: Claude Sonnet 4.6 (copilot)
-tools:
-  - vscode/installExtension
-  - vscode/memory
-  - vscode/newWorkspace
-  - vscode/resolveMemoryFileUri
-  - vscode/runCommand
-  - vscode/vscodeAPI
-  - vscode/extensions
-  - vscode/toolSearch
-  - vscode/askQuestions
-  - execute/runNotebookCell
-  - execute/getTerminalOutput
-  - execute/killTerminal
-  - execute/sendToTerminal
-  - execute/runTask
-  - execute/createAndRunTask
-  - execute/runInTerminal
-  - execute/runTests
-  - execute/testFailure
-  - read/getNotebookSummary
-  - read/problems
-  - read/readFile
-  - read/viewImage
-  - read/readNotebookCellOutput
-  - read/terminalSelection
-  - read/terminalLastCommand
-  - read/getTaskOutput
-  - agent/runSubagent
-  - edit/createDirectory
-  - edit/createFile
-  - edit/createJupyterNotebook
-  - edit/editFiles
-  - edit/editNotebook
-  - edit/rename
-  - search/changes
-  - search/codebase
-  - search/fileSearch
-  - search/listDirectory
-  - search/textSearch
-  - search/usages
-  - web/fetch
-  - web/githubTextSearch
-  - browser/openBrowserPage
-  - browser/readPage
-  - browser/screenshotPage
-  - browser/navigatePage
-  - browser/clickElement
-  - browser/dragElement
-  - browser/hoverElement
-  - browser/typeInPage
-  - browser/runPlaywrightCode
-  - browser/handleDialog
-  - todo
+model: auto
+tools:vscode, execute, read, agent, edit, search, web, browser, todo
 handoffs:
   - target: "devkit-ai-architecture-expert"
     when: "The request needs AI/ML/LLM/RAG/agent architecture, technology selection, model serving, or mobile-to-backend AI integration decisions"

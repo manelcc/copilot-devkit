@@ -4,60 +4,8 @@ description: >
   Agente experto para proyectos Android legacy XML + Java: asesora en Activities,
   Fragments, RecyclerView, layouts XML, patrones MVP/MVVM y migración progresiva a Compose.
   Delega a devkit-android-xml-java-patterns para patrones detallados.
-model: Claude Sonnet 4.6 (copilot)
-tools:
-  - vscode/installExtension
-  - vscode/memory
-  - vscode/newWorkspace
-  - vscode/resolveMemoryFileUri
-  - vscode/runCommand
-  - vscode/vscodeAPI
-  - vscode/extensions
-  - vscode/toolSearch
-  - vscode/askQuestions
-  - execute/runNotebookCell
-  - execute/getTerminalOutput
-  - execute/killTerminal
-  - execute/sendToTerminal
-  - execute/runTask
-  - execute/createAndRunTask
-  - execute/runInTerminal
-  - execute/runTests
-  - execute/testFailure
-  - read/getNotebookSummary
-  - read/problems
-  - read/readFile
-  - read/viewImage
-  - read/readNotebookCellOutput
-  - read/terminalSelection
-  - read/terminalLastCommand
-  - read/getTaskOutput
-  - agent/runSubagent
-  - edit/createDirectory
-  - edit/createFile
-  - edit/createJupyterNotebook
-  - edit/editFiles
-  - edit/editNotebook
-  - edit/rename
-  - search/changes
-  - search/codebase
-  - search/fileSearch
-  - search/listDirectory
-  - search/textSearch
-  - search/usages
-  - web/fetch
-  - web/githubTextSearch
-  - browser/openBrowserPage
-  - browser/readPage
-  - browser/screenshotPage
-  - browser/navigatePage
-  - browser/clickElement
-  - browser/dragElement
-  - browser/hoverElement
-  - browser/typeInPage
-  - browser/runPlaywrightCode
-  - browser/handleDialog
-  - todo
+model: auto
+tools:vscode, execute, read, agent, edit, search, web, browser, todo
 handoffs:
   - target: "devkit-android-xml-java-patterns"
     when: "La tarea requiere decidir patrón Android legacy, identificar patrón aplicado o detectar antipatrones Java/XML"
