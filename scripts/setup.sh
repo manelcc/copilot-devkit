@@ -124,7 +124,15 @@ while IFS= read -r skill_md; do
   target="$COPILOT_SKILLS_DIR/$skill_name"
 
   if [[ -L "$target" ]]; then
-    log_info "Ya enlazada: $skill_name"
+    current_target="$(readlink "$target")"
+    if [[ "$current_target" == "$skill_dir" ]]; then
+      log_info "Ya enlazada: $skill_name"
+    else
+      rm "$target"
+      ln -s "$skill_dir" "$target"
+      log_success "Actualizada: $skill_name"
+      ((linked++)) || true
+    fi
   elif [[ -e "$target" ]]; then
     log_warning "Existe (no es symlink): $skill_name — omitida"
   else
@@ -149,7 +157,15 @@ for agent_file in "$GLOBAL_AGENTS_DIR"/*.agent.md; do
     target="$COPILOT_AGENTS_DIR/$agent_name"
 
     if [[ -L "$target" ]]; then
-        log_info "Agente ya enlazado: $agent_name"
+        current_target="$(readlink "$target")"
+        if [[ "$current_target" == "$agent_file" ]]; then
+            log_info "Agente ya enlazado: $agent_name"
+        else
+            rm "$target"
+            ln -s "$agent_file" "$target"
+            log_success "Agente actualizado: $agent_name"
+            ((agents_linked++)) || true
+        fi
     elif [[ -e "$target" ]]; then
         log_warning "Agente existe (no es symlink): $agent_name — omitido"
     else

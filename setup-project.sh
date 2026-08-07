@@ -83,7 +83,14 @@ link_item() {
     mkdir -p "$target_dir"
 
     if [[ -L "$target" ]]; then
-        echo "  ↩️  Ya enlazado ($label): $item_name"
+        current_target="$(readlink "$target")"
+        if [[ "$current_target" == "$source_path" ]]; then
+            echo "  ↩️  Ya enlazado ($label): $item_name"
+        else
+            rm "$target"
+            ln -s "$source_path" "$target"
+            echo "  🔄 Actualizado ($label): $item_name"
+        fi
     elif [[ -e "$target" ]]; then
         echo "  ⚠️  Existe (no es symlink) ($label): $item_name — omitido."
     else
@@ -124,7 +131,14 @@ link_gemini_skills_from() {
         local target="$TARGET_GEMINI_SKILLS_DIR/$item_name"
 
         if [[ -L "$target" ]]; then
-            echo "  ↩️  Ya enlazado (gemini): $item_name"
+            current_target="$(readlink "$target")"
+            if [[ "$current_target" == "$item" ]]; then
+                echo "  ↩️  Ya enlazado (gemini): $item_name"
+            else
+                rm "$target"
+                ln -s "$item" "$target"
+                echo "  🔄 Actualizado (gemini): $item_name"
+            fi
         elif [[ -e "$target" ]]; then
             echo "  ⚠️  Existe (no es symlink) (gemini): $item_name — omitido."
         else

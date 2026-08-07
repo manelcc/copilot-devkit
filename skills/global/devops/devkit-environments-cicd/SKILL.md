@@ -25,6 +25,11 @@ triggers:
   - "scopes gitlab variables"
   - "variables development staging production"
   - "naming release branches"
+  - "runbook entorno stage"
+  - "setup entorno stage paso a paso"
+  - "cómo activar stage"
+  - "primer deploy stage"
+  - "configurar stage nuevo microservicio"
 non_triggers:
   - Variables concretas de un microservicio específico (usar la skill de proyecto, ej. middleware-environments)
   - Generación de pipeline desde cero (usar gitlab-cicd)
@@ -60,7 +65,7 @@ Define the canonical branch→environment strategy, GitLab CI scoped variable ta
 - GitLab group/project path (for variable scope configuration)
 
 ## Steps
-See numbered sections below (§1–§9).
+See numbered sections below (§1–§11).
 
 ## Expected outputs
 - Documented branch→environment mapping for the service
@@ -322,9 +327,88 @@ La lista concreta de `REQUIRED_VARS` se define en la skill de proyecto de cada m
 
 ---
 
-## 9. Cómo Generar la Skill de Proyecto (Instancia)
+## 9. Runbook: Setup Completo de un Entorno Stage (Día 0)
 
-Cuando se incorpora un nuevo microservicio o se quiere formalizar el contrato de entornos de uno existente, usar este prompt con el agente `devkit-devops`:
+Este es el procedimiento exacto para activar el entorno stage en un microservicio. Ejecutar en orden.
+
+### Paso 1 — Generar los secretos
+
+```bash
+echo "JWT_SECRET=$(openssl rand -base64 64 | tr -d '\n')"
+echo "INTERNAL_AUTH_SECRET=$(openssl rand -base64 48 | tr -d '\n')"
+echo "DB_STAGE_PASSWORD=$(openssl rand -base64 24 | tr -d '\n')"
+echo "MCP_KEY_1=$(openssl rand -base64 48 | tr -d '\n')"
+echo "MCP_KEY_2=$(openssl rand -base64 48 | tr -d '\n')"
+```
+
+Guardar los valores — se usarán en los pasos siguientes.
+
+### Paso 2 — Crear las bases de datos stage
+
+Ejecutar el script de setup de DB del microservicio (ej. `db/scripts/setup_stage.sh`) contra el contenedor Docker del PostgreSQL compartido:
+
+```bash
+export DB_STAGE_PASSWORD='<generado en paso 1>'
+bash db/scripts/setup_stage.sh
+# usa docker exec internamente contra el contenedor postgres configurado
+```
+
+### Paso 3 — Crear .env.stage
+
+```bash
+cp .env.stage.example .env.stage
+```
+
+Rellenar con:
+- URLs de BD con sufijo `_stage`
+- `JWT_SECRET` y `INTERNAL_AUTH_SECRET` generados en paso 1
+- `TUNNEL_TOKEN` del entorno stage (dashboard del proveedor)
+- `MCP_API_KEYS`: `KEY_1,KEY_2` generados en paso 1
+- Variables globales (`CF_R2_*`, APIs externas): copiar de `.env.local`
+- `PORT`: diferente a dev (ej. `8082`) para coexistir en el mismo servidor
+
+### Paso 4 — Sincronizar variables a GitLab
+
+```bash
+export GITLAB_TOKEN=glpat_xxx  # token con scope 'api'
+scripts/sync_gitlab_variables.sh \
+  --project-id <PROJECT_ID> \
+  --env-file .env.stage \
+  --scope staging
+```
+
+Verificar en GitLab UI: **Settings → CI/CD → Variables** — activar **Masked** en las variables sensibles (`*_PASSWORD`, `JWT_SECRET`, `INTERNAL_AUTH_SECRET`, `TUNNEL_TOKEN`, `MCP_API_KEYS`).
+
+### Paso 5 — Crear la rama release/V1 y hacer push
+
+```bash
+git checkout develop && git pull
+git checkout -b release/V1
+git push -u origin release/V1
+```
+
+### Paso 6 — Crear la MR en GitLab
+
+En GitLab → **Merge Requests → New MR**:
+- Source: `develop`
+- Target: `release/V1`
+
+El pipeline ejecuta automáticamente: `build → test → code_review → build_docker_image_stage`
+
+### Paso 7 — Merge y verificación del deploy
+
+Cuando el pipeline pase:
+1. Hacer merge
+2. El job `deploy_stage` se ejecuta automáticamente
+3. Verificar: `curl https://staging.<proyecto>.com/health`
+
+> **Regla invariable**: El deploy de PROD es **siempre manual**. Nunca automático.
+
+---
+
+## 10. Cómo Generar la Skill de Proyecto (Instancia)
+
+Cuando se incorpora un nuevo microservicio o se quiere formalizar el contrato de entornos de uno existente, usar este prompt con el agente `devkit-devops-orchestrator`:
 
 ```
 Usando la skill global devkit-environments-cicd como base, genera la skill de entornos
@@ -355,446 +439,32 @@ El agente generará:
 
 ---
 
-## Referencias Globales
-
-- Skill `gitlab-cicd` — Generación/modificación del pipeline completo
-- Skill `devkit-ktor-auth-flow` — JWT, Argon2id, auth endpoints
-- Agente `devkit-devops` — Gobernador de CI/CD y estrategia de entornos
-- [GitLab CI/CD Variables docs](https://docs.gitlab.com/ee/ci/variables/)
-
-
-# Estrategia de Entornos — CardioChef Middleware
-
-> **Gobernada por**: agente `devkit-devops`  
-> **Aplica a**: todos los repositorios del ecosistema mycardiochef  
-> **Fuente de verdad local**: este fichero (`.github/skills/devkit-environments-cicd/SKILL.md`)
-
----
-
-## Visión general
-
-```mermaid
-flowchart LR
-    F["feature/*"] -->|MR| D["develop"]
-    D -->|auto deploy| DEV["ENV: DEV\ndev.mycardiochef.com\n:dev"]
-    D -->|MR| R["release/Vx"]
-    R -->|auto deploy| STAGE["ENV: STAGE\nstage.mycardiochef.com\n:stage"]
-    R -->|MR| M["main"]
-    M -->|manual deploy| PROD["ENV: PROD\napi.mycardiochef.com\n:latest"]
-
-    style DEV fill:#1e3a5f,color:#fff
-    style STAGE fill:#4a235a,color:#fff
-    style PROD fill:#1a3a2a,color:#fff
-```
-
----
-
-## 1. Mapeo Branch → Entorno
-
-| Rama | Entorno | URL | Docker Tag | Deploy | APP_ENV |
-|---|---|---|---|---|---|
-| `feature/*` | — (solo CI build/test/review) | — | — | — | — |
-| `develop` | **DEV** | https://dev.mycardiochef.com | `:dev` | Automático post-merge | `dev` |
-| `release/Vx` | **STAGE** | https://stage.mycardiochef.com | `:stage` | Automático post-merge | `stage` |
-| `main` | **PROD** | https://api.mycardiochef.com | `:latest` | **Manual** (botón GitLab) | `prod` |
-
-### Naming de ramas release
-Las ramas de integración de stage siguen el patrón `release/Vx`:
-- `release/V1`, `release/V2`, `release/V3`, …
-- Se crean desde `develop` cuando se quiere promocionar al entorno de stage.
-- Cada versión mayor de producto corresponde a una rama `release/Vx`.
-
-> **Regla**: Nunca trabajar directamente en `release/Vx` o `main`. Solo se reciben merges desde la rama anterior.
-
----
-
-## 2. Taxonomía de Variables
-
-### Grupos de variables
-
-| Grupo | Variables | Sensible |
-|---|---|---|
-| **Base de datos AUTH** | `DB_AUTH_URL`, `DB_AUTH_USER`, `DB_AUTH_PASSWORD` | ✅ |
-| **Base de datos PROFILES** | `DB_PROFILES_URL`, `DB_PROFILES_USER`, `DB_PROFILES_PASSWORD` | ✅ |
-| **JWT** | `JWT_SECRET`, `JWT_ACCESS_TOKEN_EXPIRATION`, `JWT_REFRESH_TOKEN_EXPIRATION_DAYS` | ✅ |
-| **Auth interna (HMAC)** | `INTERNAL_AUTH_SERVICE_ID`, `INTERNAL_AUTH_KEY_ID`, `INTERNAL_AUTH_SECRET`, `INTERNAL_AUTH_ALLOWED_SKEW_SECONDS` | ✅ |
-| **MCP Server** | `MCP_API_KEYS`, `MCP_SERVER_NAME`, `MCP_SERVER_VERSION`, `MCP_RATE_LIMIT_MAX_ATTEMPTS`, `MCP_DB_MAX_ROWS`, `MCP_DB_ALLOW_JOINS` | ✅ (keys) |
-| **Cloudflare R2** | `CF_R2_ACCOUNT_ID`, `CF_R2_ACCESS_KEY_ID`, `CF_R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_BASE_URL`, `R2_ENDPOINT`, `R2_INGREDIENT_IMAGE_PREFIX`, `R2_INGREDIENT_ICON_PREFIX`, `R2_INGREDIENTS_BASE_PREFIX` | ✅ (keys) |
-| **Túnel Cloudflare** | `TUNNEL_TOKEN` | ✅ |
-| **APIs externas** | `SPOONACULAR_API_KEY` | ✅ |
-| **Runtime / App** | `PORT`, `KTOR_DEVELOPMENT`, `APP_ENV`, `LOG_LEVEL`, `HTTP_TRACE_ENABLED`, `MIDDLEWARE_SERVICE_ID`, `PRIVATE_DOCKER_NETWORK` | ❌ |
-| **Servicios internos** | `NER_ENDPOINT`, `OCR_ENDPOINT`, `WEB_SCRAPING_ENDPOINT`, `CARDIOSCORING_ENDPOINT`, `RAG_TRANSFORM_ENDPOINT` | ❌ |
-| **Imágenes / Assets** | `INGREDIENT_IMAGE_MAX_DIMENSION`, `INGREDIENT_IMAGE_PNG_COMPRESSION_QUALITY` | ❌ |
-
----
-
-### Variables por entorno
-
-| Variable | LOCAL | DEV | STAGE | PROD |
-|---|---|---|---|---|
-| `DB_AUTH_URL` | `jdbc:postgresql://host.docker.internal:5432/cardioauthdb` | URL PostgreSQL DEV | URL PostgreSQL STAGE | URL PostgreSQL PROD |
-| `DB_AUTH_USER` | `authappuser` | user-dev | user-stage | user-prod |
-| `DB_AUTH_PASSWORD` | (dev password) | (dev secret) | (stage secret) | (prod secret fuerte) |
-| `DB_PROFILES_URL` | `jdbc:postgresql://host.docker.internal:5432/cardioprofilesdb` | URL STAGE | URL STAGE | URL PROD |
-| `DB_PROFILES_USER` | `profilesappuser` | user-dev | user-stage | user-prod |
-| `DB_PROFILES_PASSWORD` | (dev password) | (dev secret) | (stage secret) | (prod secret fuerte) |
-| `JWT_SECRET` | `dev-secret-min-32-chars` | secreto-dev | secreto-stage | **secreto PROD aleatorio ≥64 chars** |
-| `INTERNAL_AUTH_SECRET` | (dev secret) | (dev secret) | (stage secret) | (prod secret) |
-| `TUNNEL_TOKEN` | (dev token) | (dev token) | (stage token) | (prod token) |
-| `APP_ENV` | _(vacío o dev)_ | `dev` | `stage` | `prod` |
-| `KTOR_DEVELOPMENT` | `true` | `false` | `false` | `false` |
-| `LOG_LEVEL` | `DEBUG` | `DEBUG` | `INFO` | `WARN` |
-| `HTTP_TRACE_ENABLED` | `true` | `true` | `true` | `false` |
-| `MIDDLEWARE_SERVICE_ID` | `cardiochef-middleware` | `cardiochef-middleware` | `cardiochef-middleware` | `cardiochef-middleware` |
-| `MCP_API_KEYS` | (dev keys) | (dev keys) | (stage keys) | (prod keys distintas) |
-| `CF_R2_*` / `R2_*` | mismo bucket todos los entornos | ← igual | ← igual | ← igual |
-| `SPOONACULAR_API_KEY` | (key compartida) | ← igual | ← igual | ← igual |
-
-> **Regla de seguridad**: `JWT_SECRET` y `INTERNAL_AUTH_SECRET` en PROD deben generarse con `openssl rand -base64 64` y nunca reutilizarse de dev/stage.
-
----
-
-## 3. Scopes de Variables en GitLab CI/CD
-
-GitLab permite asignar variables a un **scope de entorno** concreto. El pipeline lee la variable correcta según el entorno desplegado.
-
-| GitLab Scope | Aplica a | Entorno |
-|---|---|---|
-| `*` | Todas las ramas | Variables globales (R2, Spoonacular) |
-| `development` | Rama `develop` | Variables de DEV |
-| `staging` | Rama `release/V*` | Variables de STAGE |
-| `production` | Rama `main` | Variables de PROD |
-
-### Cómo crear una variable con scope en GitLab UI
-
-1. Ir a **Settings → CI/CD → Variables** en el proyecto GitLab
-2. Clic en **Add variable**
-3. Rellenar:
-   - **Key**: nombre de la variable (ej. `DB_AUTH_URL`)
-   - **Value**: valor para ese entorno
-   - **Environment scope**: seleccionar el scope (ej. `development`)
-   - **Masked**: activar para secretos (passwords, tokens, keys)
-   - **Protected**: activar si solo debe usarse en ramas protegidas
-4. Repetir para cada scope que necesite un valor diferente
-
-> Para variables con el mismo valor en todos los entornos, usar scope `*`.
-
-### Cómo sincronizar variables desde .env.local a GitLab (desarrollo)
-
-```bash
-export GITLAB_TOKEN=glpat_xxx  # Personal Access Token con scope 'api'
-
-# Subir variables al scope 'development'
-scripts/sync_gitlab_variables.sh \
-  --project-id 77373249 \
-  --env-file .env.local \
-  --scope development
-
-# Subir variables al scope 'staging' (desde un .env.stage si existe)
-scripts/sync_gitlab_variables.sh \
-  --project-id 77373249 \
-  --env-file .env.stage \
-  --scope staging
-```
-
-> ⚠️ El script ignora automáticamente `GITLAB_TOKEN`, `PRIVATE_TOKEN`, `CI_JOB_TOKEN` y `CI_REGISTRY_PASSWORD`.
-
----
-
-## 4. Setup de Entorno Local
-
-### Prerrequisitos
-- Docker Desktop instalado y corriendo
-- Acceso a la PostgreSQL del entorno DEV (o local)
-- Credenciales de Cloudflare R2
-- Cloudflare Tunnel Token del entorno DEV
-
-### Ficheros de plantilla por entorno
-
-| Entorno | Plantilla (commitada) | Fichero activo (en .gitignore) |
-|---|---|---|
-| Local / DEV | `.env.local.example` | `.env.local` |
-| Stage | `.env.stage.example` | `.env.stage` |
-| Producción | `.env.prod.example` | `.env.prod` |
-
-### Pasos
-
-```bash
-# 1. Clonar / entrar al repo
-cd middleware
-
-# 2. Crear .env.local desde la plantilla
-scripts/sync_env.sh
-# → Crea .env.local si no existe, o sincroniza variables nuevas
-
-# 3. Editar .env.local con los valores reales
-# (Ver sección "Variables por entorno" arriba para cada key)
-vim .env.local
-
-# 4. Arrancar con Docker Compose
-docker compose --env-file .env.local up --build
-
-# 5. Verificar que está vivo
-curl http://localhost:8081/health
-```
-
-### Crear plantilla de stage o prod por primera vez
-
-```bash
-# Stage
-cp .env.stage.example .env.stage
-vim .env.stage  # rellenar con valores reales de staging
-
-# Prod
-cp .env.prod.example .env.prod
-vim .env.prod   # rellenar con valores reales de producción
-# JWT_SECRET y INTERNAL_AUTH_SECRET deben ser únicos:
-# openssl rand -base64 64
-```
-
-> **Nota KTOR_DEVELOPMENT**: En local, `KTOR_DEVELOPMENT=true` desactiva Flyway. Para aplicar migraciones, arrancar una vez con `DOCKER_KTOR_DEVELOPMENT=false` (ya es el default en `docker-compose.yml`). Ver sección 4 de `copilot-instructions.md`.
-
----
-
-## 5. Flujo de Promoción Paso a Paso
-
-### 5.1 Feature → DEV (el flujo normal de desarrollo)
-
-```
-1. git checkout -b feature/us-XX-descripcion
-2. [desarrollar, commits]
-3. git push -u origin feature/us-XX-descripcion
-4. Crear MR en GitLab: feature/us-XX → develop
-5. Pipeline MR ejecuta: build → test → code_review → build_docker_image_dev
-6. Si ✅ → Merge
-7. Pipeline post-merge ejecuta: build_docker_image_dev → deploy_dev  (automático)
-8. Verificar en https://dev.mycardiochef.com
-```
-
-### 5.2 DEV → STAGE (promoción a release/Vx)
-
-```
-1. Desde develop (estable, con features validadas en DEV):
-   git checkout develop && git pull
-   git checkout -b release/V2   # versión nueva
-   git push -u origin release/V2
-
-2. Crear MR en GitLab: develop → release/V2
-3. Pipeline MR ejecuta: build → test → code_review → build_docker_image_stage
-4. Si ✅ → Merge
-5. Pipeline post-merge ejecuta: deploy_stage  (automático)
-6. Verificar en https://stage.mycardiochef.com
-7. Ejecutar smoke tests manuales
-```
-
-### 5.3 STAGE → PROD (promoción a main)
-
-```
-1. Crear MR en GitLab: release/V2 → main
-2. Pipeline MR ejecuta: build → test → code_review → build_docker_image_prod
-3. Si ✅ → Merge (requiere 2 revisores — ver devkit-project.config.md)
-4. Pipeline genera imagen :latest
-5. ⚠️  Deploy MANUAL: ir a GitLab → Pipelines → job 'deploy_prod' → clic "Play"
-6. Verificar en https://api.mycardiochef.com
-7. Crear tag git de versión:
-   git tag -a v2.0.0 -m "Release V2"
-   git push origin v2.0.0
-```
-
-> **Regla producción**: El deploy de prod es siempre manual. Nunca automático.
-
----
-
-## 6. Variables Requeridas por el CI (pre-check de deploy)
-
-El CI verifica estas variables antes de cada deploy. Si alguna falta, el job falla con error descriptivo:
-
-```
-INTERNAL_AUTH_SERVICE_ID
-INTERNAL_AUTH_KEY_ID
-INTERNAL_AUTH_SECRET
-DB_AUTH_URL
-DB_AUTH_USER
-DB_AUTH_PASSWORD
-DB_PROFILES_URL
-DB_PROFILES_USER
-DB_PROFILES_PASSWORD
-TUNNEL_TOKEN
-```
-
-Estas variables **deben existir** en GitLab con el scope correcto (`development` / `staging` / `production`) antes de ejecutar el primer deploy al entorno correspondiente.
-
----
-
-## 7. Docker Image Tagging Strategy
-
-| Evento | Tag publicado | Cuándo |
-|---|---|---|
-| MR hacia `develop` | `:dev` (preview) | En la MR, antes del merge |
-| Merge a `develop` | `:dev` | Post-merge, antes del deploy DEV |
-| MR hacia `release/Vx` | `:stage` (preview) | En la MR, antes del merge |
-| Merge a `release/Vx` | `:stage` | Post-merge, antes del deploy STAGE |
-| MR hacia `main` | `:latest` (preview) | En la MR, antes del merge |
-| Merge a `main` | `:latest` | Post-merge (deploy manual) |
-
-> La imagen CI runner (`ci-builder:latest`) se construye solo cuando cambia `Dockerfile.ci`. Ver `docs/architecture/CI-CD.md`.
-
----
-
-## 8. Reglas del Pipeline (`.gitlab-ci.yml` patterns)
-
-### Build / Test / Review (solo en MR hacia develop)
-```yaml
-rules:
-  - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
-```
-
-### Docker Build STAGE (MR hacia release/Vx)
-```yaml
-rules:
-  - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release/'
-```
-
-### Docker Build PROD (MR hacia main)
-```yaml
-rules:
-  - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-```
-
-### Deploy DEV (post-merge en develop)
-```yaml
-rules:
-  - if: '$CI_COMMIT_REF_NAME == "develop"'
-```
-
-### Deploy STAGE (post-merge en release/Vx)
-```yaml
-rules:
-  - if: '$CI_COMMIT_REF_NAME =~ /^release/'
-```
-
-### Deploy PROD (post-merge en main — manual)
-```yaml
-rules:
-  - if: '$CI_COMMIT_REF_NAME == "main"'
-when: manual
-```
-
----
-
-## 9. Checklist: Crear un Nuevo Entorno Stage (release/Vx)
-
-- [ ] ¿Develop está estable y validado en DEV?
-- [ ] ¿Existe la rama `release/Vx` creada desde develop?
-- [ ] ¿Están configuradas las variables GitLab con scope `staging`?
-  - `DB_AUTH_URL`, `DB_AUTH_USER`, `DB_AUTH_PASSWORD` (staging)
-  - `DB_PROFILES_URL`, `DB_PROFILES_USER`, `DB_PROFILES_PASSWORD` (staging)
-  - `JWT_SECRET` (staging — generado con `openssl rand -base64 64`)
-  - `INTERNAL_AUTH_SECRET` (staging)
-  - `TUNNEL_TOKEN` (staging — token del túnel Cloudflare de stage)
-  - `MCP_API_KEYS` (staging)
-- [ ] ¿Se ha creado la MR develop → release/Vx en GitLab?
-- [ ] ¿Ha pasado el pipeline de la MR (build + test + docker)?
-- [ ] ¿Se ha hecho merge?
-- [ ] ¿Ha arrancado `deploy_stage` automáticamente?
-- [ ] ¿Responde `https://stage.mycardiochef.com/health`?
-- [ ] ¿Se han ejecutado smoke tests manuales?
-
----
-
-## 10. Checklist: Primera Configuración de Variables GitLab
-
-Ejecutar una sola vez por proyecto. Requiere `GITLAB_TOKEN` con scope `api`.
-
-```bash
-export GITLAB_TOKEN=glpat_xxx
-
-# 1. Variables DEV (desde .env.local ya relleno)
-scripts/sync_gitlab_variables.sh \
-  --project-id 77373249 \
-  --env-file .env.local \
-  --scope development \
-  --masked false \
-  --protected false
-
-# 2. Variables STAGE (crear .env.stage con valores de stage)
-cp .env.local.example .env.stage
-# → Editar .env.stage con los valores reales de staging
-scripts/sync_gitlab_variables.sh \
-  --project-id 77373249 \
-  --env-file .env.stage \
-  --scope staging \
-  --masked false \
-  --protected false
-
-# 3. Variables PROD (crear .env.prod con valores de producción)
-cp .env.local.example .env.prod
-# → Editar .env.prod con los valores reales de producción
-# → JWT_SECRET y INTERNAL_AUTH_SECRET deben ser únicos y fuertes:
-#    openssl rand -base64 64
-scripts/sync_gitlab_variables.sh \
-  --project-id 77373249 \
-  --env-file .env.prod \
-  --scope production \
-  --masked false \
-  --protected true
-
-# 4. Verificar en GitLab UI:
-#    Settings → CI/CD → Variables
-#    Cada variable sensible debe tener "Masked" activado manualmente en UI
-```
-
-> ⚠️ Los ficheros `.env.stage` y `.env.prod` **NUNCA se commitean** (están en `.gitignore`).
-
----
-
 ## 11. Gobernanza y Alcance Multi-Repo
 
-### Agente gobernador: `devkit-devops`
+### Agente gobernador: `devkit-devops-orchestrator`
 
-Esta skill está bajo la gobernanza del agente `devkit-devops`. Cualquier cambio en:
-- Estrategia de ramas o naming de releases
-- Scopes de variables o nuevas variables requeridas
-- Flujo de promoción entre entornos
-- Reglas del pipeline
-
-…debe pasar por review del agente `devkit-devops` antes de aplicarse.
+Cualquier cambio en estrategia de ramas, scopes de variables, flujo de promoción o reglas del pipeline debe pasar por review del agente `devkit-devops-orchestrator`.
 
 ### Alcance multi-repositorio
 
-Esta estrategia aplica a **todos los repositorios del ecosistema mycardiochef**:
+Esta estrategia aplica a todos los microservicios del ecosistema. Cada microservicio instancia esta skill con su propia `<microservicio>-environments` skill.
 
-| Repositorio | Aplica | Notas |
-|---|---|---|
-| `middleware` | ✅ | Fuente de verdad actual de la skill |
-| `ocr-foto` | ✅ | Misma estrategia branch/entorno |
-| `web-scraping` | ✅ | Misma estrategia branch/entorno |
-| Futuros microservicios | ✅ | Adoptar esta estrategia desde el inicio |
+### Cómo actualizar esta skill en proyectos consumidores
 
-### Cómo promover esta skill a global (devkit)
+```bash
+# Opción A: re-ejecutar setup-project para actualizar los symlinks
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --kotlin  # o la tech correspondiente
 
-Si se quiere que esta skill sea accesible desde todos los repos sin copiarla:
-
-```
-# Opción A: Copiar a ~/.copilot/skills/ en cada máquina de desarrollo
-cp -r .github/skills/devkit-environments-cicd ~/.copilot/skills/
-
-# Opción B: Crear un repo devtools compartido e incluirlo como submodule
-# (ver agente devkit-devops para el flujo completo)
+# Opción B: ejecutar install para actualizar los globales
+bash $COPILOT_DEVKIT_HOME/install.sh
 ```
 
 ---
 
-## Referencias
+## Referencias Globales
 
-- [`.gitlab-ci.yml`](.gitlab-ci.yml) — Pipeline completo
-- [`.env.local.example`](.env.local.example) — Plantilla variables locales/dev
-- [`.env.stage.example`](.env.stage.example) — Plantilla variables staging
-- [`.env.prod.example`](.env.prod.example) — Plantilla variables producción
-- [`scripts/sync_env.sh`](scripts/sync_env.sh) — Sincroniza .env.local desde example
-- [`scripts/sync_gitlab_variables.sh`](scripts/sync_gitlab_variables.sh) — Sube variables a GitLab
-- [`docs/architecture/CI-CD.md`](docs/architecture/CI-CD.md) — Documentación del pipeline
-- [`docs/guides/SERVICE_TO_SERVICE_SIGNING.md`](docs/guides/SERVICE_TO_SERVICE_SIGNING.md) — Auth HMAC interna
-- Skill `devkit-ktor-auth-flow` — JWT, Argon2id, auth endpoints
-- Skill `gitlab-cicd` — Generación/modificación del pipeline
-- Agente `devkit-devops` — Gobernador de CI/CD y estrategia de entornos
+- Skill `devkit-gitlab-cicd` — Generación/modificación del pipeline completo
+- Skill `devkit-github-actions-cicd` — Pipelines GitHub Actions
+- Skill `devkit-azure-pipelines-cicd` — Pipelines Azure DevOps
+- Agente `devkit-devops-orchestrator` — Gobernador de CI/CD y estrategia de entornos
+- [GitLab CI/CD Variables docs](https://docs.gitlab.com/ee/ci/variables/)
