@@ -1,9 +1,9 @@
 ---
-name: "azure-pipelines-cicd"
+name: "devkit-azure-pipelines-cicd"
 description: >
-  Genera y valida pipelines Azure DevOps para el proyecto Kotlin/Ktor: imagen CI runner (una sola vez),
-  stages build/test/docker-build/docker-push/deploy, Azure Container Registry (ACR),
-  staging automático en OpenShift y producción en Google Cloud Run con aprobación manual.
+  Genera y valida pipelines Azure DevOps cross-stack: Kotlin/Ktor, Python FastAPI, Android, iOS.
+  Modelo dos imágenes Docker (CI runner una sola vez + app por push), stages build/test/docker-build/docker-push/deploy,
+  Azure Container Registry (ACR), staging automático en OpenShift y producción en Google Cloud Run con aprobación manual.
 applyTo:
   - "azure-pipelines.yml"
   - "Dockerfile"
@@ -15,19 +15,45 @@ triggers:
   - "azure container registry"
   - "acr"
   - "azure devops pipeline"
+  - "azure pipelines para android"
+  - "azure pipelines para ios"
+  - "azure pipelines para python"
 nonTriggers:
-  - Pipeline de GitLab CI (usar gitlab-cicd)
-  - Pipeline de GitHub Actions (usar github-actions-cicd)
-  - Implementación de código Kotlin (usar kotlin-mcp-expert)
+  - Pipeline de GitLab CI (usar devkit-gitlab-cicd)
+  - Pipeline de GitHub Actions (usar devkit-github-actions-cicd)
+  - Implementación de código (usar el stack expert correspondiente)
+governance: devkit-devops
+scope: global
 ---
 
 # Azure Pipelines CI/CD
 
-## Propósito
+## Purpose
 
 Genera pipelines Azure DevOps completos para el proyecto MCP Server ShareResources:
 build Gradle, tests con JaCoCo, Docker multi-stage, publicación en Azure Container
 Registry (ACR), deploy staging en **OpenShift** y prod en **Google Cloud Run** con aprobación manual.
+
+
+## When to use
+- User asks to set up CI/CD for a Azure DevOps project
+- User needs to generate or update `azure-pipelines.yml`
+- User needs Docker build, registry push, or deployment pipeline for any stack
+
+## When NOT to use
+- User asks for application code → delegate to the relevant stack expert agent
+- User asks about git branching conventions → use `devkit-git-operations` skill
+- User needs only the environment/branch strategy → use `devkit-environments-cicd`
+
+## Inputs
+- Stack (Kotlin/Ktor, Python, Spring, Android, iOS, KMP)
+- Registry type (GitLab CR / GHCR / ACR / custom)
+- Staging deploy target (OpenShift / Kubernetes / ECS)
+- Production deploy target (Google Cloud Run / App Store / Play Store)
+- Secret/variable names for registry credentials and deploy keys
+
+## Steps
+See detailed pipeline sections below.
 
 ---
 
@@ -393,7 +419,7 @@ Configurar en **Pipelines → Library → Variable Groups** (`mcp-cicd-vars`):
 
 ---
 
-## Checklist de revisión
+## Validation
 
 - [ ] **AZ-01** Stages en orden con `dependsOn`: `Build → Test → DockerBuild → DockerPush → Deploy`
 - [ ] **AZ-02** Servicio `postgres` en el stage `Test`
@@ -412,7 +438,7 @@ Configurar en **Pipelines → Library → Variable Groups** (`mcp-cicd-vars`):
 
 ---
 
-## Outputs esperados
+## Expected outputs
 
 - `azure-pipelines-ci-image.yml` para construir la imagen CI runner (una sola vez).
 - `azure-pipelines.yml` con 6 stages; `Build` y `Test` usan `container: $(CI_IMAGE)`.
@@ -421,3 +447,8 @@ Configurar en **Pipelines → Library → Variable Groups** (`mcp-cicd-vars`):
 - `docker-compose.yml` para testing local.
 - Variable Group `mcp-cicd-vars` documentado con nuevas variables OpenShift y GCP.
 - Environment `production` con aprobación manual en Azure DevOps.
+
+## Examples
+- "Set up GitLab CI for my Kotlin/Ktor service with OpenShift staging and Cloud Run prod"
+- "Add GitHub Actions pipeline with GHCR registry and manual production approval"
+- "Migrate my Azure DevOps pipeline to GitHub Actions"

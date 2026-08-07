@@ -1,9 +1,9 @@
 ---
-name: "gitlab-cicd"
+name: "devkit-gitlab-cicd"
 description: >
-  Genera y valida pipelines GitLab CI para el proyecto Kotlin/Ktor: imagen CI runner (una sola vez
-  por repo), stages build/test/docker-build/docker-push/deploy, GitLab Container Registry,
-  staging automático en OpenShift y producción en Google Cloud Run con aprobación manual.
+  Genera y valida pipelines GitLab CI cross-stack: Kotlin/Ktor, Python FastAPI, Android, iOS.
+  Modelo dos imágenes Docker (CI runner una sola vez + app por push), stages build/test/docker-build/docker-push/deploy,
+  GitLab Container Registry, staging automático en OpenShift y producción en Google Cloud Run con aprobación manual.
 applyTo:
   - ".gitlab-ci.yml"
   - "Dockerfile"
@@ -14,19 +14,45 @@ triggers:
   - "pipeline para gitlab"
   - "gitlab container registry"
   - "stage de docker en gitlab"
+  - "pipeline gitlab para android"
+  - "pipeline gitlab para ios"
+  - "pipeline gitlab para python"
 nonTriggers:
-  - Pipeline de GitHub Actions (usar github-actions-cicd)
-  - Pipeline de Azure Pipelines (usar azure-pipelines-cicd)
-  - Implementación de código Kotlin (usar kotlin-mcp-expert)
+  - Pipeline de GitHub Actions (usar devkit-github-actions-cicd)
+  - Pipeline de Azure DevOps (usar devkit-azure-pipelines-cicd)
+  - Implementación de código (usar el stack expert correspondiente)
+governance: devkit-devops
+scope: global
 ---
 
 # GitLab CI/CD
 
-## Propósito
+## Purpose
 
 Genera pipelines GitLab CI completos para el proyecto MCP Server ShareResources:
 build Gradle, tests con cobertura JaCoCo, Docker multi-stage build, publicación
 en GitLab Container Registry, deploy staging en **OpenShift** y prod en **Google Cloud Run**.
+
+
+## When to use
+- User asks to set up CI/CD for a GitLab CI project
+- User needs to generate or update `.gitlab-ci.yml`
+- User needs Docker build, registry push, or deployment pipeline for any stack
+
+## When NOT to use
+- User asks for application code → delegate to the relevant stack expert agent
+- User asks about git branching conventions → use `devkit-git-operations` skill
+- User needs only the environment/branch strategy → use `devkit-environments-cicd`
+
+## Inputs
+- Stack (Kotlin/Ktor, Python, Spring, Android, iOS, KMP)
+- Registry type (GitLab CR / GHCR / ACR / custom)
+- Staging deploy target (OpenShift / Kubernetes / ECS)
+- Production deploy target (Google Cloud Run / App Store / Play Store)
+- Secret/variable names for registry credentials and deploy keys
+
+## Steps
+See detailed pipeline sections below.
 
 ---
 
@@ -308,7 +334,7 @@ Las variables `CI_REGISTRY_USER`, `CI_REGISTRY_PASSWORD` y `CI_REGISTRY` las pro
 
 ---
 
-## Checklist de revisión
+## Validation
 
 - [ ] **GL-01** Stages en orden: `build → test → docker-build → docker-push → deploy`
 - [ ] **GL-02** Tests con servicio `postgres` para integración (no H2 en CI si hay servicio disponible)
@@ -329,7 +355,7 @@ Las variables `CI_REGISTRY_USER`, `CI_REGISTRY_PASSWORD` y `CI_REGISTRY` las pro
 
 ---
 
-## Outputs esperados
+## Expected outputs
 
 - `.gitlab-ci-image.yml` para construir la imagen CI runner (una sola vez).
 - `.gitlab-ci.yml` con los 5 stages; jobs `build` y `test` usan `$CI_IMAGE`.
@@ -337,3 +363,8 @@ Las variables `CI_REGISTRY_USER`, `CI_REGISTRY_PASSWORD` y `CI_REGISTRY` las pro
 - `Dockerfile` multi-stage para la imagen de aplicación (usa `ARG CI_IMAGE`).
 - `docker-compose.yml` para testing local.
 - Variables CI/CD documentadas (nombres, no valores).
+
+## Examples
+- "Set up GitLab CI for my Kotlin/Ktor service with OpenShift staging and Cloud Run prod"
+- "Add GitHub Actions pipeline with GHCR registry and manual production approval"
+- "Migrate my Azure DevOps pipeline to GitHub Actions"

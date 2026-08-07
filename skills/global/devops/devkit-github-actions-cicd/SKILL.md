@@ -1,9 +1,9 @@
 ---
-name: "github-actions-cicd"
+name: "devkit-github-actions-cicd"
 description: >
-  Genera y valida workflows GitHub Actions para el proyecto Kotlin/Ktor: imagen CI runner (una sola vez),
-  jobs build/test/docker-build/docker-push/deploy, GitHub Container Registry (GHCR),
-  staging automático en OpenShift y producción en Google Cloud Run con aprobación manual.
+  Genera y valida workflows GitHub Actions cross-stack: Kotlin/Ktor, Python FastAPI, Android, iOS.
+  Modelo dos imágenes Docker (CI runner una sola vez + app por push), jobs build/test/docker-build/docker-push/deploy,
+  GitHub Container Registry (GHCR), staging automático en OpenShift y producción en Google Cloud Run con aprobación manual.
 applyTo:
   - ".github/workflows/*.yml"
   - "Dockerfile"
@@ -15,19 +15,45 @@ triggers:
   - "github container registry"
   - "ghcr"
   - "workflow de github"
+  - "github actions para android"
+  - "github actions para ios"
+  - "github actions para python"
 nonTriggers:
-  - Pipeline de GitLab CI (usar gitlab-cicd)
-  - Pipeline de Azure Pipelines (usar azure-pipelines-cicd)
-  - Implementación de código Kotlin (usar kotlin-mcp-expert)
+  - Pipeline de GitLab CI (usar devkit-gitlab-cicd)
+  - Pipeline de Azure DevOps (usar devkit-azure-pipelines-cicd)
+  - Implementación de código (usar el stack expert correspondiente)
+governance: devkit-devops
+scope: global
 ---
 
 # GitHub Actions CI/CD
 
-## Propósito
+## Purpose
 
 Genera workflows GitHub Actions completos para el proyecto MCP Server ShareResources:
 build Gradle, tests con JaCoCo, Docker multi-stage, publicación en GitHub Container
 Registry (GHCR), deploy staging en **OpenShift** y prod en **Google Cloud Run** con aprobación manual.
+
+
+## When to use
+- User asks to set up CI/CD for a GitHub Actions project
+- User needs to generate or update `.github/workflows/ci.yml`
+- User needs Docker build, registry push, or deployment pipeline for any stack
+
+## When NOT to use
+- User asks for application code → delegate to the relevant stack expert agent
+- User asks about git branching conventions → use `devkit-git-operations` skill
+- User needs only the environment/branch strategy → use `devkit-environments-cicd`
+
+## Inputs
+- Stack (Kotlin/Ktor, Python, Spring, Android, iOS, KMP)
+- Registry type (GitLab CR / GHCR / ACR / custom)
+- Staging deploy target (OpenShift / Kubernetes / ECS)
+- Production deploy target (Google Cloud Run / App Store / Play Store)
+- Secret/variable names for registry credentials and deploy keys
+
+## Steps
+See detailed pipeline sections below.
 
 ---
 
@@ -377,7 +403,7 @@ Configurar en **Settings → Secrets and variables → Actions**:
 
 ---
 
-## Checklist de revisión
+## Validation
 
 - [ ] **GH-01** Jobs en orden con `needs:`: `build → test → docker-build → docker-push → deploy`
 - [ ] **GH-02** Servicio `postgres` en el job `test` con health-check
@@ -396,7 +422,7 @@ Configurar en **Settings → Secrets and variables → Actions**:
 
 ---
 
-## Outputs esperados
+## Expected outputs
 
 - `.github/workflows/ci-image.yml` para construir la imagen CI runner (una sola vez).
 - `.github/workflows/ci.yml` con 6 jobs; `build` y `test` usan container CI runner.
@@ -404,3 +430,8 @@ Configurar en **Settings → Secrets and variables → Actions**:
 - `Dockerfile` multi-stage para la imagen de aplicación (usa `ARG CI_IMAGE`).
 - `docker-compose.yml` para testing local.
 - Environment `production` configurado con aprobación manual en GitHub.
+
+## Examples
+- "Set up GitLab CI for my Kotlin/Ktor service with OpenShift staging and Cloud Run prod"
+- "Add GitHub Actions pipeline with GHCR registry and manual production approval"
+- "Migrate my Azure DevOps pipeline to GitHub Actions"
