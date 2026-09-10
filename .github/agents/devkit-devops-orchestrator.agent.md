@@ -1,0 +1,1 @@
+/Users/manelcc/Library/CloudStorage/OneDrive-SopraSteria/PROYECTOS/DEVKIT/agents/global/devkit-devops-orchestrator.agent.md

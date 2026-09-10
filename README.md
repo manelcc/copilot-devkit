@@ -59,6 +59,12 @@ bash $COPILOT_DEVKIT_HOME/setup-project.sh --cmp
 # Backend Python
 bash $COPILOT_DEVKIT_HOME/setup-project.sh --python
 
+# Backend Kotlin/Ktor
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --kotlin
+
+# Solo DevOps global (skills + orquestador)
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --devops
+
 # Proyecto con múltiples tecnologías
 bash $COPILOT_DEVKIT_HOME/setup-project.sh --android --kmp
 
@@ -75,8 +81,11 @@ Resultado en el proyecto:
 └── instructions/  ← instrucciones del stack enlazadas
 ```
 
-> Las skills globales (clean-code, git-workflow, etc.) ya están en `~/.copilot/skills/`
+> Las skills globales (clean-code, git-workflow, devops, etc.) ya están en `~/.copilot/skills/`
 > y no necesitan enlazarse por proyecto.
+>
+> Si ejecutas `--python` o `--kotlin`, `setup-project.sh` también enlaza automáticamente
+> el bloque DevOps global en `.github/` para mejorar descubribilidad dentro del proyecto.
 
 #### Gemini (Android Studio)
 

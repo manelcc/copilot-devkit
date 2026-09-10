@@ -261,6 +261,8 @@ echo "   setup-project --ios"
 echo "   setup-project --cmp"
 echo "   setup-project --kmp"
 echo "   setup-project --python"
+echo "   setup-project --kotlin"
+echo "   setup-project --devops"
 echo ""
 
 log_success "Ready to develop!"

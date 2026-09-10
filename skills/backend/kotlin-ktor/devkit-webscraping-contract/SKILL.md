@@ -24,7 +24,7 @@ Definir y aplicar el contrato tecnico entre `middleware` (sender) y `web-scrapin
 ## Mandatory source of truth
 Usar siempre estas referencias como contrato fuente:
 - `.github/copilot-hmac-auth.md`
-- `docs/guides/SERVICE_TO_SERVICE_SIGNING.md`
+- Wiki CardioChef: `architecture/Wiki-HMAC-V1-Protocol`
 - `src/main/kotlin/<org>/<project>/infrastructure/client/ScrapingServiceClient.kt`
 - `src/main/kotlin/<org>/<project>/core/di/KoinModules.kt`
 

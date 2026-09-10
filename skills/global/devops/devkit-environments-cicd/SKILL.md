@@ -13,6 +13,8 @@ applyTo:
   - ".env.prod.example"
   - "scripts/sync_env.sh"
   - "scripts/sync_gitlab_variables.sh"
+  - "scripts/check_required_vars.sh"
+  - "scripts/deploy_remote_docker.sh"
 triggers:
   - "estrategia de entornos"
   - "patrón de entornos"
@@ -310,6 +312,27 @@ Antes de cada deploy, el CI verifica que las variables requeridas existen. Si fa
 
 La lista concreta de `REQUIRED_VARS` se define en la skill de proyecto de cada microservicio.
 
+## 7.1 Regla global de segregación de deploy (mandatory)
+
+Para evitar colisiones entre entornos cuando comparten runner o infraestructura, todos los microservicios deben cumplir:
+
+1. `DEPLOY_TARGET` por entorno (`DEPLOY_TARGET_DEV`, `DEPLOY_TARGET_STAGE`, `DEPLOY_TARGET_PROD`)
+2. `SERVICE_NAME` distinto por entorno (`<service>-dev`, `<service>-stage`, `<service>-prod`)
+3. Deploy remoto por SSH usando `scripts/deploy_remote_docker.sh`
+4. Precheck de variables previo con `scripts/check_required_vars.sh`
+
+Patrón YAML recomendado:
+
+```yaml
+deploy_dev:
+  variables:
+    SERVICE_NAME: "<service>-dev"
+    DEPLOY_TARGET: "$DEPLOY_TARGET_DEV"
+  script:
+    - scripts/check_required_vars.sh DEPLOY_TARGET DEPLOY_SSH_USER DEPLOY_SSH_PRIVATE_KEY DEPLOY_SSH_KNOWN_HOSTS
+    - scripts/deploy_remote_docker.sh --target "$DEPLOY_TARGET" --image "$CI_REGISTRY_IMAGE:dev" --service-name "$SERVICE_NAME" --port "${PORT}" --network "${PRIVATE_DOCKER_NETWORK}"
+```
+
 ---
 
 ## 8. Checklist: Primer Deploy a un Entorno Nuevo
@@ -353,7 +376,8 @@ bash db/scripts/setup_stage.sh
 # usa docker exec internamente contra el contenedor postgres configurado
 ```
 
-### Paso 3 — Crear .env.stage
+> **Nota — recrear el contenedor desde cero**: los init scripts de `db/init/` se ejecutan solo en el primer arranque del contenedor (volumen vacío). Si en el futuro destruyes el volumen PostgreSQL y lo recreas, los scripts `01_init_stage_databases.sql` necesitarán las passwords stage disponibles como variables de entorno en el `docker-compose`. Añádelas al fichero `.env` del repo `db-ingredients` (o a un `.env.local` ignorado por git) antes de hacer `docker compose up`.
+
 
 ```bash
 cp .env.stage.example .env.stage

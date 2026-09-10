@@ -1,0 +1,1 @@
+/Users/manelcc/Library/CloudStorage/OneDrive-SopraSteria/PROYECTOS/DEVKIT/agents/backend/kotlin-ktor/devkit-x-correlation-id-strategy.agent.md

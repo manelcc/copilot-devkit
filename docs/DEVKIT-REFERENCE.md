@@ -100,6 +100,12 @@ bash $COPILOT_DEVKIT_HOME/setup-project.sh --cmp
 # Backend Python
 bash $COPILOT_DEVKIT_HOME/setup-project.sh --python
 
+# Backend Kotlin/Ktor
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --kotlin
+
+# Solo DevOps global
+bash $COPILOT_DEVKIT_HOME/setup-project.sh --devops
+
 # Skill individual
 bash $COPILOT_DEVKIT_HOME/setup-project.sh --skill devkit-logging-kotlin
 
@@ -107,8 +113,11 @@ bash $COPILOT_DEVKIT_HOME/setup-project.sh --skill devkit-logging-kotlin
 bash $COPILOT_DEVKIT_HOME/setup-project.sh --list
 ```
 
-> **Nota:** No existe flag `--kotlin` ni `--spring`. Las skills de Backend Kotlin/Ktor y Spring
-> se integran con `--skill <nombre>` individualmente o copiando manualmente las symlinks.
+> **Nota:** Existe flag `--kotlin` para Backend Kotlin/Ktor y flag `--devops` para el paquete
+> global de DevOps. No existe flag `--spring` por ahora; Spring se integra con `--skill <nombre>`
+> o symlink manual.
+>
+> Si activas `--python` o `--kotlin`, el script habilita también DevOps automáticamente.
 
 El script crea symlinks en `.github/` del proyecto consumidor:
 
@@ -304,7 +313,7 @@ Los symlinks ya existentes se omiten sin error; sólo se crean los nuevos.
 
 ## Backend Kotlin / Ktor
 
-> Flag de activación: `--skill <nombre>` (skill por skill) o symlink manual
+> Flag de activación: `--kotlin`
 >
 > Ruta en el repo: `skills/backend/kotlin-ktor/`, `agents/backend/kotlin-ktor/`
 
@@ -324,12 +333,14 @@ Los symlinks ya existentes se omiten sin error; sólo se crean los nuevos.
 | Agent | Descripción |
 |---|---|
 | `devkit-backend-kotlin-project-orchestrator` | Orquestador principal de proyectos backend Kotlin/Ktor |
-| `devkit-devops` | Genera pipelines CI/CD production-ready (GitLab CI, GitHub Actions, Azure DevOps) con modelo Docker de dos imágenes |
 | `devkit-kotlin-expert-pattern` | Guía de patrones Kotlin server-side y KMP con trade-offs e implementación Ktor/Exposed/Koin |
 | `devkit-kotlin-mcp-expert` | Genera servidores MCP Kotlin end-to-end con Clean Architecture y CI/CD |
 | `devkit-kotlin-server-quality` | Auditor de calidad Kotlin server-side con hallazgos priorizados y basados en evidencia |
 | `devkit-payload-logging-trace` | Implementa logging de payloads request/response JSON con trazabilidad; mejora troubleshooting sin exponer secretos |
 | `devkit-x-correlation-id-strategy` | Define e implementa la estrategia de trazabilidad `X-Correlation-ID`/`X-Request-ID` entre servicios HTTP |
+
+> El orquestador DevOps (`devkit-devops-orchestrator`) es global y se instala con `setup.sh`.
+> Opcionalmente puede enlazarse en el proyecto con `setup-project.sh --devops`.
 
 ### Instrucción de Copilot
 

@@ -12,6 +12,7 @@
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --kmp
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --python
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --kotlin
+#   bash $COPILOT_DEVKIT_HOME/setup-project.sh --devops
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --skill <nombre>
 #   bash $COPILOT_DEVKIT_HOME/setup-project.sh --list
 #
@@ -43,6 +44,7 @@ CMP=false
 KMP=false
 PYTHON=false
 KOTLIN=false
+DEVOPS=false
 GEMINI=false
 SPECIFIC_SKILLS=()
 DO_LIST=false
@@ -55,12 +57,13 @@ while [[ $# -gt 0 ]]; do
         --kmp)       KMP=true;      shift ;;
         --python)    PYTHON=true;   shift ;;
         --kotlin)    KOTLIN=true;   shift ;;
+        --devops)    DEVOPS=true;   shift ;;
         --gemini)    GEMINI=true;   shift ;;
         --skill)     SPECIFIC_SKILLS+=("$2"); shift 2 ;;
         --list)      DO_LIST=true;  shift ;;
         *)
             echo "❌ Opción desconocida: $1"
-            echo "   Uso: setup-project.sh [--android] [--ios] [--cmp] [--kmp] [--python] [--kotlin] [--gemini] [--skill <nombre>] [--list]"
+            echo "   Uso: setup-project.sh [--android] [--ios] [--cmp] [--kmp] [--python] [--kotlin] [--devops] [--gemini] [--skill <nombre>] [--list]"
             exit 1
             ;;
     esac
@@ -289,7 +292,7 @@ if [[ "$DO_LIST" == true ]]; then
         esac
 
         echo "[$section]"
-        for category in android ios multiplatform/cmp multiplatform/kmp backend/python backend/kotlin-ktor; do
+        for category in android ios multiplatform/cmp multiplatform/kmp backend/python backend/kotlin-ktor backend/spring-java global/devops; do
             dir="$section_dir/$category"
             [[ -d "$dir" ]] || continue
             entries=("$dir"/*)
@@ -315,7 +318,7 @@ if [[ ${#SPECIFIC_SKILLS[@]} -gt 0 ]]; then
     echo ""
     for skill_name in "${SPECIFIC_SKILLS[@]}"; do
         found=false
-        for dir in "$SKILLS_DIR"/android "$SKILLS_DIR"/ios "$SKILLS_DIR"/multiplatform/cmp "$SKILLS_DIR"/multiplatform/kmp "$SKILLS_DIR"/backend/python "$SKILLS_DIR"/backend/kotlin-ktor; do
+        for dir in "$SKILLS_DIR"/android "$SKILLS_DIR"/ios "$SKILLS_DIR"/multiplatform/cmp "$SKILLS_DIR"/multiplatform/kmp "$SKILLS_DIR"/backend/python "$SKILLS_DIR"/backend/kotlin-ktor "$SKILLS_DIR"/backend/spring-java "$SKILLS_DIR"/global "$SKILLS_DIR"/global/devops; do
             skill_path="$dir/$skill_name"
             if [[ -e "$skill_path" ]]; then
                 link_item "$skill_path" "$TARGET_SKILLS_DIR" "skills"
@@ -334,8 +337,8 @@ if [[ ${#SPECIFIC_SKILLS[@]} -gt 0 ]]; then
 fi
 
 # ─── Validate at least one tech flag ─────────────────────────────────────────
-if [[ "$ANDROID" == false && "$IOS" == false && "$CMP" == false && "$KMP" == false && "$PYTHON" == false && "$KOTLIN" == false ]]; then
-    echo "❌ Debes indicar al menos una tecnología: --android --ios --cmp --kmp --python --kotlin"
+if [[ "$ANDROID" == false && "$IOS" == false && "$CMP" == false && "$KMP" == false && "$PYTHON" == false && "$KOTLIN" == false && "$DEVOPS" == false ]]; then
+    echo "❌ Debes indicar al menos una tecnología: --android --ios --cmp --kmp --python --kotlin --devops"
     echo "   Combina con --gemini para soporte de Gemini en Android Studio."
     echo "   O usa --skill <nombre> para enlazar skills específicas."
     echo "   Usa --list para ver el contenido disponible."
@@ -354,6 +357,12 @@ TECHS_ENABLED=()
 [[ "$KMP" == true ]] && TECHS_ENABLED+=("kmp")
 [[ "$PYTHON" == true ]] && TECHS_ENABLED+=("python")
 [[ "$KOTLIN" == true ]] && TECHS_ENABLED+=("kotlin")
+
+# DevOps es transversal: habilitarlo explícitamente o cuando se activa backend.
+if [[ "$PYTHON" == true || "$KOTLIN" == true ]]; then
+    DEVOPS=true
+fi
+[[ "$DEVOPS" == true ]] && TECHS_ENABLED+=("devops")
 
 echo "🏷️  Tecnologías: ${TECHS_ENABLED[*]}"
 echo ""
@@ -414,6 +423,13 @@ if [[ "$KOTLIN" == true ]]; then
     link_item "$INSTRUCTIONS_DIR/devkit-backend-kotlin.instructions.md" "$TARGET_INSTRUCTIONS_DIR" "instructions"
 fi
 
+# 7. Link DevOps global content (transversal)
+if [[ "$DEVOPS" == true ]]; then
+    link_folder "$SKILLS_DIR/global/devops" "$TARGET_SKILLS_DIR/global/devops" "global/devops" "skills"
+    link_item "$AGENTS_DIR/global/devkit-devops-orchestrator.agent.md" "$TARGET_AGENTS_DIR" "agents"
+    link_item "$INSTRUCTIONS_DIR/devkit-global.instructions.md" "$TARGET_INSTRUCTIONS_DIR" "instructions"
+fi
+
 # ─── Official Android skills (via android CLI) ───────────────────────────────
 if [[ "$ANDROID" == true ]]; then
     if command -v android >/dev/null 2>&1; then
@@ -455,6 +471,9 @@ if [[ "$GEMINI" == true ]]; then
     fi
     if [[ "$KOTLIN" == true ]]; then
         link_gemini_skills_from "$SKILLS_DIR/backend/kotlin-ktor" "kotlin-ktor"
+    fi
+    if [[ "$DEVOPS" == true ]]; then
+        link_gemini_skills_from "$SKILLS_DIR/global/devops" "global/devops"
     fi
 
     # Global skills → .agents/skills/
